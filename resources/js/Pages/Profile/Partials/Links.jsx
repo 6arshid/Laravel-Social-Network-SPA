@@ -30,33 +30,10 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
         whatsapp: user.whatsapp ?? '',
         telegram: user.telegram ?? '',
     });
-    
 
-    const [usernameStatus, setUsernameStatus] = useState(null); // true = available, false = taken, null = unknown
+    const [usernameStatus, setUsernameStatus] = useState(null);
     const [checkingUsername, setCheckingUsername] = useState(false);
 
-    useEffect(() => {
-        if (data.username.length < 4) {
-            setUsernameStatus(null);
-            return;
-        }
-
-        const delayDebounce = setTimeout(() => {
-            setCheckingUsername(true);
-            axios.post(route('username.check'), { username: data.username })
-                .then((res) => {
-                    setUsernameStatus(res.data.available);
-                    if (!res.data.available) {
-                        // don't show backend error unless submitting
-                        clearErrors('username');
-                    }
-                })
-                .catch(() => setUsernameStatus(null))
-                .finally(() => setCheckingUsername(false));
-        }, 500);
-
-        return () => clearTimeout(delayDebounce);
-    }, [data.username]);
 
     const submit = (e) => {
         e.preventDefault();
@@ -66,43 +43,58 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
+                <h2 className="text-lg font-medium text-gray-900">Profile Links Information</h2>
                 <p className="mt-1 text-sm text-gray-600">
-                    Update your account's profile information and email address.
+                    Update your social network information.
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
-            {[
-    ['bio', 'Bio'],
-    ['location', 'Location'],
-    ['website', 'Website'],
-    ['phone', 'Phone'],
-    ['instagram', 'Instagram'],
-    ['twitter', 'Twitter'],
-    ['facebook', 'Facebook'],
-    ['linkedin', 'LinkedIn'],
-    ['github', 'GitHub'],
-    ['tiktok', 'TikTok'],
-    ['snapchat', 'Snapchat'],
-    ['youtube', 'YouTube'],
-    ['pinterest', 'Pinterest'],
-    ['whatsapp', 'WhatsApp'],
-    ['telegram', 'Telegram'],
-].map(([key, label]) => (
-    <div key={key}>
-        <InputLabel htmlFor={key} value={label} />
-        <TextInput
-            id={key}
-            className="mt-1 block w-full"
-            value={data[key]}
-            onChange={(e) => setData(key, e.target.value)}
-            autoComplete={key}
-        />
-        <InputError className="mt-2" message={errors[key]} />
-    </div>
-))}
+                <div>
+                    <InputLabel htmlFor="bio" value="Bio" />
+                    <textarea
+                        id="bio"
+                        className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-indigo-200"
+                        value={data.bio}
+                        onChange={(e) => setData('bio', e.target.value)}
+                        rows="4"
+                    ></textarea>
+                    <InputError className="mt-2" message={errors.bio} />
+                </div>
 
+                {[ // link fields with base URLs
+                    ['location', 'Location', ''],
+                    ['website', 'Website', 'https://'],
+                    ['phone', 'Phone', ''],
+                    ['instagram', 'Instagram', 'https://instagram.com/'],
+                    ['twitter', 'Twitter', 'https://twitter.com/'],
+                    ['facebook', 'Facebook', 'https://facebook.com/'],
+                    ['linkedin', 'LinkedIn', 'https://linkedin.com/in/'],
+                    ['github', 'GitHub', 'https://github.com/'],
+                    ['tiktok', 'TikTok', 'https://tiktok.com/@'],
+                    ['snapchat', 'Snapchat', 'https://snapchat.com/add/'],
+                    ['youtube', 'YouTube', 'https://youtube.com/@'],
+                    ['pinterest', 'Pinterest', 'https://pinterest.com/'],
+                    ['whatsapp', 'WhatsApp', 'https://wa.me/'],
+                    ['telegram', 'Telegram', 'https://t.me/'],
+                ].map(([key, label, base]) => (
+                    <div key={key}>
+                        <InputLabel htmlFor={key} value={label} />
+                        <div className="flex items-center gap-2">
+                            {base && (
+                                <span className="text-sm text-gray-500">{base}</span>
+                            )}
+                            <TextInput
+                                id={key}
+                                className="mt-1 block w-full"
+                                value={data[key]}
+                                onChange={(e) => setData(key, e.target.value)}
+                                autoComplete={key}
+                            />
+                        </div>
+                        <InputError className="mt-2" message={errors[key]} />
+                    </div>
+                ))}
 
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>
