@@ -6,11 +6,13 @@
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
         <meta name="csrf-token" content="{{ csrf_token() }}">
-<script>
-    window.Laravel = {
-        user: @json(auth()->user())
-    }
-</script>
+        <script>
+            window.Laravel = {
+                user: @json(auth()->user())
+            }
+        </script>
+            @PwaHead <!-- Add this directive to include the PWA meta tags -->
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -23,5 +25,7 @@
     </head>
     <body class="font-sans antialiased">
         @inertia
+        @RegisterServiceWorkerScript <!-- This registers the service worker -->
+
     </body>
 </html>
