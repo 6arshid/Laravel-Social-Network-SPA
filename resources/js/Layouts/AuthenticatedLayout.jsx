@@ -115,7 +115,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </span>
                                 </Dropdown.Trigger>
                                 <Dropdown.Content>
-                                    <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                    <Dropdown.Link href={route('profile.edit')}>Edit Profile</Dropdown.Link>
                                     <Dropdown.Link href={route('logout')} method="post" as="button">Log Out</Dropdown.Link>
                                 </Dropdown.Content>
                             </Dropdown>
@@ -156,7 +156,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="px-4">
                                 <span className="text-lg text-gray-700">🔔 {unreadCount > 0 && <span className="ml-1 text-red-600 text-sm font-bold">({unreadCount})</span>}</span>
                             </div>
-                            <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('profile.edit')}>Edit Profile</ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('logout')} as="button">Log Out</ResponsiveNavLink>
                         </div>
                     </div>
