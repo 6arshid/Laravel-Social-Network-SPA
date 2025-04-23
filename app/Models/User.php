@@ -22,7 +22,10 @@ class User extends Authenticatable
         'email',
         'password',
         'username',
-        'avatar', 'cover','google_id',
+        'avatar', 'cover','google_id','bio','location','website',
+        'phone','instagram','twitter','facebook','linkedin',
+        'github','tiktok','snapchat','youtube','pinterest',
+        'whatsapp','telegram',
     ];
 
     /**

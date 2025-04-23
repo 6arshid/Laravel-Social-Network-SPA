@@ -46,7 +46,6 @@ async function getCroppedImg(imageSrc, pixelCrop) {
     });
 }
 
-
 export default function Show() {
     const { user, posts, isOwner, isFollowing } = usePage().props;
     const [allPosts, setAllPosts] = useState(posts.data);
@@ -174,7 +173,33 @@ export default function Show() {
             {/* User Info */}
             <div className="pt-16 px-4">
                 <h1 className="text-xl font-bold">{user.name}</h1>
-                <p className="text-gray-500">@{user.username}</p>
+                <p className="text-gray-500">{user.username} </p>
+
+                {/* Additional Profile Fields */}
+                <div className="mt-4 space-y-2 text-sm text-gray-700">
+                    {user.bio && <p><span className="font-medium">Bio:</span> {user.bio}</p>}
+                    {user.location && <p><span className="font-medium">Location:</span> {user.location}</p>}
+                    {user.website && (
+                        <p>
+                            <span className="font-medium">Website:</span>{' '}
+                            <a href={user.website} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+                                {user.website}
+                            </a>
+                        </p>
+                    )}
+                    {user.phone && <p><span className="font-medium">Phone:</span> {user.phone}</p>}
+                    {user.instagram && <p><span className="font-medium">Instagram:</span> @{user.instagram}</p>}
+                    {user.twitter && <p><span className="font-medium">Twitter:</span> @{user.twitter}</p>}
+                    {user.facebook && <p><span className="font-medium">Facebook:</span> {user.facebook}</p>}
+                    {user.linkedin && <p><span className="font-medium">LinkedIn:</span> {user.linkedin}</p>}
+                    {user.github && <p><span className="font-medium">GitHub:</span> {user.github}</p>}
+                    {user.tiktok && <p><span className="font-medium">TikTok:</span> @{user.tiktok}</p>}
+                    {user.snapchat && <p><span className="font-medium">Snapchat:</span> @{user.snapchat}</p>}
+                    {user.youtube && <p><span className="font-medium">YouTube:</span> {user.youtube}</p>}
+                    {user.pinterest && <p><span className="font-medium">Pinterest:</span> {user.pinterest}</p>}
+                    {user.whatsapp && <p><span className="font-medium">WhatsApp:</span> {user.whatsapp}</p>}
+                    {user.telegram && <p><span className="font-medium">Telegram:</span> {user.telegram}</p>}
+                </div>
 
                 {!isOwner && (
                     <div className="px-4 mt-4 flex space-x-4">

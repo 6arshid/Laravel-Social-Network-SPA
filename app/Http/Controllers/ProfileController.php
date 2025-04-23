@@ -129,15 +129,15 @@ class ProfileController extends Controller
     public function show_profile($username, Request $request)
     {
         $user = User::where('username', $username)->firstOrFail();
-
+    
         $posts = $user->posts()
             ->with(['media', 'likes', 'user'])
             ->latest()
             ->paginate(5)
             ->withQueryString();
-
+    
         $authUser = auth()->user();
-
+    
         return Inertia::render('Profile/Show', [
             'user' => [
                 'id' => $user->id,
@@ -145,12 +145,28 @@ class ProfileController extends Controller
                 'username' => $user->username,
                 'avatar' => $user->avatar,
                 'cover' => $user->cover,
+                'bio' => $user->bio,
+                'location' => $user->location,
+                'website' => $user->website,
+                'phone' => $user->phone,
+                'instagram' => $user->instagram,
+                'twitter' => $user->twitter,
+                'facebook' => $user->facebook,
+                'linkedin' => $user->linkedin,
+                'github' => $user->github,
+                'tiktok' => $user->tiktok,
+                'snapchat' => $user->snapchat,
+                'youtube' => $user->youtube,
+                'pinterest' => $user->pinterest,
+                'whatsapp' => $user->whatsapp,
+                'telegram' => $user->telegram,
             ],
             'posts' => $posts,
             'isOwner' => $authUser && $authUser->id === $user->id,
             'isFollowing' => $authUser ? $authUser->isFollowing($user) : false,
         ]);
     }
+    
 
     public function updateImage(Request $request)
     {
