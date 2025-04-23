@@ -25,12 +25,14 @@ class SocialiteController extends Controller
         // اگر کاربر وجود داشت، لاگینش کن
         Auth::login($user);
     } else {
+        $avatarUrl = $googleUser->getAvatar();
+
         // اگر کاربر جدید بود، اکانت بساز و لاگینش کن
         $user = User::create([
             'name' => $googleUser->getName(),
             'email' => $googleUser->getEmail(),
             'google_id' => $googleUser->getId(),
-            'avatar' => $googleUser->getAvatar(),
+            'avatar' => $avatarUrl, // 👈 مستقیم ذخیره بشه
             'password' => Hash::make(Str::random(16)),
             'username' => Str::slug($googleUser->getName()) . '-' . Str::random(5),
         ]);
