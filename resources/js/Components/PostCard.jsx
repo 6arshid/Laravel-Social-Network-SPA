@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePage, router, Link } from '@inertiajs/react';
 import MediaModal from '@/Components/MediaModal';
+import RepostButton from '@/Components/RepostButton';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import parseHashtags from '@/Utils/parseHashtags';
@@ -28,12 +29,10 @@ export default function PostCard({ post }) {
 
   const handleReportSubmit = (e) => {
     e.preventDefault();
-
     if (parseInt(reportForm.captcha) !== captchaAnswer) {
       alert('Incorrect captcha!');
       return;
     }
-
     router.post('/reports', {
       post_id: post.id,
       post_url: window.location.href,
@@ -76,10 +75,62 @@ export default function PostCard({ post }) {
             )}
           </div>
 
-          {/* Post Content */}
-          <p className="text-gray-800 whitespace-pre-wrap text-base leading-relaxed">
-            {parseHashtags(post.content)}
-          </p>
+          {/* Quote if repost */}
+          {post.repost ? (
+            <>
+              {post.content && (
+                <p className="text-gray-800 whitespace-pre-wrap text-base leading-relaxed">
+                  {parseHashtags(post.content)}
+                </p>
+              )}
+
+              <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 mt-2 space-y-2">
+                <div className="text-sm text-gray-500 italic">
+                  🔁 Reposted from{' '}
+                  <Link
+                    href={route('posts.show', post.repost.id)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    @{post.repost.user?.username || 'Deleted User'}
+                  </Link>
+                </div>
+
+                <div className="text-gray-800 text-sm whitespace-pre-wrap">
+                  {parseHashtags(post.repost.content)}
+                </div>
+
+                {post.repost.media && post.repost.media.length > 0 && (
+                  <div className="flex flex-wrap gap-4 mt-2">
+                    {post.repost.media.map((m) => {
+                      const fileUrl = `/storage/${m.file_path}`;
+                      return (
+                        <div
+                          key={m.id}
+                          className="w-32 h-32 relative overflow-hidden rounded-lg"
+                        >
+                          {m.type === 'image' ? (
+                            <img
+                              src={fileUrl}
+                              className="w-full h-full object-cover"
+                              alt=""
+                            />
+                          ) : (
+                            <video className="w-full h-full object-cover" muted controls>
+                              <source src={fileUrl} type="video/mp4" />
+                            </video>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <p className="text-gray-800 whitespace-pre-wrap text-base leading-relaxed">
+              {parseHashtags(post.content)}
+            </p>
+          )}
 
           {/* Media Gallery */}
           <div className="flex flex-wrap gap-4 mt-2">
@@ -120,6 +171,9 @@ export default function PostCard({ post }) {
             <button onClick={() => setReportModalOpen(true)} className="text-red-600 hover:underline">
               📣 Report
             </button>
+            {!isOwner && (
+              <RepostButton postId={post.id} />
+            )}
             {isOwner && (
               <>
                 <button
@@ -135,6 +189,7 @@ export default function PostCard({ post }) {
             )}
           </div>
 
+          {/* Media Modal */}
           <MediaModal
             media={media}
             index={modalIndex}
@@ -149,7 +204,6 @@ export default function PostCard({ post }) {
           <div className="bg-white w-full max-w-md rounded-lg p-6 shadow-xl space-y-5 relative">
             <h2 className="text-xl font-semibold text-red-600">📣 Report Post</h2>
             <form onSubmit={handleReportSubmit}>
-              {/* 💬 Enhanced Textarea */}
               <textarea
                 value={reportForm.reason}
                 onChange={(e) => setReportForm({ ...reportForm, reason: e.target.value })}

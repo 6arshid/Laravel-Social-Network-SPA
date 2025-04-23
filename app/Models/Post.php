@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $fillable = ['user_id', 'content'];
+    protected $fillable = ['user_id', 'content', 'repost_id', 'is_repost'];
 
     public function user()
     {
@@ -30,6 +30,15 @@ class Post extends Model
     public function likedBy(User $user)
     {
         return $this->likes()->where('user_id', $user->id)->exists();
+    }
+    public function repost()
+    {
+        return $this->belongsTo(Post::class, 'repost_id');
+    }
+
+    public function reposts()
+    {
+        return $this->hasMany(Post::class, 'repost_id');
     }
 
     

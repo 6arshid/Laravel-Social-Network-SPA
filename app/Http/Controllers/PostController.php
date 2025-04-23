@@ -100,8 +100,19 @@ class PostController extends Controller
 }
 public function show(Request $request, Post $post)
 {
-    $post->load(['media', 'user', 'likes']);
-
+    // $post->load([
+    //     'media',
+    //     'user',
+    //     'likes',
+    //     'repost.user',
+    //     'repost.media', // 👈 این خط رو اضافه کن!
+    // ]);
+    $post->load([
+        'media',
+        'user',
+        'likes',
+        'repost' => fn ($q) => $q->with('user', 'media'), // 👈 خیلی مهم
+    ]);
     $comments = $post->comments()
         ->with([
             'user',
@@ -113,14 +124,12 @@ public function show(Request $request, Post $post)
         ->paginate(5)
         ->withQueryString();
 
-    // گرفتن پست‌های مشابه از همان کاربر
     $similarPosts = \App\Models\Post::where('user_id', $post->user_id)
         ->where('id', '!=', $post->id)
         ->latest()
         ->take(10)
         ->get();
 
-    // اگر کاربر پست مشابه دیگری نداشت، پست‌های دیگر کاربران را بگیر
     if ($similarPosts->isEmpty()) {
         $similarPosts = \App\Models\Post::where('id', '!=', $post->id)
             ->latest()
@@ -132,12 +141,13 @@ public function show(Request $request, Post $post)
         'post' => $post,
         'comments' => $comments,
         'reactions' => $post->likes,
-        'similarPosts' => $similarPosts, // 👈 اینجا اضافه شد
+        'similarPosts' => $similarPosts,
         'auth' => [
             'user' => Auth::user(),
         ],
     ]);
 }
+
 
 public function loadComments(Request $request, Post $post)
 {
@@ -154,4 +164,28 @@ public function loadComments(Request $request, Post $post)
     return response()->json($comments);
 }
 
+public function repost(Request $request, $id)
+{
+    $request->validate([
+        'content' => 'nullable|string|max:1000',
+    ]);
+
+    $original = Post::with('media')->findOrFail($id);
+
+    $post = Post::create([
+        'user_id' => auth()->id(),
+        'content' => $request->input('content'), // توضیح کاربر
+        'repost_id' => $original->id,
+    ]);
+
+    // اگر خواستی media هم کپی بشه
+    foreach ($original->media as $media) {
+        $post->media()->create([
+            'file_path' => $media->file_path,
+            'type' => $media->type,
+        ]);
+    }
+
+    return redirect()->route('posts.show', $post->id);
+}
 }
