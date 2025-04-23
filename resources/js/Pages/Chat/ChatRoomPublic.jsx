@@ -307,6 +307,34 @@ export default function ChatPage({ user = null, messages: initialMessages, room_
                     </form>
                 </div>
             </div>
+            <div className="fixed right-4 top-1/2 transform -translate-y-1/2 space-y-4 z-50">
+                <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(document.title + ' ' + window.location.href)}`} target="_blank" rel="noopener noreferrer" className="block text-green-600">
+                    <svg className="w-6 h-6" viewBox="0 0 32 32" fill="currentColor">
+                        <path d="M16 .5C7.4.5.5 7.4.5 16c0 2.7.7 5.3 2.1 7.6L.5 31.5l8.2-2.1c2.2 1.2 4.7 1.8 7.3 1.8 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5zm0 28.6c-2.2 0-4.3-.6-6.2-1.7l-.4-.2-4.9 1.2 1.3-4.8-.3-.4c-1.3-2-2-4.2-2-6.5C3.5 9.1 9.1 3.5 16 3.5c6.9 0 12.5 5.6 12.5 12.5S22.9 29.1 16 29.1z"/>
+                        <path d="M24.2 19.7l-2.9-1.2c-.4-.2-.9-.2-1.2.1l-1.7 1.4c-2.4-1.3-4.3-3.1-5.6-5.6l1.4-1.7c.3-.3.3-.8.1-1.2l-1.2-2.9c-.2-.5-.8-.7-1.3-.5-1 .4-2.2 1.4-2.2 3.4 0 1.1.5 2.4 1.4 3.8 1.5 2.3 3.7 4.5 6 5.5 1.1.5 2 .8 2.8.8 2 0 3.1-1.2 3.4-2.2.2-.5 0-1.1-.5-1.3z"/>
+                    </svg>
+                </a>
+                <a href={`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(document.title)}`} target="_blank" rel="noopener noreferrer" className="block text-blue-500">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9.484 15.477l-.391 4.363c.56 0 .803-.24 1.097-.527l2.63-2.515 5.451 3.982c1 .553 1.715.264 1.976-.931l3.58-16.744-.001-.001c.316-1.476-.539-2.056-1.519-1.713L1.178 9.228c-1.456.575-1.439 1.394-.25 1.763l5.623 1.756 13.038-8.237-10.106 11.014z" />
+                    </svg>
+                </a>
+                <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(document.title)}`} target="_blank" rel="noopener noreferrer" className="block text-black">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.26 4.26 0 001.85-2.35 8.45 8.45 0 01-2.7 1.03A4.23 4.23 0 0015.5 4a4.26 4.26 0 00-4.26 4.26c0 .33.04.66.1.97A12.07 12.07 0 013 5.15a4.27 4.27 0 001.32 5.68 4.21 4.21 0 01-1.92-.53v.05a4.27 4.27 0 003.42 4.18 4.28 4.28 0 01-1.91.07 4.27 4.27 0 003.98 2.96 8.5 8.5 0 01-6.26 1.75A12.01 12.01 0 008.3 21c7.73 0 11.96-6.4 11.96-11.96 0-.18-.01-.36-.02-.54A8.55 8.55 0 0022.46 6z" />
+                    </svg>
+                </a>
+                <a href={`mailto:?subject=${encodeURIComponent(document.title)}&body=${encodeURIComponent(window.location.href)}`} className="block text-red-600">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4.24l-8 5-8-5V6l8 5 8-5v2.24z" />
+                    </svg>
+                </a>
+                <a href={`sms:?body=${encodeURIComponent(document.title + ' ' + window.location.href)}`} className="block text-gray-700">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 2H4C2.9 2 2 2.9 2 4v20l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 9H6v-2h12v2z" />
+                    </svg>
+                </a>
+            </div>
         </AuthenticatedLayout>
     );
 }
