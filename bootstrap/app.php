@@ -15,11 +15,21 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\CheckForInstallation::class,
+            \App\Http\Middleware\VerifyCsrfToken::class, 
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+
+
+
         ]);
 
         // تعریف alias برای middleware سفارشی
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
+        ]);
+        $middleware->group('install', [
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            // بدون session و csrf!
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
