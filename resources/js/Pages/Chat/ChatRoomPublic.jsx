@@ -140,7 +140,9 @@ export default function ChatPage({ user = null, messages: initialMessages, room_
             body: JSON.stringify({ content: newContent }),
         });
     };
-
+    const triggerFileInput = () => {
+        fileRef.current.click();
+    };
     const renderFile = (filePath) => {
         if (!filePath) return null;
         const ext = filePath.split('.').pop().toLowerCase();
@@ -238,73 +240,88 @@ export default function ChatPage({ user = null, messages: initialMessages, room_
                     {isTyping && <div className="text-sm text-gray-500 mb-2">Typing...</div>}
 
                     <form onSubmit={submit} className="mt-auto flex flex-col gap-2 relative">
-                        {showEmoji && (
-                            <div className="absolute bottom-full mb-2 left-0 z-50">
-                                <Picker data={data} onEmojiSelect={handleEmojiSelect} />
-                            </div>
-                        )}
+    {showEmoji && (
+        <div className="absolute bottom-full mb-2 left-0 z-50">
+            <Picker data={data} onEmojiSelect={handleEmojiSelect} />
+        </div>
+    )}
 
-                        <div className="flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setShowEmoji(!showEmoji)}
-                                className="text-2xl px-2"
-                                title="Pick emoji"
-                            >
-                                😊
-                            </button>
+    {/* emoji + input */}
+    <div className="flex items-center gap-2">
+        <button
+            type="button"
+            onClick={() => setShowEmoji(!showEmoji)}
+            className="text-2xl px-2"
+            title="Pick emoji"
+        >
+            😊
+        </button>
 
-                            <input
-                                type="text"
-                                className="flex-1 border rounded-lg p-2"
-                                placeholder="Type a message..."
-                                value={formData.content}
-                                onChange={(e) => setData('content', e.target.value)}
-                            />
+        <input
+            type="text"
+            className="flex-1 border rounded-lg p-2"
+            placeholder="Type a message..."
+            value={formData.content}
+            onChange={(e) => setData('content', e.target.value)}
+        />
+    </div>
 
-                            {!recording ? (
-                                <button
-                                    type="button"
-                                    onClick={startRecording}
-                                    className="text-2xl px-2 text-red-500"
-                                    title="Start voice recording"
-                                >
-                                    🎙️
-                                </button>
-                            ) : (
-                                <button
-                                    type="button"
-                                    onClick={stopRecording}
-                                    className="text-2xl px-2 text-green-600"
-                                    title="Stop recording"
-                                >
-                                    ⏹️
-                                </button>
-                            )}
+    {/* controls below input */}
+    <div className="flex items-center justify-between gap-2">
+        {!recording ? (
+            <button
+                type="button"
+                onClick={startRecording}
+                className="text-2xl px-2 text-red-500"
+                title="Start recording"
+            >
+                🎙️
+            </button>
+        ) : (
+            <button
+                type="button"
+                onClick={stopRecording}
+                className="text-2xl px-2 text-green-600"
+                title="Stop recording"
+            >
+                ⏹️
+            </button>
+        )}
 
-                            <input
-                                type="file"
-                                ref={fileRef}
-                                accept="image/*,video/*"
-                                onChange={(e) => setData('file', e.target.files[0])}
-                                className="hidden"
-                            />
+        <button
+            type="button"
+            onClick={triggerFileInput}
+            className="text-2xl px-2"
+            title="Attach file"
+        >
+            📎
+        </button>
 
-                            <button
-                                type="submit"
-                                className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-                            >
-                                Send
-                            </button>
-                        </div>
+        <input
+            type="file"
+            ref={fileRef}
+            accept="image/*,video/*,audio/*"
+            onChange={(e) => setData('file', e.target.files[0])}
+            className="hidden"
+        />
 
-                        {audioURL && (
-                            <audio controls className="mt-2">
-                                <source src={audioURL} type="audio/webm" />
-                                Your browser does not support the audio element.
-                            </audio>
-                        )}
-                    </form>
+        <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
+            title="Send"
+        >
+            Send
+        </button>
+    </div>
+
+    {audioURL && (
+        <audio controls className="mt-2 w-full">
+            <source src={audioURL} type="audio/webm" />
+            Your browser does not support the audio element.
+        </audio>
+    )}
+</form>
+
                 </div>
             </div>
             <div className="fixed right-4 top-1/2 transform -translate-y-1/2 space-y-4 z-50">

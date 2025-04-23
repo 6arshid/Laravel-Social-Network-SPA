@@ -219,82 +219,89 @@ export default function ChatPage({ user, messages: initialMessages }) {
                     {isTyping && <div className="text-sm text-gray-500 mb-2">Typing...</div>}
 
                     <form onSubmit={submit} className="mt-auto relative">
-                        {showEmoji && (
-                            <div className="absolute bottom-14 left-0 z-50">
-                                <Picker data={data} onEmojiSelect={handleEmojiSelect} />
-                            </div>
-                        )}
+    {showEmoji && (
+        <div className="absolute bottom-24 left-0 z-50">
+            <Picker data={data} onEmojiSelect={handleEmojiSelect} />
+        </div>
+    )}
 
-                        <div className="flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setShowEmoji(!showEmoji)}
-                                className="text-2xl px-2"
-                                title="Pick emoji"
-                            >
-                                😊
-                            </button>
+    {/* emoji + input */}
+    <div className="flex items-center gap-2">
+        <button
+            type="button"
+            onClick={() => setShowEmoji(!showEmoji)}
+            className="text-2xl p-2"
+            title="Pick emoji"
+        >
+            😊
+        </button>
 
-                            <input
-                                type="text"
-                                className="flex-1 border rounded-lg p-2"
-                                placeholder="Type a message..."
-                                value={formData.content}
-                                onChange={(e) => setData('content', e.target.value)}
-                            />
+        <input
+            type="text"
+            className="flex-1 border rounded-lg px-3 py-2 text-sm"
+            placeholder="Type a message..."
+            value={formData.content}
+            onChange={(e) => setData('content', e.target.value)}
+        />
+    </div>
 
-                            {!recording ? (
-                                <button
-                                    type="button"
-                                    onClick={startRecording}
-                                    className="text-2xl px-2 text-red-500"
-                                    title="Start voice recording"
-                                >
-                                    🎙️
-                                </button>
-                            ) : (
-                                <button
-                                    type="button"
-                                    onClick={stopRecording}
-                                    className="text-2xl px-2 text-green-600"
-                                    title="Stop recording"
-                                >
-                                    ⏹️
-                                </button>
-                            )}
+    {/* voice, attach, send */}
+    <div className="flex items-center justify-between mt-2 gap-2">
+        {!recording ? (
+            <button
+                type="button"
+                onClick={startRecording}
+                className="text-2xl p-2 text-red-500"
+                title="Start recording"
+            >
+                🎙️
+            </button>
+        ) : (
+            <button
+                type="button"
+                onClick={stopRecording}
+                className="text-2xl p-2 text-green-600"
+                title="Stop recording"
+            >
+                ⏹️
+            </button>
+        )}
 
-                            <button
-                                type="button"
-                                onClick={triggerFileInput}
-                                className="text-2xl px-2"
-                                title="Attach file"
-                            >
-                                📎
-                            </button>
+        <button
+            type="button"
+            onClick={triggerFileInput}
+            className="text-2xl p-2"
+            title="Attach file"
+        >
+            📎
+        </button>
 
-                            <input
-                                type="file"
-                                ref={fileRef}
-                                accept="image/*,video/*"
-                                onChange={(e) => setData('file', e.target.files[0])}
-                                className="hidden"
-                            />
+        <input
+            type="file"
+            ref={fileRef}
+            accept="image/*,video/*,audio/*"
+            onChange={(e) => setData('file', e.target.files[0])}
+            className="hidden"
+        />
 
-                            <button
-                                type="submit"
-                                className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-                            >
-                                Send
-                            </button>
-                        </div>
+        <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
+            title="Send"
+        >
+            Send
+        </button>
+    </div>
 
-                        {audioURL && (
-                            <audio controls className="mt-2">
-                                <source src={audioURL} type="audio/webm" />
-                                Your browser does not support the audio element.
-                            </audio>
-                        )}
-                    </form>
+    {audioURL && (
+        <audio controls className="mt-2 w-full">
+            <source src={audioURL} type="audio/webm" />
+            Your browser does not support the audio element.
+        </audio>
+    )}
+</form>
+
+
                 </div>
             </div>
         </AuthenticatedLayout>
