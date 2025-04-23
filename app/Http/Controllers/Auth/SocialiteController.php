@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
+
 class SocialiteController extends Controller
 {
     public function redirectToGoogle()
@@ -18,21 +21,22 @@ class SocialiteController extends Controller
 {
     $googleUser = Socialite::driver('google')->stateless()->user();
 
-    // بررسی اینکه کاربر با این ایمیل قبلاً ثبت‌نام کرده یا نه
     $user = User::where('email', $googleUser->getEmail())->first();
 
     if ($user) {
-        // اگر کاربر وجود داشت، لاگینش کن
         Auth::login($user);
     } else {
+        // دانلود تصویر آواتار و ذخیره در storage
         $avatarUrl = $googleUser->getAvatar();
+        $avatarContents = Http::get($avatarUrl)->body();
+        $avatarName = 'avatars/' . Str::uuid() . '.jpg';
+        Storage::disk('public')->put($avatarName, $avatarContents);
 
-        // اگر کاربر جدید بود، اکانت بساز و لاگینش کن
         $user = User::create([
             'name' => $googleUser->getName(),
             'email' => $googleUser->getEmail(),
             'google_id' => $googleUser->getId(),
-            'avatar' => $avatarUrl, // 👈 مستقیم ذخیره بشه
+            'avatar' => $avatarName, // ✅ مسیر صحیح برای نمایش در مرورگر
             'password' => Hash::make(Str::random(16)),
             'username' => Str::slug($googleUser->getName()) . '-' . Str::random(5),
         ]);
