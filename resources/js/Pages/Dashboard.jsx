@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import PostCard from '@/Components/PostCard';
 import CommentBox from '@/Components/CommentBox';
+import { Link } from '@inertiajs/react';
 
 export default function Dashboard({ posts, suggestedUsers = [] }) {
   const [suggestions, setSuggestions] = useState(suggestedUsers);
@@ -47,26 +48,31 @@ export default function Dashboard({ posts, suggestedUsers = [] }) {
               <div className="mb-10">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">🔍 Suggested Users to Follow</h2>
                 <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {suggestions.map((user) => (
-                    <li key={user.id} className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg shadow">
-                      <img
-                        src={user.avatar || '/default-avatar.png'}
-                        alt={user.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div className="flex-grow">
-                        <div className="font-medium text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">@{user.username}</div>
-                      </div>
-                      <button
-                        onClick={() => handleFollow(user.username, user.id)}
-                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                      >
-                        Follow
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+  {suggestions.map((user) => (
+    <li key={user.id} className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg shadow">
+      <Link href={`/${user.username}`} className="block">
+        <img
+          src={user.avatar || '/default-avatar.png'}
+          alt={user.name}
+          className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
+        />
+      </Link>
+      <div className="flex-grow">
+        <Link href={`/${user.username}`}>
+          <div className="font-medium text-gray-900 hover:underline">{user.name}</div>
+        </Link>
+        <div className="text-sm text-gray-500">@{user.username}</div>
+      </div>
+      <button
+        onClick={() => handleFollow(user.username, user.id)}
+        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Follow
+      </button>
+    </li>
+  ))}
+</ul>
+
               </div>
             )}
 
