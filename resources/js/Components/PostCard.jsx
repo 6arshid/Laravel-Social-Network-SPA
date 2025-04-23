@@ -48,18 +48,18 @@ export default function PostCard({ post }) {
   };
 
   return (
-    <div className="border rounded p-4 shadow-sm space-y-4 mt-6">
+    <div className="bg-white rounded-xl p-6 shadow-lg space-y-5 mt-6">
       {isDeletedByReport ? (
         <p className="text-red-600 text-center text-lg font-semibold">
           This post has been removed due to a violation report.
         </p>
       ) : (
         <>
-          {/* User & Time Info */}
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          {/* User & Timestamp */}
+          <div className="flex items-center text-sm text-gray-500 gap-2">
             <Link
               href={route('posts.show', post.id)}
-              className="text-xs hover:underline text-gray-700"
+              className="hover:underline text-gray-700"
             >
               {dayjs(post.created_at).fromNow()}
             </Link>
@@ -68,7 +68,7 @@ export default function PostCard({ post }) {
                 <span>·</span>
                 <Link
                   href={route('show_profile', post.user.username)}
-                  className="text-xs text-blue-600 hover:underline"
+                  className="text-blue-600 hover:underline"
                 >
                   @{post.user.username}
                 </Link>
@@ -76,12 +76,12 @@ export default function PostCard({ post }) {
             )}
           </div>
 
-          {/* Content */}
-          <p className="text-gray-800 whitespace-pre-wrap text-lg">
+          {/* Post Content */}
+          <p className="text-gray-800 whitespace-pre-wrap text-base leading-relaxed">
             {parseHashtags(post.content)}
           </p>
 
-          {/* Media */}
+          {/* Media Gallery */}
           <div className="flex flex-wrap gap-4 mt-2">
             {media.map((m, i) => {
               const fileUrl = `/storage/${m.file_path}`;
@@ -89,7 +89,7 @@ export default function PostCard({ post }) {
                 <button
                   key={m.id}
                   onClick={() => setModalIndex(i)}
-                  className="w-40 h-40 relative overflow-hidden rounded"
+                  className="w-40 h-40 relative overflow-hidden rounded-lg hover:scale-105 transition-transform duration-200"
                 >
                   {m.type === 'image' ? (
                     <img src={fileUrl} className="w-full h-full object-cover" alt="" />
@@ -110,18 +110,16 @@ export default function PostCard({ post }) {
             })}
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-4">
+          {/* Reactions + Actions */}
+          <div className="flex items-center gap-6 mt-3 text-sm">
             <Reactions
               postId={post.id}
               reactions={post.likes}
               currentUserId={auth.user?.id}
             />
-
             <button onClick={() => setReportModalOpen(true)} className="text-red-600 hover:underline">
               📣 Report
             </button>
-
             {isOwner && (
               <>
                 <button
@@ -148,38 +146,41 @@ export default function PostCard({ post }) {
       {/* Report Modal */}
       {reportModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-md rounded p-6 shadow-lg space-y-4 relative">
-            <h2 className="text-lg font-semibold text-red-600">📣 Report Post</h2>
+          <div className="bg-white w-full max-w-md rounded-lg p-6 shadow-xl space-y-5 relative">
+            <h2 className="text-xl font-semibold text-red-600">📣 Report Post</h2>
             <form onSubmit={handleReportSubmit}>
+              {/* 💬 Enhanced Textarea */}
               <textarea
                 value={reportForm.reason}
                 onChange={(e) => setReportForm({ ...reportForm, reason: e.target.value })}
-                className="w-full border p-2 rounded mb-2"
-                placeholder="Write your reason for reporting..."
+                placeholder="Describe the issue clearly..."
                 required
+                rows={4}
+                className="w-full rounded-xl border border-gray-300 bg-white p-4 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-red-400 focus:ring-2 focus:ring-red-300 transition duration-200 resize-none"
               />
-              <div className="mb-3">
-                <label className="text-sm text-gray-700 block mb-1">
-                  Please solve: 3 + 4 =
-                </label>
+              <div className="mb-4">
+                <label className="text-sm text-gray-700 block mb-1">Please solve: 3 + 4 =</label>
                 <input
                   type="number"
                   value={reportForm.captcha}
                   onChange={(e) => setReportForm({ ...reportForm, captcha: e.target.value })}
-                  className="w-full border p-2 rounded"
+                  className="w-full border border-gray-300 p-2 rounded"
                   required
                 />
               </div>
-              <div className="flex justify-between mt-4">
-                <button type="submit" className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                  Submit Report
+              <div className="flex justify-between items-center mt-4">
+                <button
+                  type="submit"
+                  className="bg-red-600 text-white px-5 py-2 rounded hover:bg-red-700 transition"
+                >
+                  Submit
                 </button>
                 <button
                   type="button"
                   onClick={() => setReportModalOpen(false)}
                   className="text-gray-600 hover:underline"
                 >
-                  Close
+                  Cancel
                 </button>
               </div>
             </form>
