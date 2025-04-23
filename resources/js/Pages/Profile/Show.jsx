@@ -176,6 +176,7 @@ export default function Show() {
             <div className="pt-16 px-4">
                 <h1 className="text-xl font-bold">{user.name}</h1>
                 <p className="text-gray-500">{user.username} </p>
+                <p className="text-gray-500">Bio : {user.bio} </p>
 
                 {/* Additional Profile Fields */}
                 <SocialLinks user={user} />
