@@ -49,6 +49,11 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            {user.is_admin === 1 && (
+                                <NavLink href="/admin/panel" active={route().current('admin.panel')}>
+                                    Admin Panel
+                                </NavLink>
+                                )}
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Dashboard
                                 </NavLink>
@@ -61,6 +66,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <NavLink href={route('show_profile', user.username)} active={route().current('show_profile')}>
                                     Show Your Profile
                                 </NavLink>
+                       
                             </div>
                         </div>
 
@@ -139,10 +145,16 @@ export default function AuthenticatedLayout({ header, children }) {
                 {/* موبایل - منوی کشویی */}
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="space-y-1 pb-3 pt-2">
+                    {user.is_admin === 1 && (
+                            <ResponsiveNavLink href="/admin/panel" active={route().current('admin.panel')}>
+                                Admin Panel
+                            </ResponsiveNavLink>
+                        )}
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>Dashboard</ResponsiveNavLink>
                         <ResponsiveNavLink href={route('chat.index')} active={route().current('chat.index')}>Chat</ResponsiveNavLink>
                         <ResponsiveNavLink href={route('posts.index')} active={route().current('posts.index')}>Posts</ResponsiveNavLink>
                         <ResponsiveNavLink href={route('show_profile', user.username)} active={route().current('show_profile')}>Show Your Profile</ResponsiveNavLink>
+                    
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4">
