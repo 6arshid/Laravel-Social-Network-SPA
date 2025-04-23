@@ -7,6 +7,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function ChatPage({ user = null, messages: initialMessages, room_name = null }) {
     const [messages, setMessages] = useState(initialMessages);
+    const [prevMessageCount, setPrevMessageCount] = useState(initialMessages.length);
     const [messageReactions, setMessageReactions] = useState({});
     const [showEmoji, setShowEmoji] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
@@ -29,27 +30,36 @@ export default function ChatPage({ user = null, messages: initialMessages, room_
     useEffect(() => {
         const interval = setInterval(() => {
             const path = room_name ? `/chat/place/${room_name}/json` : `/chat/${user.username}/json`;
+
             fetch(path)
                 .then((res) => res.json())
                 .then((data) => {
-                    setMessages(data.messages);
+                    setMessages((prevMessages) => {
+                        const isNewMessage = data.messages.length > prevMessages.length;
+
+                        if (isNewMessage) {
+                            scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+                            setPrevMessageCount(data.messages.length);
+                        }
+
+                        const reactions = {};
+                        for (const msg of data.messages) {
+                            reactions[msg.id] = msg.reactions || [];
+                        }
+                        setMessageReactions(reactions);
+
+                        return data.messages;
+                    });
+
                     if (!room_name) setSeenStatus(data.seen);
-                    const reactions = {};
-                    for (const msg of data.messages) {
-                        reactions[msg.id] = msg.reactions || [];
-                    }
-                    setMessageReactions(reactions);
                 });
+
             if (!room_name && user?.username) {
                 fetch(`/chat/seen/${user.username}`, { method: 'POST' });
             }
         }, 2000);
         return () => clearInterval(interval);
     }, [user?.id, room_name]);
-
-    useEffect(() => {
-        scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
 
     useEffect(() => {
         if (!formData.content) {
