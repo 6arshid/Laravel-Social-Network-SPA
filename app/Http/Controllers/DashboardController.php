@@ -13,11 +13,21 @@ class DashboardController extends Controller
         $user = auth()->user();
         $followingIds = $user->followings()->pluck('users.id');
     
-        $posts = Post::with(['user', 'media', 'likes', 'comments'])
-            ->whereIn('user_id', $followingIds)
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        $userIds = auth()->user()->followings()->select('users.id')->pluck('id');
+
+        $posts = Post::with([
+            'media',
+            'user',
+            'likes',
+            'comments.user',
+            'comments.likes',
+            'comments.replies.user',
+            'comments.replies.likes',
+            'repost' => fn($q) => $q->with('user', 'media'),
+        ])
+        ->whereIn('user_id', $userIds)
+        ->latest()
+->paginate(10);
     
         // فقط اگه هیچ کسی رو دنبال نکرده باشه، پیشنهاد بده
         $suggestedUsers = [];
