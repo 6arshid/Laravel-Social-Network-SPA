@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'install-button' => true, // Show or hide the install button globally.
-
+    'install-button' => env('PWA_INSTALL_BUTTON', true), 
+    
     'manifest' => [
-        'name' => 'Laravel PWA',
-        'short_name' => 'LPT',
-        'background_color' => '#6777ef',
-        'display' => 'fullscreen',
-        'description' => 'A Progressive Web Application setup for Laravel projects.',
-        'theme_color' => '#6777ef',
+        'name' => env('PWA_NAME', 'Laravel PWA'),
+        'short_name' => env('PWA_SHORT_NAME', 'LPT'),
+        'background_color' => env('PWA_BACKGROUND_COLOR', '#6777ef'),
+        'display' => env('PWA_DISPLAY', 'fullscreen'),
+        'description' => env('PWA_DESCRIPTION', 'A Progressive Web Application setup for Laravel projects.'),
+        'theme_color' => env('PWA_THEME_COLOR', '#6777ef'),
         'icons' => [
             [
-                'src' => 'logo.png',
+                'src' => env('PWA_ICON', 'pwa.png'), 
                 'sizes' => '512x512',
                 'type' => 'image/png',
             ],
         ],
     ],
 
-    'debug' => env('APP_DEBUG', false), // Show or hide console.log in the browser globally.
+    'debug' => env('APP_DEBUG', false),
 ];

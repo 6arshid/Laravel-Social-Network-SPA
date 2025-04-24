@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'name' => 'Admin',
         'email' => $adminEmail,
         'password' => bcrypt($adminPassword),
-        'is_admin' => true,
+        'is_admin' => 1,
         'username' => 'admin',
     ]);
 

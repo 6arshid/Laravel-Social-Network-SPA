@@ -25,7 +25,7 @@ class User extends Authenticatable
         'avatar', 'cover','google_id','bio','location','website',
         'phone','instagram','twitter','facebook','linkedin',
         'github','tiktok','snapchat','youtube','pinterest',
-        'whatsapp','telegram',
+        'whatsapp','telegram','is_admin'
     ];
 
     /**

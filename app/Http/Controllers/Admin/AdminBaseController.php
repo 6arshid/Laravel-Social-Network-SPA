@@ -56,6 +56,16 @@ class AdminBaseController extends Controller
             'client_secret' => env('GOOGLE_CLIENT_SECRET'),
             'redirect_uri' => env('GOOGLE_REDIRECT_URI'), // ← این خط مهمه
         ],
+        'pwa' => [
+    'install_button' => env('PWA_INSTALL_BUTTON', true),
+    'name' => env('PWA_NAME'),
+    'short_name' => env('PWA_SHORT_NAME'),
+    'background_color' => env('PWA_BACKGROUND_COLOR'),
+    'display' => env('PWA_DISPLAY'),
+    'description' => env('PWA_DESCRIPTION'),
+    'theme_color' => env('PWA_THEME_COLOR'),
+    'icon' => env('PWA_ICON'),
+        ],
         'app_name' => env('APP_NAME'),
         'mail' => [
         'host' => env('MAIL_HOST'),
@@ -165,6 +175,45 @@ public function updateMailSettings(Request $request)
 
     return back()->with('success', 'Mail settings updated.');
 }
-    
+public function updatePWA(Request $request)
+{
+    $request->validate([
+        'install_button' => 'required|boolean',
+        'name' => 'required|string',
+        'short_name' => 'required|string',
+        'background_color' => 'required|string',
+        'display' => 'required|string',
+        'description' => 'required|string',
+        'theme_color' => 'required|string',
+        'icon' => 'required|string',
+    ]);
+
+    $this->setEnv([
+        'PWA_INSTALL_BUTTON' => $request->install_button ? 'true' : 'false',
+        'PWA_NAME' => $request->name,
+        'PWA_SHORT_NAME' => $request->short_name,
+        'PWA_BACKGROUND_COLOR' => $request->background_color,
+        'PWA_DISPLAY' => $request->display,
+        'PWA_DESCRIPTION' => $request->description,
+        'PWA_THEME_COLOR' => $request->theme_color,
+        'PWA_ICON' => $request->icon,
+    ]);
+
+    \Artisan::call('config:clear');
+    \Artisan::call('cache:clear');
+
+    return back()->with('success', 'PWA settings updated.');
+}
+public function uploadPwaIcon(Request $request)
+{
+    $request->validate([
+        'icon' => 'required|image|mimes:png,jpg,jpeg,svg,ico|max:2048',
+    ]);
+
+    $icon = $request->file('icon');
+    $icon->move(public_path(), 'pwa.png');
+
+    return back()->with('success', 'PWA icon uploaded.');
+}
     
 }

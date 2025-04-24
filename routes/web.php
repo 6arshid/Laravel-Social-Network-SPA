@@ -104,6 +104,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/settings/update-google', [AdminBaseController::class, 'updateGoogle'])->name('admin.settings.update-google');
     Route::post('/settings/update-app-name', [AdminBaseController::class, 'updateAppName']);
     Route::post('/settings/update-mail', [AdminBaseController::class, 'updateMailSettings']);
+    Route::post('/settings/update-pwa', [AdminBaseController::class, 'updatePWA']);
+    Route::post('/upload-pwa-icon', [AdminBaseController::class, 'uploadPwaIcon']);
+
+
 
 
 });
