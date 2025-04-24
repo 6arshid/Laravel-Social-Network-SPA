@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { usePage, router } from '@inertiajs/react';
+import { usePage, router, Link } from '@inertiajs/react';
 
 export default function UsersIndex() {
   const { users, following } = usePage().props;
@@ -69,31 +69,41 @@ export default function UsersIndex() {
       {/* ✅ User List */}
       <ul className="space-y-4">
         {users.data.map(user => (
-          <li key={user.id} className="flex items-center justify-between border p-4 rounded">
-            <div className="flex items-center gap-4">
-              <img src={user.avatar || '/default-avatar.png'} alt={user.name} className="w-12 h-12 rounded-full object-cover" />
-              <div>
-                <a href={`/${user.username}`} className="font-bold text-blue-600">@{user.username}</a>
-                <p>{user.name}</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              {following && (
-                <button
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
-                  onClick={() => toggleFollow(user.username, user.id)}
-                >
-                  {followed.includes(user.id) ? 'Unfollow' : 'Follow'}
-                </button>
-              )}
-              <button
-                className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
-                onClick={() => goToChat(user.username)}
-              >
-                Message
-              </button>
-            </div>
-          </li>
+        <li key={user.id} className="flex items-center justify-between border p-4 rounded">
+        <div className="flex items-center gap-4">
+          <Link href={`/${user.username}`}>
+            <img
+              src={user.avatar || '/default-avatar.png'}
+              alt={user.name}
+              className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
+            />
+          </Link>
+          <div>
+            <Link href={`/${user.username}`} className="font-bold text-blue-600 hover:underline">
+              @{user.username}
+            </Link>
+            <p>{user.name}</p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          {following && (
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+              onClick={() => toggleFollow(user.username, user.id)}
+            >
+              {followed.includes(user.id) ? 'Unfollow' : 'Follow'}
+            </button>
+          )}
+          <button
+            className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
+            onClick={() => goToChat(user.username)}
+          >
+            Message
+          </button>
+        </div>
+      </li>
+      
+       
         ))}
       </ul>
 
