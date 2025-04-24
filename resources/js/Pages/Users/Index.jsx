@@ -1,7 +1,9 @@
+// resources/js/Pages/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
-import { usePage, router, Link } from '@inertiajs/react';
+import AuthenticatedLayoutRoot from '@/Layouts/AuthenticatedLayoutRoot';
+import { Head, usePage, router, Link } from '@inertiajs/react';
 
-export default function UsersIndex() {
+export default function Dashboard() {
   const { users, following } = usePage().props;
   const [followed, setFollowed] = useState(following || []);
   const [search, setSearch] = useState('');
@@ -35,10 +37,18 @@ export default function UsersIndex() {
     router.visit(route('chat.show', { user: username }));
   };
 
-  // Debounced live search
+  // Debounced live search with page preservation
   useEffect(() => {
     const delay = setTimeout(() => {
-      router.get(route('users.index'), { search }, {
+      const params = new URLSearchParams(window.location.search);
+      const page = params.get('page');
+
+      const query = {
+        search,
+        ...(page && { page })
+      };
+
+      router.get(route('users.index'), query, {
         preserveScroll: true,
         preserveState: true,
         replace: true,
@@ -49,76 +59,90 @@ export default function UsersIndex() {
   }, [search]);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Users</h1>
+    <AuthenticatedLayoutRoot
+      header={
+        <h2 className="text-xl font-semibold leading-tight text-gray-800">
+          Users
+        </h2>
+      }
+    >
+      <Head title="Users" />
 
-      {/* 🔍 Search Input */}
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by name or username..."
-        className="w-full mb-6 p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
+      <div className="py-12">
+        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="bg-white shadow-sm sm:rounded-lg p-6">
+            <div className="p-6 max-w-4xl mx-auto">
+              <h1 className="text-3xl font-bold mb-6">Users</h1>
 
-      {/* ❌ No users */}
-      {users.data.length === 0 && (
-        <p className="text-gray-500">No users found</p>
-      )}
+              {/* 🔍 Search Input */}
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by name or username..."
+                className="w-full mb-6 p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
 
-      {/* ✅ User List */}
-      <ul className="space-y-4">
-        {users.data.map(user => (
-        <li key={user.id} className="flex items-center justify-between border p-4 rounded">
-        <div className="flex items-center gap-4">
-          <Link href={`/${user.username}`}>
-            <img
-              src={user.avatar || '/default-avatar.png'}
-              alt={user.name}
-              className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
-            />
-          </Link>
-          <div>
-            <Link href={`/${user.username}`} className="font-bold text-blue-600 hover:underline">
-              @{user.username}
-            </Link>
-            <p>{user.name}</p>
+              {/* ❌ No users */}
+              {users.data.length === 0 && (
+                <p className="text-gray-500">No users found</p>
+              )}
+
+              {/* ✅ User List */}
+              <ul className="space-y-4">
+                {users.data.map(user => (
+                  <li key={user.id} className="flex items-center justify-between border p-4 rounded">
+                    <div className="flex items-center gap-4">
+                      <Link href={`/${user.username}`}>
+                        <img
+                          src={user.avatar || '/default-avatar.png'}
+                          alt={user.name}
+                          className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
+                        />
+                      </Link>
+                      <div>
+                        <Link href={`/${user.username}`} className="font-bold text-blue-600 hover:underline">
+                          @{user.username}
+                        </Link>
+                        <p>{user.name}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      {following && (
+                        <button
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                          onClick={() => toggleFollow(user.username, user.id)}
+                        >
+                          {followed.includes(user.id) ? 'Unfollow' : 'Follow'}
+                        </button>
+                      )}
+                      <button
+                        className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
+                        onClick={() => goToChat(user.username)}
+                      >
+                        Message
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              {/* 📄 Pagination */}
+              <div className="mt-6 flex justify-center flex-wrap gap-2">
+                {users.links.map((link, index) => (
+                  <button
+                    key={index}
+                    disabled={!link.url}
+                    onClick={() => router.visit(link.url)}
+                    className={`px-3 py-1 rounded ${link.active ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                    dangerouslySetInnerHTML={{ __html: link.label }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex gap-2">
-          {following && (
-            <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
-              onClick={() => toggleFollow(user.username, user.id)}
-            >
-              {followed.includes(user.id) ? 'Unfollow' : 'Follow'}
-            </button>
-          )}
-          <button
-            className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
-            onClick={() => goToChat(user.username)}
-          >
-            Message
-          </button>
-        </div>
-      </li>
-      
-       
-        ))}
-      </ul>
-
-      {/* 📄 Pagination */}
-      <div className="mt-6 flex justify-center flex-wrap gap-2">
-        {users.links.map((link, index) => (
-          <button
-            key={index}
-            disabled={!link.url}
-            onClick={() => router.visit(link.url)}
-            className={`px-3 py-1 rounded ${link.active ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
-            dangerouslySetInnerHTML={{ __html: link.label }}
-          />
-        ))}
       </div>
-    </div>
+    </AuthenticatedLayoutRoot>
   );
 }
