@@ -85,17 +85,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/message/{message}/react', [MessageReactionController::class, 'store']);
     Route::post('/settings/notifications', [ProfileController::class, 'updateNotifications'])->name('settings.notifications');
     Route::get('/users', [RootController::class, 'users'])->name('users.index');
-
+    Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
+    Route::get('/posts/{post}/comments', [PostController::class, 'loadComments']);
+    Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
+    Route::get('/{username}/posts', [ProfileController::class, 'loadPosts']);
+    Route::get('/hashtag/{name}', [HashtagController::class, 'show'])->name('hashtag.show');
 
 });
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
-Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
-Route::get('/posts/{post}/comments', [PostController::class, 'loadComments']);
-Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
-Route::get('/{username}/posts', [ProfileController::class, 'loadPosts']);
-Route::get('/hashtag/{name}', [HashtagController::class, 'show'])->name('hashtag.show');
+
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/panel', [AdminBaseController::class, 'index'])->name('admin.index');
