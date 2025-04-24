@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ReportAdminController;
+use App\Http\Controllers\Admin\AdminBaseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
@@ -87,9 +88,16 @@ Route::get('/posts/{post}/comments', [PostController::class, 'loadComments']);
 Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
 Route::get('/{username}/posts', [ProfileController::class, 'loadPosts']);
 Route::get('/hashtag/{name}', [HashtagController::class, 'show'])->name('hashtag.show');
-Route::get('/{username}', [ProfileController::class, 'show_profile'])->name('show_profile');
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/panel', [AdminBaseController::class, 'index'])->name('admin.index');
+
+    Route::get('/users', [AdminBaseController::class, 'userList'])->name('admin.users.index');
+    Route::delete('/users/{id}', [AdminBaseController::class, 'destroyUser'])->name('admin.users.destroy');
+    Route::post('/users/{id}/make-admin', [AdminBaseController::class, 'makeAdmin'])->name('admin.users.makeAdmin');
+
     Route::get('/reports', [ReportAdminController::class, 'index'])->name('admin.reports.index');
     Route::delete('/reports/{report}/delete-post', [ReportAdminController::class, 'deletePost'])->name('admin.reports.delete-post');
 });
+
+Route::get('/{username}', [ProfileController::class, 'show_profile'])->name('show_profile');

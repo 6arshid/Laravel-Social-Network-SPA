@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('content');
-            $table->foreignId('repost_id')->nullable()->constrained('posts');
+            $table->foreignId('repost_id')->nullable()->constrained('posts')->onDelete('cascade');
             $table->timestamps();
         });
         Schema::create('comments', function (Blueprint $table) {
