@@ -21,7 +21,8 @@ use App\Http\Controllers\{
     HashtagController,
     MessageReactionController,
     Auth\SocialiteController,
-    PwaController
+    PwaController,
+    RootController
 };
 use App\Http\Controllers\Admin\{
     ReportAdminController,
@@ -42,6 +43,7 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('welcome');
+
 /*
 |--------------------------------------------------------------------------
 | Auth Routes
@@ -59,6 +61,7 @@ Route::get('/posts/{post}/comments', [PostController::class, 'loadComments']);
 Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
 Route::get('/{username}/posts', [ProfileController::class, 'loadPosts']);
 Route::get('/hashtag/{name}', [HashtagController::class, 'show'])->name('hashtag.show');
+Route::get('/users', [RootController::class, 'users'])->name('users.index');
 
 /*
 |--------------------------------------------------------------------------

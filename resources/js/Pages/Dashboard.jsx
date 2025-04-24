@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import PostCard from '@/Components/PostCard';
@@ -9,22 +10,14 @@ export default function Dashboard({ posts, suggestedUsers = [] }) {
 
   const handleFollow = async (username, id) => {
     try {
-      const res = await fetch(`/ajax/follow/${username}`, {
-        method: 'POST',
-        headers: {
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-          Accept: 'application/json',
-        },
-      });
-
-      if (!res.ok) throw new Error('Request failed');
-      const data = await res.json();
+      const { data } = await axios.post(`/ajax/follow/${username}`);
 
       if (data.status === 'followed') {
+        // حذف کاربر از لیست پیشنهادات
         setSuggestions((prev) => prev.filter((user) => user.id !== id));
       }
     } catch (error) {
-      console.error(error);
+      console.error('Follow error:', error.response?.data || error.message);
     }
   };
 

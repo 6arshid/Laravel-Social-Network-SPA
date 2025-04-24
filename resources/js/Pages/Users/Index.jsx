@@ -1,0 +1,114 @@
+import React, { useState, useEffect } from 'react';
+import { usePage, router } from '@inertiajs/react';
+
+export default function UsersIndex() {
+  const { users, following } = usePage().props;
+  const [followed, setFollowed] = useState(following || []);
+  const [search, setSearch] = useState('');
+
+  // AJAX follow toggle
+  const toggleFollow = async (username, userId) => {
+    try {
+      const res = await fetch(route('follow.ajax', { user: username }), {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await res.json();
+
+      setFollowed((prev) =>
+        data.status === 'followed'
+          ? [...prev, userId]
+          : prev.filter((id) => id !== userId)
+      );
+    } catch (error) {
+      console.error('Follow error:', error);
+    }
+  };
+
+  // Go to chat page
+  const goToChat = (username) => {
+    router.visit(route('chat.show', { user: username }));
+  };
+
+  // Debounced live search
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      router.get(route('users.index'), { search }, {
+        preserveScroll: true,
+        preserveState: true,
+        replace: true,
+      });
+    }, 500);
+
+    return () => clearTimeout(delay);
+  }, [search]);
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">Users</h1>
+
+      {/* 🔍 Search Input */}
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search by name or username..."
+        className="w-full mb-6 p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+
+      {/* ❌ No users */}
+      {users.data.length === 0 && (
+        <p className="text-gray-500">No users found</p>
+      )}
+
+      {/* ✅ User List */}
+      <ul className="space-y-4">
+        {users.data.map(user => (
+          <li key={user.id} className="flex items-center justify-between border p-4 rounded">
+            <div className="flex items-center gap-4">
+              <img src={user.avatar || '/default-avatar.png'} alt={user.name} className="w-12 h-12 rounded-full object-cover" />
+              <div>
+                <a href={`/${user.username}`} className="font-bold text-blue-600">@{user.username}</a>
+                <p>{user.name}</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              {following && (
+                <button
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                  onClick={() => toggleFollow(user.username, user.id)}
+                >
+                  {followed.includes(user.id) ? 'Unfollow' : 'Follow'}
+                </button>
+              )}
+              <button
+                className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
+                onClick={() => goToChat(user.username)}
+              >
+                Message
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {/* 📄 Pagination */}
+      <div className="mt-6 flex justify-center flex-wrap gap-2">
+        {users.links.map((link, index) => (
+          <button
+            key={index}
+            disabled={!link.url}
+            onClick={() => router.visit(link.url)}
+            className={`px-3 py-1 rounded ${link.active ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+            dangerouslySetInnerHTML={{ __html: link.label }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
