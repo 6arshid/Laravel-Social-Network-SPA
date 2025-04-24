@@ -13,7 +13,7 @@ export default function Show({ post, comments, similarPosts }) {
     <CommentBox post={post} comments={comments} />
       {/* نمایش پست‌های مشابه */}
       <div className="border-t pt-6">
-        <h2 className="text-xl font-bold mb-4">پست‌های مشابه</h2>
+        <h2 className="text-xl font-bold mb-4">Related Posts</h2>
         <div className="space-y-4">
           {similarPosts.map((p) => (
             <PostCard key={p.id} post={p} />
