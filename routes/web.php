@@ -98,6 +98,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     Route::get('/reports', [ReportAdminController::class, 'index'])->name('admin.reports.index');
     Route::delete('/reports/{report}/delete-post', [ReportAdminController::class, 'deletePost'])->name('admin.reports.delete-post');
+
+    Route::get('/setting', [AdminBaseController::class, 'setting'])->name('admin.setting.index');
+    Route::post('/upload-logo', [AdminBaseController::class, 'upload_logo'])->name('admin.upload-logo');
+    Route::post('/settings/update-google', [AdminBaseController::class, 'updateGoogle'])->name('admin.settings.update-google');
+    Route::post('/settings/update-app-name', [AdminBaseController::class, 'updateAppName']);
+    Route::post('/settings/update-mail', [AdminBaseController::class, 'updateMailSettings']);
+
+
 });
 
 Route::get('/{username}', [ProfileController::class, 'show_profile'])->name('show_profile');
