@@ -1,39 +1,28 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\Admin\ReportAdminController;
+use App\Http\Controllers\Admin\AdminBaseController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentLikeController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\FollowController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HashtagController;
+use App\Http\Controllers\MessageReactionController;
+use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\PwaController;
+use App\Http\Controllers\RootController;
+
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
 use App\Models\User;
-
-// Controllers
-use App\Http\Controllers\{
-    ProfileController,
-    MessageController,
-    PostController,
-    CommentController,
-    CommentLikeController,
-    ReportController,
-    LikeController,
-    NotificationController,
-    FollowController,
-    DashboardController,
-    HashtagController,
-    MessageReactionController,
-    Auth\SocialiteController,
-    PwaController,
-    RootController
-};
-use App\Http\Controllers\Admin\{
-    ReportAdminController,
-    AdminBaseController
-};
-
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-*/
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -43,16 +32,62 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('welcome');
-
-/*
-|--------------------------------------------------------------------------
-| Auth Routes
-|--------------------------------------------------------------------------
-*/
-
-require __DIR__.'/auth.php';
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
 
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+require __DIR__.'/auth.php';
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/profile/upload', [ProfileController::class, 'upload'])->name('profile.upload');
+    Route::post('/profile/image/delete', [ProfileController::class, 'deleteImage'])->name('profile.image.delete');
+    Route::post('/profile/update-image', [ProfileController::class, 'updateImage'])->name('profile.update-image');
+    Route::post('/profile/delete-image', [ProfileController::class, 'deleteImage'])->name('profile.delete-image');
+    Route::get('/chat', [MessageController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{user:username}', [MessageController::class, 'show'])->name('chat.show');
+    Route::get('/chat/place/{name}', [MessageController::class, 'placechat'])->name('placechat');
+    Route::get('/chat/place/{name}/json', [MessageController::class, 'placechatJson']);
+    Route::post('/chat/send', [MessageController::class, 'store'])->name('chat.store');
+    Route::get('/chat/{user}/json', [MessageController::class, 'fetchJson']);
+    Route::put('/chat/message/{message}', [MessageController::class, 'update'])->name('chat.update');
+    Route::delete('/chat/message/{message}', [MessageController::class, 'destroy'])->name('chat.destroy');
+    Route::post('/chat/seen/{user}', [MessageController::class, 'markSeen'])->name('chat.seen');
+    Route::get('/posts/create', function () {return Inertia::render('Posts/Create');})->name('posts.create');
+    Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+    Route::post('/posts', [PostController::class, 'store']);
+    Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
+    Route::post('/posts/{post}/like', [LikeController::class, 'store']);
+    Route::post('/posts/{id}/repost', [PostController::class, 'repost'])->name('posts.repost');
+    Route::post('/comments/{comment}/like', [CommentLikeController::class, 'toggle']);
+    Route::put('/comments/{comment}', [CommentController::class, 'update']);
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+    Route::post('/follow/{user:username}', [FollowController::class, 'toggle'])->name('follow.toggle');
+    Route::post('/ajax/follow/{user:username}', [FollowController::class, 'ajaxToggle'])->name('follow.ajax');
+    Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
+    Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead']);
+    Route::post('/username-check', function (Request $request) {
+        $request->validate([
+            'username' => 'required|string|min:4|max:222',
+        ]);
+    
+        $exists = User::where('username', $request->username)
+            ->where('id', '!=', auth()->id())
+            ->exists();
+    
+        return response()->json(['available' => !$exists]);
+    })->name('username.check');
+    Route::post('/chat/message/{message}/react', [MessageReactionController::class, 'store']);
+    Route::post('/settings/notifications', [ProfileController::class, 'updateNotifications'])->name('settings.notifications');
+    Route::get('/users', [RootController::class, 'users'])->name('users.index');
+
+
+});
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
@@ -61,102 +96,28 @@ Route::get('/posts/{post}/comments', [PostController::class, 'loadComments']);
 Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
 Route::get('/{username}/posts', [ProfileController::class, 'loadPosts']);
 Route::get('/hashtag/{name}', [HashtagController::class, 'show'])->name('hashtag.show');
-Route::get('/users', [RootController::class, 'users'])->name('users.index');
 
-/*
-|--------------------------------------------------------------------------
-| Authenticated Routes
-|--------------------------------------------------------------------------
-*/
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/panel', [AdminBaseController::class, 'index'])->name('admin.index');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/users', [AdminBaseController::class, 'userList'])->name('admin.users.index');
+    Route::delete('/users/{id}', [AdminBaseController::class, 'destroyUser'])->name('admin.users.destroy');
+    Route::post('/users/{id}/make-admin', [AdminBaseController::class, 'makeAdmin'])->name('admin.users.makeAdmin');
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/reports', [ReportAdminController::class, 'index'])->name('admin.reports.index');
+    Route::delete('/reports/{report}/delete-post', [ReportAdminController::class, 'deletePost'])->name('admin.reports.delete-post');
 
-    // Profile
-    Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
-        Route::patch('/', [ProfileController::class, 'update'])->name('update');
-        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
-        Route::post('/upload', [ProfileController::class, 'upload'])->name('upload');
-        Route::post('/update-image', [ProfileController::class, 'updateImage'])->name('update-image');
-        Route::post('/delete-image', [ProfileController::class, 'deleteImage'])->name('delete-image');
-        Route::post('/image/delete', [ProfileController::class, 'deleteImage']); // duplicated
-        Route::post('/notifications', [ProfileController::class, 'updateNotifications'])->name('notifications');
-    });
-
-    // Posts
-    Route::prefix('posts')->name('posts.')->group(function () {
-        Route::get('/', [PostController::class, 'index'])->name('index');
-        Route::get('/create', fn () => Inertia::render('Posts/Create'))->name('create');
-        Route::post('/', [PostController::class, 'store']);
-        Route::get('/{post}/edit', [PostController::class, 'edit'])->name('edit');
-        Route::put('/{post}', [PostController::class, 'update'])->name('update');
-        Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
-        Route::post('/{post}/comments', [CommentController::class, 'store']);
-        Route::post('/{post}/like', [LikeController::class, 'store']);
-        Route::post('/{id}/repost', [PostController::class, 'repost'])->name('repost');
-    });
-
-    // Comments
-    Route::put('/comments/{comment}', [CommentController::class, 'update']);
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
-    Route::post('/comments/{comment}/like', [CommentLikeController::class, 'toggle']);
-
-    // Chat
-    Route::prefix('chat')->name('chat.')->group(function () {
-        Route::get('/', [MessageController::class, 'index'])->name('index');
-        Route::get('/{user:username}', [MessageController::class, 'show'])->name('show');
-        Route::get('/place/{name}', [MessageController::class, 'placechat'])->name('place');
-        Route::get('/place/{name}/json', [MessageController::class, 'placechatJson']);
-        Route::post('/send', [MessageController::class, 'store'])->name('store');
-        Route::get('/{user}/json', [MessageController::class, 'fetchJson']);
-        Route::put('/message/{message}', [MessageController::class, 'update'])->name('update');
-        Route::delete('/message/{message}', [MessageController::class, 'destroy'])->name('destroy');
-        Route::post('/seen/{user}', [MessageController::class, 'markSeen'])->name('seen');
-        Route::post('/message/{message}/react', [MessageReactionController::class, 'store']);
-    });
-
-    // Follow
-    Route::post('/follow/{user:username}', [FollowController::class, 'toggle'])->name('follow.toggle');
-    Route::post('/ajax/follow/{user:username}', [FollowController::class, 'ajaxToggle'])->name('follow.ajax');
-
-    // Notifications
-    Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
-    Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead']);
-
-    // Utilities
-    Route::post('/username-check', function (Request $request) {
-        $request->validate(['username' => 'required|string|min:4|max:222']);
-        $exists = User::where('username', $request->username)
-            ->where('id', '!=', auth()->id())->exists();
-        return response()->json(['available' => !$exists]);
-    })->name('username.check');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Admin Panel Routes
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/panel', [AdminBaseController::class, 'index'])->name('index');
-    Route::get('/users', [AdminBaseController::class, 'userList'])->name('users.index');
-    Route::delete('/users/{id}', [AdminBaseController::class, 'destroyUser'])->name('users.destroy');
-    Route::post('/users/{id}/make-admin', [AdminBaseController::class, 'makeAdmin'])->name('users.makeAdmin');
-
-    Route::get('/reports', [ReportAdminController::class, 'index'])->name('reports.index');
-    Route::delete('/reports/{report}/delete-post', [ReportAdminController::class, 'deletePost'])->name('reports.delete-post');
-
-    Route::get('/setting', [AdminBaseController::class, 'setting'])->name('setting.index');
-    Route::post('/upload-logo', [AdminBaseController::class, 'upload_logo'])->name('upload-logo');
-    Route::post('/settings/update-google', [AdminBaseController::class, 'updateGoogle'])->name('settings.update-google');
+    Route::get('/setting', [AdminBaseController::class, 'setting'])->name('admin.setting.index');
+    Route::post('/upload-logo', [AdminBaseController::class, 'upload_logo'])->name('admin.upload-logo');
+    Route::post('/settings/update-google', [AdminBaseController::class, 'updateGoogle'])->name('admin.settings.update-google');
     Route::post('/settings/update-app-name', [AdminBaseController::class, 'updateAppName']);
     Route::post('/settings/update-mail', [AdminBaseController::class, 'updateMailSettings']);
     Route::post('/settings/update-pwa', [AdminBaseController::class, 'updatePWA']);
     Route::post('/upload-pwa-icon', [AdminBaseController::class, 'uploadPwaIcon']);
-});
 
+
+
+
+});
 
 Route::get('/{username}', [ProfileController::class, 'show_profile'])->name('show_profile');
