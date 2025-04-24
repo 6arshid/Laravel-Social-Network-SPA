@@ -191,4 +191,16 @@ class ProfileController extends Controller
         $user->save();
         return back();
     }
+    public function updateNotifications(Request $request)
+    {
+        $request->validate([
+            'disable_notifications' => 'required|boolean',
+        ]);
+
+        $user = Auth::user();
+        $user->disable_notifications = $request->disable_notifications;
+        $user->save();
+
+        return back()->with('status', 'Notification settings updated.');
+    }
 }

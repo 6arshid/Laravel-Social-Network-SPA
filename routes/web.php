@@ -82,6 +82,8 @@ Route::middleware('auth')->group(function () {
         return response()->json(['available' => !$exists]);
     })->name('username.check');
     Route::post('/chat/message/{message}/react', [MessageReactionController::class, 'store']);
+    Route::post('/settings/notifications', [ProfileController::class, 'updateNotifications'])->name('settings.notifications');
+
 });
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);

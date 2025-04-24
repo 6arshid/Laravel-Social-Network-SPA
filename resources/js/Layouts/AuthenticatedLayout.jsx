@@ -26,7 +26,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 setUnreadCount(res.data.unread_count);
             })
             .catch((err) => {
-                console.error('خطا در گرفتن نوتیف:', err);
+                console.error('Error fetching notifications:', err);
             });
     };
 
@@ -49,10 +49,10 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                            {user.is_admin === 1 && (
-                                <NavLink href="/admin/panel" active={route().current('admin.panel')}>
-                                    Admin Panel
-                                </NavLink>
+                                {user.is_admin === 1 && (
+                                    <NavLink href="/admin/panel" active={route().current('admin.panel')}>
+                                        Admin Panel
+                                    </NavLink>
                                 )}
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Dashboard
@@ -66,11 +66,10 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <NavLink href={route('show_profile', user.username)} active={route().current('show_profile')}>
                                     Show Your Profile
                                 </NavLink>
-                       
                             </div>
                         </div>
 
-                        {/* دسکتاپ - نوتیفیکیشن و کاربر */}
+                        {/* Desktop - Notifications and User */}
                         <div className="hidden sm:flex sm:items-center space-x-4">
                             {/* Notification */}
                             <div className="relative">
@@ -86,7 +85,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 {showNotifications && (
                                     <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg rounded-md z-50 max-h-96 overflow-y-auto">
                                         {notifications.length === 0 ? (
-                                            <div className="p-4 text-sm text-gray-500 text-center">هیچ نوتیفیکیشنی وجود ندارد</div>
+                                            <div className="p-4 text-sm text-gray-500 text-center">No notifications available</div>
                                         ) : (
                                             notifications.map((notif) => (
                                                 <Link
@@ -127,7 +126,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             </Dropdown>
                         </div>
 
-                        {/* موبایل - دکمه برای باز کردن منو */}
+                        {/* Mobile - Menu Toggle Button */}
                         <div className="-me-2 flex items-center sm:hidden">
                             <button
                                 onClick={() => setShowingNavigationDropdown((prev) => !prev)}
@@ -142,10 +141,10 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
                 </div>
 
-                {/* موبایل - منوی کشویی */}
+                {/* Mobile - Dropdown Menu */}
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="space-y-1 pb-3 pt-2">
-                    {user.is_admin === 1 && (
+                        {user.is_admin === 1 && (
                             <ResponsiveNavLink href="/admin/panel" active={route().current('admin.panel')}>
                                 Admin Panel
                             </ResponsiveNavLink>
@@ -154,7 +153,6 @@ export default function AuthenticatedLayout({ header, children }) {
                         <ResponsiveNavLink href={route('chat.index')} active={route().current('chat.index')}>Chat</ResponsiveNavLink>
                         <ResponsiveNavLink href={route('posts.index')} active={route().current('posts.index')}>Posts</ResponsiveNavLink>
                         <ResponsiveNavLink href={route('show_profile', user.username)} active={route().current('show_profile')}>Show Your Profile</ResponsiveNavLink>
-                    
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4">
@@ -164,7 +162,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            {/* موبایل - نوتیف */}
+                            {/* Mobile - Notifications */}
                             <div className="px-4">
                                 <span className="text-lg text-gray-700">🔔 {unreadCount > 0 && <span className="ml-1 text-red-600 text-sm font-bold">({unreadCount})</span>}</span>
                             </div>
@@ -184,7 +182,6 @@ export default function AuthenticatedLayout({ header, children }) {
             )}
 
             <main>{children}</main>
-            
         </div>
     );
 }

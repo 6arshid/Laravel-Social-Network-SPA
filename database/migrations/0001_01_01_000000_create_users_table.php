@@ -38,6 +38,7 @@ return new class extends Migration
             $table->string('whatsapp')->nullable();
             $table->string('telegram')->nullable();
             $table->boolean('verify')->default(false);
+            $table->boolean('disable_notifications')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

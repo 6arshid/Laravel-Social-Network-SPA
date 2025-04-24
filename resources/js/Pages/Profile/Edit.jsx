@@ -7,14 +7,17 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import UpdateAvatarCoverForm from './Partials/UpdateAvatarCoverForm';
 import Links from './Partials/Links';
+import NotificationSettingsForm from './Partials/NotificationSettingsForm';
 
 const tabs = [
     { name: 'Profile Image', key: 'avatar' },
     { name: 'Links', key: 'links' },
     { name: 'Profile Info', key: 'profile' },
     { name: 'Password', key: 'password' },
+    { name: 'Notifications', key: 'notifications' }, 
     { name: 'Delete Account', key: 'delete' },
 ];
+
 
 export default function Edit({ mustVerifyEmail, status, auth }) {
     const [activeTab, setActiveTab] = useState('avatar');
@@ -35,6 +38,8 @@ export default function Edit({ mustVerifyEmail, status, auth }) {
                 );
             case 'password':
                 return <UpdatePasswordForm className="max-w-xl" />;
+                case 'notifications':
+            return <NotificationSettingsForm user={auth.user} />;
             case 'delete':
                 return <DeleteUserForm className="max-w-xl" />;
             default:

@@ -25,7 +25,7 @@ class User extends Authenticatable
         'avatar', 'cover','google_id','bio','location','website',
         'phone','instagram','twitter','facebook','linkedin',
         'github','tiktok','snapchat','youtube','pinterest',
-        'whatsapp','telegram','is_admin','verify',
+        'whatsapp','telegram','is_admin','verify','disable_notifications'
     ];
 
     /**
@@ -48,8 +48,10 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'disable_notifications' => 'boolean',
         ];
     }
+
     public function getRouteKeyName() { return 'username'; }
     public function posts()
     {
