@@ -192,7 +192,7 @@ export default function Settings() {
                 <button className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Save</button>
               </form>
               <form onSubmit={handleSubmitPwaIcon} className="mt-6">
-                <label className="block mb-1 font-semibold">Upload New PWA Icon (pwa.png)</label>
+                <label className="block mb-1 font-semibold">Upload New PWA Icon (pwa.png) , Please make sure that the icon must be 512x512</label>
                 <input
                   type="file"
                   accept="image/*"

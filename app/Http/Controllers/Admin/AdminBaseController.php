@@ -57,7 +57,7 @@ class AdminBaseController extends Controller
             'redirect_uri' => env('GOOGLE_REDIRECT_URI'), // ← این خط مهمه
         ],
         'pwa' => [
-    'install_button' => env('PWA_INSTALL_BUTTON', true),
+    'install_button' => env('PWA_INSTALL_BUTTON', false),
     'name' => env('PWA_NAME'),
     'short_name' => env('PWA_SHORT_NAME'),
     'background_color' => env('PWA_BACKGROUND_COLOR'),

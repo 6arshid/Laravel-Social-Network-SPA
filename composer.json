@@ -10,7 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "erag/laravel-pwa": "^1.4",
+        "erag/laravel-pwa": "*",
         "inertiajs/inertia-laravel": "^2.0",
         "intervention/image": "^3.11",
         "laravel/framework": "^12.0",

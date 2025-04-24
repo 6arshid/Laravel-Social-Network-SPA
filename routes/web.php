@@ -15,6 +15,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HashtagController;
 use App\Http\Controllers\MessageReactionController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\PwaController;
+
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +31,7 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('welcome');
+Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 

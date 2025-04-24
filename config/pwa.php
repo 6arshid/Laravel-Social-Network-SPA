@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'install-button' => env('PWA_INSTALL_BUTTON', true), 
+    'install-button' => env('PWA_INSTALL_BUTTON', false), 
     
     'manifest' => [
         'name' => env('PWA_NAME', 'Laravel PWA'),

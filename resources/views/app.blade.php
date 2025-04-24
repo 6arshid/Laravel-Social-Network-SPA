@@ -12,7 +12,10 @@
             }
         </script>
             @PwaHead <!-- Add this directive to include the PWA meta tags -->
-
+            <link rel="icon" type="image/png" href="/pwa.png?v={{ now()->timestamp }}">
+<link rel="apple-touch-icon" href="/pwa.png?v={{ now()->timestamp }}">
+<link rel="manifest" href="{{ route('pwa.manifest') }}?v={{ now()->timestamp }}">
+<meta name="theme-color" content="{{ env('PWA_THEME_COLOR', '#000000') }}">
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

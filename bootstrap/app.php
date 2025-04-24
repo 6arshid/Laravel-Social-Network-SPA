@@ -11,27 +11,24 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // افزودن middlewareهای مورد نیاز برای لایه وب
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             \App\Http\Middleware\CheckForInstallation::class,
             \App\Http\Middleware\VerifyCsrfToken::class, 
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-
-
-
         ]);
 
-        // تعریف alias برای middleware سفارشی
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
         ]);
         $middleware->group('install', [
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            // بدون session و csrf!
         ]);
     })
+    ->withProviders([
+        // Erag\LaravelPwa\Providers\LaravelPwaServiceProvider::class
+        ])
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
