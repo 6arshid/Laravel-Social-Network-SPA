@@ -1,6 +1,6 @@
 // resources/js/Pages/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
-import AuthenticatedLayoutRoot from '@/Layouts/AuthenticatedLayoutRoot';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage, router, Link } from '@inertiajs/react';
 
 export default function Dashboard() {
@@ -59,7 +59,7 @@ export default function Dashboard() {
   }, [search]);
 
   return (
-    <AuthenticatedLayoutRoot
+    <AuthenticatedLayout
       header={
         <h2 className="text-xl font-semibold leading-tight text-gray-800">
           Users
@@ -93,13 +93,13 @@ export default function Dashboard() {
                 {users.data.map(user => (
                   <li key={user.id} className="flex items-center justify-between border p-4 rounded">
                     <div className="flex items-center gap-4">
-                      <Link href={`/${user.username}`}>
-                        <img
-                          src={user.avatar || '/default-avatar.png'}
-                          alt={user.name}
-                          className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
-                        />
-                      </Link>
+                    <Link href={`/${user.username}`}>
+  <img
+    src={user.avatar ? `/storage/${user.avatar}` : '/default-avatar.png'}
+    alt={user.name}
+    className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
+  />
+</Link>
                       <div>
                         <Link href={`/${user.username}`} className="font-bold text-blue-600 hover:underline">
                           @{user.username}
@@ -143,6 +143,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </AuthenticatedLayoutRoot>
+    </AuthenticatedLayout>
   );
 }

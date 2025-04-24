@@ -42,13 +42,13 @@ export default function Dashboard({ posts, suggestedUsers = [] }) {
                 <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {suggestions.map((user) => (
                     <li key={user.id} className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg shadow">
-                      <Link href={`/${user.username}`} className="block">
-                        <img
-                          src={user.avatar || '/default-avatar.png'}
-                          alt={user.name}
-                          className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
-                        />
-                      </Link>
+                                         <Link href={`/${user.username}`}>
+                       <img
+                         src={user.avatar ? `/storage/${user.avatar}` : '/default-avatar.png'}
+                         alt={user.name}
+                         className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
+                       />
+                     </Link>
                       <div className="flex-grow">
                         <Link href={`/${user.username}`}>
                           <div className="font-medium text-gray-900 hover:underline">{user.name}</div>
