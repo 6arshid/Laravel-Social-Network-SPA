@@ -37,6 +37,7 @@ return new class extends Migration
             $table->string('pinterest')->nullable();
             $table->string('whatsapp')->nullable();
             $table->string('telegram')->nullable();
+            $table->boolean('verify')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
