@@ -161,6 +161,8 @@ class ProfileController extends Controller
                 'whatsapp' => $user->whatsapp,
                 'telegram' => $user->telegram,
             ],
+            'appName' => config('app.name'),
+
             'posts' => $posts,
             'isOwner' => $authUser && $authUser->id === $user->id,
             'isFollowing' => $authUser ? $authUser->isFollowing($user) : false,

@@ -1,13 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { usePage, Link } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
-import axios from 'axios';
 import Cropper from 'react-easy-crop';
 import PostCard from '@/Components/PostCard';
-import MediaModal from '@/Components/MediaModal';
+import SocialLinks from '@/Components/SocialLinks';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import SocialLinks from '@/Components/SocialLinks';
 
 dayjs.extend(relativeTime);
 dayjs.locale('en');
@@ -49,7 +47,7 @@ async function getCroppedImg(imageSrc, pixelCrop) {
 }
 
 export default function Show() {
-    const { user, posts, isOwner, isFollowing } = usePage().props;
+    const { user, posts, isOwner, isFollowing, appName } = usePage().props;
     const [allPosts, setAllPosts] = useState(posts.data);
     const [nextPageUrl, setNextPageUrl] = useState(posts.next_page_url);
     const [imageSrc, setImageSrc] = useState(null);
@@ -58,8 +56,12 @@ export default function Show() {
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [following, setFollowing] = useState(isFollowing);
+    const [isUploading, setIsUploading] = useState(false);
 
-    const getImageUrl = (path) => (path ? `/storage/${path}` : null);
+    const getImageUrl = (path) => {
+        if (!path) return null;
+        return `/storage/${path}?v=${new Date().getTime()}`;
+    };
 
     const onCropComplete = useCallback((_, croppedPixels) => {
         setCroppedAreaPixels(croppedPixels);
@@ -77,6 +79,7 @@ export default function Show() {
     };
 
     const uploadCroppedImage = async () => {
+        setIsUploading(true);
         const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
         const formData = new FormData();
         formData.append('image', croppedImage);
@@ -87,6 +90,11 @@ export default function Show() {
             onSuccess: () => {
                 setImageSrc(null);
                 setSelectedType(null);
+                setIsUploading(false);
+                Inertia.reload({ only: ['user'] });
+            },
+            onError: () => {
+                setIsUploading(false);
             },
         });
     };
@@ -107,7 +115,7 @@ export default function Show() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto pb-10">
+        <div className="max-w-4xl mx-auto pb-20">
             {/* Cover */}
             <div className="w-full h-60 bg-gray-300 relative">
                 {user.cover && (
@@ -175,10 +183,8 @@ export default function Show() {
             {/* User Info */}
             <div className="pt-16 px-4">
                 <h1 className="text-xl font-bold">{user.name}</h1>
-                <p className="text-gray-500">{user.username} </p>
-                <p className="text-gray-500">Bio : {user.bio} </p>
-
-                {/* Additional Profile Fields */}
+                <p className="text-gray-500">@{user.username}</p>
+                <p className="text-gray-500">Bio : {user.bio}</p>
                 <SocialLinks user={user} />
 
                 {!isOwner && (
@@ -217,12 +223,13 @@ export default function Show() {
                             onCropComplete={onCropComplete}
                         />
                     </div>
-                    <div className="flex space-x-4">
+                    <div className="flex space-x-4 items-center">
                         <button
                             onClick={uploadCroppedImage}
                             className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                            disabled={isUploading}
                         >
-                            Save Image
+                            {isUploading ? 'Uploading...' : 'Save Image'}
                         </button>
                         <button
                             onClick={() => {
@@ -230,9 +237,15 @@ export default function Show() {
                                 setSelectedType(null);
                             }}
                             className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                            disabled={isUploading}
                         >
                             Cancel
                         </button>
+                        {isUploading && (
+                            <span className="text-sm text-gray-500 animate-pulse">
+                                Uploading image, please wait...
+                            </span>
+                        )}
                     </div>
                 </div>
             )}
@@ -254,6 +267,13 @@ export default function Show() {
                     </button>
                 </div>
             )}
+
+            {/* Footer */}
+            <div className="flex items-center justify-center mt-10">
+                <Link href="/" className="text-center text-gray-600 hover:text-blue-600 transition">
+                    Made with <span className="text-red-500">❤️</span> by <span className="font-semibold">{appName}</span>
+                </Link>
+            </div>
         </div>
     );
 }
