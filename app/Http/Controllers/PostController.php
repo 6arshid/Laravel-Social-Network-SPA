@@ -100,18 +100,12 @@ class PostController extends Controller
 }
 public function show(Request $request, Post $post)
 {
-    // $post->load([
-    //     'media',
-    //     'user',
-    //     'likes',
-    //     'repost.user',
-    //     'repost.media', // 👈 این خط رو اضافه کن!
-    // ]);
+   
     $post->load([
         'media',
         'user',
         'likes',
-        'repost' => fn ($q) => $q->with('user', 'media'), // 👈 خیلی مهم
+        'repost' => fn ($q) => $q->with('user', 'media'), 
     ]);
     $comments = $post->comments()
         ->with([
