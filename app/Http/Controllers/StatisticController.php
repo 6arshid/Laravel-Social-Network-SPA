@@ -11,37 +11,29 @@ class StatisticController extends Controller
 {
     public function index()
     {
-        $daily = Statistic::select(
-            DB::raw('DATE(date) as day'),
-            DB::raw('count(*) as total')
-        )
+        $daily = Statistic::select(DB::raw('DATE(date) as day'), DB::raw('count(*) as total'))
         ->groupBy('day')
-        ->orderBy('day', 'asc')
+        ->orderBy('day')
         ->get();
 
-        $monthly = Statistic::select(
-            DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
-            DB::raw('count(*) as total')
-        )
+    $monthly = Statistic::select(DB::raw('DATE_FORMAT(date, "%Y-%m") as month'), DB::raw('count(*) as total'))
         ->groupBy('month')
-        ->orderBy('month', 'asc')
+        ->orderBy('month')
         ->get();
 
-        $yearly = Statistic::select(
-            DB::raw('YEAR(date) as year'),
-            DB::raw('count(*) as total')
-        )
+    $yearly = Statistic::select(DB::raw('YEAR(date) as year'), DB::raw('count(*) as total'))
         ->groupBy('year')
-        ->orderBy('year', 'asc')
+        ->orderBy('year')
         ->get();
 
-        $total = Statistic::count();
+    $total = Statistic::count();
 
-        return Inertia::render('Profile/Statistics', [
-            'daily' => $daily,
-            'monthly' => $monthly,
-            'yearly' => $yearly,
-            'total' => $total,
-        ]);
+    return Inertia::render('Profile/Statistics', [
+
+        'daily' => $daily,
+        'monthly' => $monthly,
+        'yearly' => $yearly,
+        'total' => $total,
+    ]);
     }
 }
