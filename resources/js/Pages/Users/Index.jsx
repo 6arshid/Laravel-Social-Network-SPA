@@ -33,8 +33,8 @@ export default function Dashboard() {
   };
 
   // Go to chat page
-  const goToChat = (username) => {
-    router.visit(route('chat.show', { user: username }));
+  const goToChat = (id) => {
+    router.visit(route('chat.show', { user: id }));
   };
 
   // Debounced live search with page preservation
@@ -118,7 +118,7 @@ export default function Dashboard() {
                       )}
                       <button
                         className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
-                        onClick={() => goToChat(user.username)}
+                        onClick={() => goToChat(user.id)}
                       >
                         Message
                       </button>

@@ -120,10 +120,10 @@ class MessageController extends Controller
                 NotificationHelper::send(
                     $receiver->id,
                     auth()->user()->name . ' sent you a new message.',
-                    route('chat.show', ['user' => auth()->user()->username])
+                    route('chat.show', ['user' => auth()->user()->id])
                 );
             }
-            return Inertia::location(route('chat.show', ['user' => $receiver->username]));
+            return Inertia::location(route('chat.show', ['user' => $receiver->id]));
         }
     
         // اگر چت گروهی است → redirect به صفحه گروه

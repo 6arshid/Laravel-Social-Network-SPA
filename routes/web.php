@@ -47,7 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/update-image', [ProfileController::class, 'updateImage'])->name('profile.update-image');
     Route::post('/profile/delete-image', [ProfileController::class, 'deleteImage'])->name('profile.delete-image');
     Route::get('/chat', [MessageController::class, 'index'])->name('chat.index');
-    Route::get('/chat/{user:username}', [MessageController::class, 'show'])->name('chat.show');
+    Route::get('/chat/{user:id}', [MessageController::class, 'show'])->name('chat.show');
+    // Route::get('/chat/{user:username}', [MessageController::class, 'show'])->name('chat.show');
     Route::get('/chat/place/{name}', [MessageController::class, 'placechat'])->name('placechat');
     Route::get('/chat/place/{name}/json', [MessageController::class, 'placechatJson']);
     Route::post('/chat/send', [MessageController::class, 'store'])->name('chat.store');

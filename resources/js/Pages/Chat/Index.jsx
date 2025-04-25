@@ -114,9 +114,9 @@ export default function Dashboard({ chats, search }) {
                                             if (isPlace) {
                                                 href = `/chat/place/${key.replace('place:', '')}`;
                                             } else if (firstMsg.sender?.id === parseInt(key)) {
-                                                href = firstMsg.sender?.username ? `/chat/${firstMsg.sender.username}` : '#';
-                                            } else if (firstMsg.receiver?.username) {
-                                                href = `/chat/${firstMsg.receiver.username}`;
+                                                href = firstMsg.sender?.id ? `/chat/${firstMsg.sender.id}` : '#';
+                                            } else if (firstMsg.receiver?.id) {
+                                                href = `/chat/${firstMsg.receiver.id}`;
                                             }
 
                                             if (!displayName || href === '#') return null;

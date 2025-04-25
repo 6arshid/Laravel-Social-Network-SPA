@@ -190,7 +190,7 @@ export default function Show() {
                 {!isOwner && (
                     <div className="px-4 mt-4 flex space-x-4">
                         <Link
-                            href={route('chat.show', user.username)}
+                            href={route('chat.show', user.id)}
                             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                         >
                             Message
