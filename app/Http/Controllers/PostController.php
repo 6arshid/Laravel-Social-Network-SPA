@@ -100,13 +100,16 @@ class PostController extends Controller
 }
 public function show(Request $request, Post $post)
 {
-   
+    // افزایش تعداد بازدید
+    $post->increment('views');
+
     $post->load([
         'media',
         'user',
         'likes',
         'repost' => fn ($q) => $q->with('user', 'media'), 
     ]);
+
     $comments = $post->comments()
         ->with([
             'user',
@@ -141,6 +144,7 @@ public function show(Request $request, Post $post)
         ],
     ]);
 }
+
 
 
 public function loadComments(Request $request, Post $post)

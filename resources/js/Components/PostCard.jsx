@@ -19,7 +19,7 @@ export default function PostCard({ post }) {
 
   const media = post.media || [];
   const isOwner = auth.user && auth.user.id === post.user_id;
-  const isDeletedByReport = post.content === 'این پست به دلیل گزارش تخلف حذف شده است.';
+  const isDeletedByReport = post.content === 'This post has been removed due to reporting abuse.';
 
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this post?")) {
@@ -54,7 +54,7 @@ export default function PostCard({ post }) {
         </p>
       ) : (
         <>
-          {/* User & Timestamp */}
+          {/* User & Timestamp & Views */}
           <div className="flex items-center text-sm text-gray-500 gap-2">
             <Link
               href={route('posts.show', post.id)}
@@ -71,6 +71,12 @@ export default function PostCard({ post }) {
                 >
                   @{post.user.username}
                 </Link>
+              </>
+            )}
+            {typeof post.views === 'number' && (
+              <>
+                <span>·</span>
+                <span className="text-gray-600">{post.views} View</span>
               </>
             )}
           </div>

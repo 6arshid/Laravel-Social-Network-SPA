@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('content');
             $table->foreignId('repost_id')->nullable()->constrained('posts')->onDelete('cascade');
+            $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
         });
         Schema::create('comments', function (Blueprint $table) {
