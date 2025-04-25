@@ -10,6 +10,7 @@
 - **Repost**: Share posts with followers.
 - **Comments**: Users can comment on posts.
 - **Statistics System**: Visual charts for daily, monthly, annual, and overall statistics.
+- **PWA Support**: The application is installable as a Progressive Web App (PWA) on mobile and desktop, offering offline capabilities and push notifications.
 
 ## Youtube Learning
 
@@ -20,6 +21,7 @@
 - Make sure you have correct database configurations.
 - If you encounter any permission issues, ensure appropriate permissions on `storage/` and `bootstrap/cache/` folders.
 - For Inertia.js and React integration, no extra setup needed after npm install; it is already configured.
+- PWA functionalities are ready, including service workers, manifest file setup, and offline support.
 
 ---
 
@@ -46,12 +48,6 @@ cd Laravel-Social-Network-SPA
 
 ```bash
 composer install
-```
-
-Or if you haven't installed Laravel installer globally:
-
-```bash
-composer global require "laravel/installer=~1.2"
 ```
 
 ### 3. Install Node.js Dependencies
