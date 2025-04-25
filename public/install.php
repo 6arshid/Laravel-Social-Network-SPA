@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'email' => $adminEmail,
         'password' => bcrypt($adminPassword),
         'is_admin' => 1,
-        'username' => 'admin',
+        'username' => 'administrator',
     ]);
 
     echo "✅ Laravel installed successfully. You may now delete this file.";
