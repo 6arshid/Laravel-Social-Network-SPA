@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
+use App\Models\UsernameUnregister;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -78,11 +79,15 @@ Route::middleware('auth')->group(function () {
             'username' => 'required|string|min:4|max:222',
         ]);
     
-        $exists = User::where('username', $request->username)
+        $username = strtolower($request->username); // case-insensitive check
+    
+        $reserved = UsernameUnregister::where('username', $username)->exists();
+    
+        $exists = User::where('username', $username)
             ->where('id', '!=', auth()->id())
             ->exists();
     
-        return response()->json(['available' => !$exists]);
+        return response()->json(['available' => !$exists && !$reserved]);
     })->name('username.check');
     Route::post('/chat/message/{message}/react', [MessageReactionController::class, 'store']);
     Route::post('/settings/notifications', [ProfileController::class, 'updateNotifications'])->name('settings.notifications');

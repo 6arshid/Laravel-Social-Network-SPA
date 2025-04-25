@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Models\UsernameUnregister;
 
 class ProfileUpdateRequest extends FormRequest
 {
@@ -18,11 +19,16 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'username' => [
-                'required',
-                'string',
-                'min:4',
-                'max:255',
-                Rule::unique('users', 'username')->ignore($this->user()->id),
+            'required',
+            'string',
+            'min:4',
+            'max:255',
+            Rule::unique('users', 'username')->ignore($this->user()->id),
+            function ($attribute, $value, $fail) {
+                if (UsernameUnregister::where('username', strtolower($value))->exists()) {
+                    $fail('This username cannot be used.');
+                }
+            },
             ],
             'email' => [
                 'required',

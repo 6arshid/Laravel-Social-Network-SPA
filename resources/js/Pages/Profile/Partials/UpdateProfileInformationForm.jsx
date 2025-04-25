@@ -16,7 +16,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
         username: user.username ?? '',
     });
 
-    const [usernameStatus, setUsernameStatus] = useState(null); // true = available, false = taken, null = unknown
+    const [usernameStatus, setUsernameStatus] = useState(null); // true = available, false = taken/reserved, null = unknown
     const [checkingUsername, setCheckingUsername] = useState(false);
 
     useEffect(() => {
@@ -31,8 +31,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                 .then((res) => {
                     setUsernameStatus(res.data.available);
                     if (!res.data.available) {
-                        // don't show backend error unless submitting
-                        clearErrors('username');
+                        clearErrors('username'); // don't overwrite Laravel validation
                     }
                 })
                 .catch(() => setUsernameStatus(null))
@@ -70,6 +69,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                     />
                     <InputError className="mt-2" message={errors.name} />
                 </div>
+
                 <div>
                     <InputLabel htmlFor="username" value="Username" />
                     <TextInput
@@ -85,15 +85,16 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                     {data.username.length >= 4 && (
                         <div className="mt-1 text-sm">
                             {checkingUsername ? (
-                                <span className="text-gray-500">Checking availability...</span>
+                                <span className="text-gray-500">Checking username availability...</span>
                             ) : usernameStatus === true ? (
                                 <span className="text-green-600">Username is available.</span>
                             ) : usernameStatus === false ? (
-                                <span className="text-red-600">Username is already taken.</span>
+                                <span className="text-red-600">This username is not available.</span>
                             ) : null}
                         </div>
                     )}
                 </div>
+
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
                     <TextInput
@@ -107,8 +108,6 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                     />
                     <InputError className="mt-2" message={errors.email} />
                 </div>
-
-               
 
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
