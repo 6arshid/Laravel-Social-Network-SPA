@@ -9,6 +9,7 @@
 - **Post Reactions**: Users can like or react to posts with full emoji support.
 - **Repost**: Share posts with followers.
 - **Comments**: Users can comment on posts.
+- **Statistics System**: Visual charts for daily, monthly, annual, and overall statistics.
 
 ## Youtube Learning
 
