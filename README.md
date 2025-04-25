@@ -2,15 +2,18 @@
 
 ## Features
 
+- **User Profiles**: Each user has a customizable profile, with support for social network URLs.
 - **Notifications**: Real-time notifications built into the system.
-- **User Profiles**: Each user has a customizable profile.
 - **Follow System**: Users can follow/unfollow each other easily.
-- **Messaging**: Direct messaging between users without needing third-party packages or APIs. Includes message deletion and editing.
+- **Messaging**: Direct messaging between users without needing third-party packages or APIs. Includes message deletion and editing, voice chat, file attachment, and emoji reactions.
 - **Post Reactions**: Users can like or react to posts with full emoji support.
 - **Repost**: Share posts with followers.
 - **Comments**: Users can comment on posts.
 - **Statistics System**: Visual charts for daily, monthly, annual, and overall statistics.
 - **PWA Support**: The application is installable as a Progressive Web App (PWA) on mobile and desktop, offering offline capabilities and push notifications.
+- **Admin Panel**: Manage users, posts, and overall system settings.
+- **Post Report System**: Users can report inappropriate posts.
+- **Reserved Usernames**: Prevent registration of specific usernames.
 
 ## Youtube Learning
 
