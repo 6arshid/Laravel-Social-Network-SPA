@@ -124,6 +124,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/settings/update-pwa', [AdminBaseController::class, 'updatePWA']);
     Route::post('/upload-pwa-icon', [AdminBaseController::class, 'uploadPwaIcon']);
 
+    Route::get('/username-unregister', [AdminBaseController::class, 'usernameunregister'])->name('admin.usernameunregister.index');
+    Route::post('/reserved-usernames', [AdminBaseController::class, 'usernameunregisterstore'])->name('reserved-usernames.store');
+
 
 
 

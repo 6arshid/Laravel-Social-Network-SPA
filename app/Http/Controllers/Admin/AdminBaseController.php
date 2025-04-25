@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreReservedUsernameRequest;
+use App\Models\UsernameUnregister;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -57,14 +59,14 @@ class AdminBaseController extends Controller
             'redirect_uri' => env('GOOGLE_REDIRECT_URI'), // ← این خط مهمه
         ],
         'pwa' => [
-    'install_button' => env('PWA_INSTALL_BUTTON', false),
-    'name' => env('PWA_NAME'),
-    'short_name' => env('PWA_SHORT_NAME'),
-    'background_color' => env('PWA_BACKGROUND_COLOR'),
-    'display' => env('PWA_DISPLAY'),
-    'description' => env('PWA_DESCRIPTION'),
-    'theme_color' => env('PWA_THEME_COLOR'),
-    'icon' => env('PWA_ICON'),
+        'install_button' => env('PWA_INSTALL_BUTTON', false),
+        'name' => env('PWA_NAME'),
+        'short_name' => env('PWA_SHORT_NAME'),
+        'background_color' => env('PWA_BACKGROUND_COLOR'),
+        'display' => env('PWA_DISPLAY'),
+        'description' => env('PWA_DESCRIPTION'),
+        'theme_color' => env('PWA_THEME_COLOR'),
+        'icon' => env('PWA_ICON'),
         ],
         'app_name' => env('APP_NAME'),
         'mail' => [
@@ -135,20 +137,20 @@ class AdminBaseController extends Controller
         \Artisan::call('optimize:clear');
     }
     public function updateAppName(Request $request)
-{
-    $request->validate([
-        'app_name' => 'required|string',
-    ]);
+    {
+        $request->validate([
+            'app_name' => 'required|string',
+        ]);
 
-    $this->setEnv([
-        'APP_NAME' => $request->app_name,
-    ]);
+        $this->setEnv([
+            'APP_NAME' => $request->app_name,
+        ]);
 
-    \Artisan::call('config:clear');
-    \Artisan::call('cache:clear');
+        \Artisan::call('config:clear');
+        \Artisan::call('cache:clear');
 
-    return back()->with('success', 'App name updated.');
-}
+        return back()->with('success', 'App name updated.');
+    }
 
 public function updateMailSettings(Request $request)
 {
@@ -175,45 +177,60 @@ public function updateMailSettings(Request $request)
 
     return back()->with('success', 'Mail settings updated.');
 }
-public function updatePWA(Request $request)
-{
-    $request->validate([
-        'install_button' => 'required|boolean',
-        'name' => 'required|string',
-        'short_name' => 'required|string',
-        'background_color' => 'required|string',
-        'display' => 'required|string',
-        'description' => 'required|string',
-        'theme_color' => 'required|string',
-        'icon' => 'required|string',
-    ]);
+    public function updatePWA(Request $request)
+    {
+        $request->validate([
+            'install_button' => 'required|boolean',
+            'name' => 'required|string',
+            'short_name' => 'required|string',
+            'background_color' => 'required|string',
+            'display' => 'required|string',
+            'description' => 'required|string',
+            'theme_color' => 'required|string',
+            'icon' => 'required|string',
+        ]);
 
-    $this->setEnv([
-        'PWA_INSTALL_BUTTON' => $request->install_button ? 'true' : 'false',
-        'PWA_NAME' => $request->name,
-        'PWA_SHORT_NAME' => $request->short_name,
-        'PWA_BACKGROUND_COLOR' => $request->background_color,
-        'PWA_DISPLAY' => $request->display,
-        'PWA_DESCRIPTION' => $request->description,
-        'PWA_THEME_COLOR' => $request->theme_color,
-        'PWA_ICON' => $request->icon,
-    ]);
+        $this->setEnv([
+            'PWA_INSTALL_BUTTON' => $request->install_button ? 'true' : 'false',
+            'PWA_NAME' => $request->name,
+            'PWA_SHORT_NAME' => $request->short_name,
+            'PWA_BACKGROUND_COLOR' => $request->background_color,
+            'PWA_DISPLAY' => $request->display,
+            'PWA_DESCRIPTION' => $request->description,
+            'PWA_THEME_COLOR' => $request->theme_color,
+            'PWA_ICON' => $request->icon,
+        ]);
 
-    \Artisan::call('config:clear');
-    \Artisan::call('cache:clear');
+        \Artisan::call('config:clear');
+        \Artisan::call('cache:clear');
 
-    return back()->with('success', 'PWA settings updated.');
-}
-public function uploadPwaIcon(Request $request)
-{
-    $request->validate([
-        'icon' => 'required|image|mimes:png,jpg,jpeg,svg,ico|max:2048',
-    ]);
+        return back()->with('success', 'PWA settings updated.');
+    }
+    public function uploadPwaIcon(Request $request)
+    {
+        $request->validate([
+            'icon' => 'required|image|mimes:png,jpg,jpeg,svg,ico|max:2048',
+        ]);
 
-    $icon = $request->file('icon');
-    $icon->move(public_path(), 'pwa.png');
+        $icon = $request->file('icon');
+        $icon->move(public_path(), 'pwa.png');
 
-    return back()->with('success', 'PWA icon uploaded.');
-}
+        return back()->with('success', 'PWA icon uploaded.');
+    }
+    public function usernameunregister(){
+        $usernames = UsernameUnregister::orderByDesc('created_at')->get();
+
+        return Inertia::render('Admin/UsernameUnregister', [
+            'reservedUsernames' => $usernames,
+        ]);
+    }
+    public function usernameunregisterstore(StoreReservedUsernameRequest $request)
+    {
+        UsernameUnregister::create([
+            'username' => strtolower($request->username),
+        ]);
+
+        return redirect()->route('admin.usernameunregister.index')->with('success', 'Username has been reserved.');
+    }
     
 }
