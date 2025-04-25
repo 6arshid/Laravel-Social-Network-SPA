@@ -17,6 +17,7 @@ use App\Http\Controllers\MessageReactionController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\RootController;
+use App\Http\Controllers\StatisticController;
 
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
@@ -91,6 +92,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
     Route::get('/{username}/posts', [ProfileController::class, 'loadPosts']);
     Route::get('/hashtag/{name}', [HashtagController::class, 'show'])->name('hashtag.show');
+    Route::get('/statistics', [StatisticController::class, 'index'])->name('user.statistics');
+
 
 });
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle']);

@@ -128,6 +128,8 @@ class ProfileController extends Controller
 
     public function show_profile($username, Request $request)
     {
+        \App\Helpers\StatisticHelper::record('profile_visited');
+
         $user = User::where('username', $username)->firstOrFail();
     
         $posts = $user->posts()
