@@ -131,10 +131,15 @@ class ProfileController extends Controller
         $user = User::where('username', $username)->firstOrFail();
     
         $posts = $user->posts()
-            ->with(['media', 'likes', 'user'])
-            ->latest()
-            ->paginate(5)
-            ->withQueryString();
+        ->with([
+            'media',
+            'likes',
+            'user',
+            'repost' => fn($q) => $q->with('user', 'media'),
+        ])
+        ->latest()
+        ->paginate(5)
+        ->withQueryString();
     
         $authUser = auth()->user();
     
