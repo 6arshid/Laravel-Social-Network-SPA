@@ -100,7 +100,8 @@ For production build:
 npm run build
 ```
 
-
+After install php artisan DB:seed
+Go to admin and make your is_admin = 1
 
 Happy coding! :rocket:
 
