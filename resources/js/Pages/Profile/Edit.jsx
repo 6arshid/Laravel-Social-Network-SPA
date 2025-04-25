@@ -10,9 +10,9 @@ import Links from './Partials/Links';
 import NotificationSettingsForm from './Partials/NotificationSettingsForm';
 
 const tabs = [
+    { name: 'Profile Info', key: 'profile' },
     { name: 'Profile Image', key: 'avatar' },
     { name: 'Links', key: 'links' },
-    { name: 'Profile Info', key: 'profile' },
     { name: 'Password', key: 'password' },
     { name: 'Notifications', key: 'notifications' }, 
     { name: 'Delete Account', key: 'delete' },
@@ -24,10 +24,6 @@ export default function Edit({ mustVerifyEmail, status, auth }) {
 
     const renderTabContent = () => {
         switch (activeTab) {
-            case 'avatar':
-                return <UpdateAvatarCoverForm user={auth.user} />;
-            case 'links':
-                return <Links user={auth.user} />;
             case 'profile':
                 return (
                     <UpdateProfileInformationForm
@@ -36,6 +32,11 @@ export default function Edit({ mustVerifyEmail, status, auth }) {
                         className="max-w-xl"
                     />
                 );
+            case 'avatar':
+                return <UpdateAvatarCoverForm user={auth.user} />;
+            case 'links':
+                return <Links user={auth.user} />;
+     
             case 'password':
                 return <UpdatePasswordForm className="max-w-xl" />;
                 case 'notifications':

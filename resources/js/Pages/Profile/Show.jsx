@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { usePage, Link } from '@inertiajs/react';
+import { usePage, Link, Head } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import Cropper from 'react-easy-crop';
 import PostCard from '@/Components/PostCard';
 import SocialLinks from '@/Components/SocialLinks';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -114,102 +115,51 @@ export default function Show() {
         setNextPageUrl(data.next_page_url);
     };
 
-    return (
+    const content = (
         <div className="max-w-4xl mx-auto pb-20">
-            {/* Cover */}
+            {/* <Head title={`${user ? user.name + "'s" : 'Public'} Profile`} /> */}
             <div className="w-full h-60 bg-gray-300 relative">
-                {user.cover && (
-                    <img src={getImageUrl(user.cover)} className="w-full h-full object-cover" alt="cover" />
-                )}
-                {isOwner && (
+                {user?.cover && <img src={getImageUrl(user.cover)} className="w-full h-full object-cover" alt="cover" />}
+                {user && isOwner && (
                     <div className="absolute top-2 right-2 space-x-2">
-                        <input
-                            type="file"
-                            accept="image/*"
-                            id="cover-upload"
-                            onChange={(e) => handleFileChange(e, 'cover')}
-                            className="hidden"
-                        />
-                        <label htmlFor="cover-upload" className="text-sm text-white bg-black/50 px-2 py-1 rounded cursor-pointer">
-                            Change Cover
-                        </label>
-                        {user.cover && (
-                            <button
-                                onClick={() => deleteImage('cover')}
-                                className="text-sm bg-red-600 text-white px-2 py-1 rounded"
-                            >
-                                Delete
-                            </button>
-                        )}
+                        <input type="file" accept="image/*" id="cover-upload" onChange={(e) => handleFileChange(e, 'cover')} className="hidden" />
+                        <label htmlFor="cover-upload" className="text-sm text-white bg-black/50 px-2 py-1 rounded cursor-pointer">Change Cover</label>
+                        {user.cover && <button onClick={() => deleteImage('cover')} className="text-sm bg-red-600 text-white px-2 py-1 rounded">Delete</button>}
                     </div>
                 )}
-
-                {/* Avatar */}
                 <div className="absolute -bottom-12 left-4">
-                    {user.avatar ? (
-                        <img
-                            src={getImageUrl(user.avatar)}
-                            alt="avatar"
-                            className="w-24 h-24 rounded-full border-4 border-white object-cover shadow"
-                        />
+                    {user?.avatar ? (
+                        <img src={getImageUrl(user.avatar)} alt="avatar" className="w-24 h-24 rounded-full border-4 border-white object-cover shadow" />
                     ) : (
                         <div className="w-24 h-24 rounded-full border-4 border-white bg-gray-500 text-white flex items-center justify-center shadow text-2xl font-bold">
-                            {(user.name || user.username)?.charAt(0)}
+                            {(user?.name || user?.username)?.charAt(0) || '?'}
                         </div>
                     )}
-
-                    {isOwner && (
+                    {user && isOwner && (
                         <div className="mt-2">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="avatar-upload"
-                                onChange={(e) => handleFileChange(e, 'avatar')}
-                                className="hidden"
-                            />
-                            <label htmlFor="avatar-upload" className="text-blue-600 text-sm cursor-pointer">
-                                {user.avatar ? 'Change Avatar' : 'Add Avatar'}
-                            </label>
-                            {user.avatar && (
-                                <button onClick={() => deleteImage('avatar')} className="ml-2 text-red-600 text-sm">
-                                    Delete
-                                </button>
-                            )}
+                            <input type="file" accept="image/*" id="avatar-upload" onChange={(e) => handleFileChange(e, 'avatar')} className="hidden" />
+                            <label htmlFor="avatar-upload" className="text-blue-600 text-sm cursor-pointer">{user.avatar ? 'Change Avatar' : 'Add Avatar'}</label>
+                            {user.avatar && <button onClick={() => deleteImage('avatar')} className="ml-2 text-red-600 text-sm">Delete</button>}
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* User Info */}
             <div className="pt-16 px-4">
-                <h1 className="text-xl font-bold">{user.name}</h1>
-                <p className="text-gray-500">@{user.username}</p>
-                <p className="text-gray-500">Bio : {user.bio}</p>
-                <SocialLinks user={user} />
-
-                {!isOwner && (
+                {/* <h1 className="text-xl font-bold">{user?.name || 'Public Profile'}</h1> */}
+                {user?.username && <p className="text-gray-500">@{user.username}</p>}
+                {user?.bio && <p className="text-gray-500">Bio : {user.bio}</p>}
+                {user && <SocialLinks user={user} />}
+                {user && !isOwner && (
                     <div className="px-4 mt-4 flex space-x-4">
-                        <Link
-                            href={route('chat.show', user.id)}
-                            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                        >
-                            Message
-                        </Link>
-                        <button
-                            onClick={() =>
-                                Inertia.post(route('follow.toggle', user.username), {}, {
-                                    onSuccess: () => setFollowing(!following),
-                                })
-                            }
-                            className={`px-4 py-2 ${following ? 'bg-gray-600' : 'bg-blue-600'} text-white rounded hover:opacity-90`}
-                        >
+                        <Link href={route('chat.show', user.id)} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Message</Link>
+                        <button onClick={() => Inertia.post(route('follow.toggle', user.username), {}, { onSuccess: () => setFollowing(!following) })} className={`px-4 py-2 ${following ? 'bg-gray-600' : 'bg-blue-600'} text-white rounded hover:opacity-90`}>
                             {following ? 'Following' : 'Follow'}
                         </button>
                     </div>
                 )}
             </div>
 
-            {/* Cropper */}
             {imageSrc && (
                 <div className="mt-8 px-4 space-y-4">
                     <div className="relative w-full h-80 bg-gray-100 border rounded overflow-hidden">
@@ -224,51 +174,23 @@ export default function Show() {
                         />
                     </div>
                     <div className="flex space-x-4 items-center">
-                        <button
-                            onClick={uploadCroppedImage}
-                            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                            disabled={isUploading}
-                        >
-                            {isUploading ? 'Uploading...' : 'Save Image'}
-                        </button>
-                        <button
-                            onClick={() => {
-                                setImageSrc(null);
-                                setSelectedType(null);
-                            }}
-                            className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
-                            disabled={isUploading}
-                        >
-                            Cancel
-                        </button>
-                        {isUploading && (
-                            <span className="text-sm text-gray-500 animate-pulse">
-                                Uploading image, please wait...
-                            </span>
-                        )}
+                        <button onClick={uploadCroppedImage} className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700" disabled={isUploading}>{isUploading ? 'Uploading...' : 'Save Image'}</button>
+                        <button onClick={() => { setImageSrc(null); setSelectedType(null); }} className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500" disabled={isUploading}>Cancel</button>
+                        {isUploading && <span className="text-sm text-gray-500 animate-pulse">Uploading image, please wait...</span>}
                     </div>
                 </div>
             )}
 
-            {/* Posts */}
             <div className="px-4 mt-10 space-y-6">
-                {allPosts.map((post) => (
-                    <PostCard key={post.id} post={post} />
-                ))}
+                {allPosts.map((post) => <PostCard key={post.id} post={post} />)}
             </div>
 
             {nextPageUrl && (
                 <div className="text-center mt-6">
-                    <button
-                        onClick={loadMore}
-                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                        Load more
-                    </button>
+                    <button onClick={loadMore} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Load more</button>
                 </div>
             )}
 
-            {/* Footer */}
             <div className="flex items-center justify-center mt-10">
                 <Link href="/" className="text-center text-gray-600 hover:text-blue-600 transition">
                     Made with <span className="text-red-500">❤️</span> by <span className="font-semibold">{appName}</span>
@@ -276,4 +198,14 @@ export default function Show() {
             </div>
         </div>
     );
+
+    if (user) {
+        return (
+            <AuthenticatedLayout >
+                {content}
+            </AuthenticatedLayout>
+        );
+    }
+
+    return content;
 }
