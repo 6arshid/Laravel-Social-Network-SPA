@@ -48,7 +48,8 @@ async function getCroppedImg(imageSrc, pixelCrop) {
 }
 
 export default function Show() {
-    const { user, posts, isOwner, isFollowing, appName } = usePage().props;
+    const { auth, user, posts, isOwner, isFollowing, appName } = usePage().props;
+    const loggedInUser = auth?.user;
     const [allPosts, setAllPosts] = useState(posts.data);
     const [nextPageUrl, setNextPageUrl] = useState(posts.next_page_url);
     const [imageSrc, setImageSrc] = useState(null);
@@ -117,13 +118,13 @@ export default function Show() {
 
     const content = (
         <div className="max-w-4xl mx-auto pb-20">
-            {/* <Head title={`${user ? user.name + "'s" : 'Public'} Profile`} /> */}
+            <Head title={`${user?.name || 'User'}'s Profile`} />
             <div className="w-full h-60 bg-gray-300 relative">
                 {user?.cover && <img src={getImageUrl(user.cover)} className="w-full h-full object-cover" alt="cover" />}
-                {user && isOwner && (
+                {loggedInUser && isOwner && (
                     <div className="absolute top-2 right-2 space-x-2">
                         <input type="file" accept="image/*" id="cover-upload" onChange={(e) => handleFileChange(e, 'cover')} className="hidden" />
-                        <label htmlFor="cover-upload" className="text-sm text-white bg-black/50 px-2 py-1 rounded cursor-pointer">Change Cover</label>
+                        <label htmlFor="cover-upload" className="text-sm text-white bg-black/50 px-2 py-1 rounded cursor-pointer">{user.cover ? 'Change Cover' : 'Add Cover'}</label>
                         {user.cover && <button onClick={() => deleteImage('cover')} className="text-sm bg-red-600 text-white px-2 py-1 rounded">Delete</button>}
                     </div>
                 )}
@@ -135,7 +136,7 @@ export default function Show() {
                             {(user?.name || user?.username)?.charAt(0) || '?'}
                         </div>
                     )}
-                    {user && isOwner && (
+                    {loggedInUser && isOwner && (
                         <div className="mt-2">
                             <input type="file" accept="image/*" id="avatar-upload" onChange={(e) => handleFileChange(e, 'avatar')} className="hidden" />
                             <label htmlFor="avatar-upload" className="text-blue-600 text-sm cursor-pointer">{user.avatar ? 'Change Avatar' : 'Add Avatar'}</label>
@@ -146,11 +147,11 @@ export default function Show() {
             </div>
 
             <div className="pt-16 px-4">
-                {/* <h1 className="text-xl font-bold">{user?.name || 'Public Profile'}</h1> */}
+                <h1 className="text-xl font-bold">{user?.name || 'User Profile'}</h1>
                 {user?.username && <p className="text-gray-500">@{user.username}</p>}
                 {user?.bio && <p className="text-gray-500">Bio : {user.bio}</p>}
                 {user && <SocialLinks user={user} />}
-                {user && !isOwner && (
+                {loggedInUser && !isOwner && (
                     <div className="px-4 mt-4 flex space-x-4">
                         <Link href={route('chat.show', user.id)} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Message</Link>
                         <button onClick={() => Inertia.post(route('follow.toggle', user.username), {}, { onSuccess: () => setFollowing(!following) })} className={`px-4 py-2 ${following ? 'bg-gray-600' : 'bg-blue-600'} text-white rounded hover:opacity-90`}>
@@ -199,13 +200,9 @@ export default function Show() {
         </div>
     );
 
-    if (user) {
-        return (
-            <AuthenticatedLayout >
-                {content}
-            </AuthenticatedLayout>
-        );
-    }
-
-    return content;
+    return loggedInUser ? (
+        <AuthenticatedLayout>
+            {content}
+        </AuthenticatedLayout>
+    ) : content;
 }
