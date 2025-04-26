@@ -1,6 +1,5 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -37,6 +36,13 @@ export default function AuthenticatedLayout({ header, children }) {
         });
     };
 
+    const MenuLink = ({ href, active, icon, children }) => (
+        <Link href={href} className={`flex items-center p-2 rounded-md space-x-2 hover:bg-gray-100 hover:text-blue-600 ${active ? 'text-blue-600 font-semibold' : 'text-gray-700'}`}>
+            {icon}
+            <span>{children}</span>
+        </Link>
+    );
+
     return (
         <div className="min-h-screen flex">
             {/* Sidebar */}
@@ -50,14 +56,42 @@ export default function AuthenticatedLayout({ header, children }) {
                     {user && (
                         <>
                             {user.is_admin === 1 && (
-                                <NavLink href="/admin/panel" active={route().current('admin.panel')}>Admin Panel</NavLink>
+                                <MenuLink href="/admin/panel" active={route().current('admin.panel')} icon={
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7h18M3 12h18M3 17h18" />
+                                    </svg>
+                                }>Admin Panel</MenuLink>
                             )}
-                            <NavLink href={route('dashboard')} active={route().current('dashboard')}>Dashboard</NavLink>
-                            <NavLink href={route('chat.index')} active={route().current('chat.index')}>Chat</NavLink>
-                            <NavLink href={route('posts.index')} active={route().current('posts.index')}>Posts</NavLink>
-                            <NavLink href={route('users.index')} active={route().current('users.index')}>Users</NavLink>
-                            <NavLink href={route('user.statistics')} active={route().current('user.statistics')}>Statistics</NavLink>
-                            <NavLink href={route('show_profile', { username: user.username })} active={route().current('show_profile')}>Show Your Profile</NavLink>
+                            <MenuLink href={route('dashboard')} active={route().current('dashboard')} icon={
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2 4 4 8-8 2 2" />
+                                </svg>
+                            }>Dashboard</MenuLink>
+                            <MenuLink href={route('chat.index')} active={route().current('chat.index')} icon={
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M21 16V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2z" />
+                                </svg>
+                            }>Chat</MenuLink>
+                            <MenuLink href={route('posts.index')} active={route().current('posts.index')} icon={
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2zm0 0v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6" />
+                                </svg>
+                            }>Posts</MenuLink>
+                            <MenuLink href={route('users.index')} active={route().current('users.index')} icon={
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6 5.87v-2a4 4 0 00-3-3.87M9 4a4 4 0 110 8 4 4 0 010-8zm6 0a4 4 0 110 8 4 4 0 010-8z" />
+                                </svg>
+                            }>Users</MenuLink>
+                            <MenuLink href={route('user.statistics')} active={route().current('user.statistics')} icon={
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                                </svg>
+                            }>Statistics</MenuLink>
+                            <MenuLink href={route('show_profile', { username: user.username })} active={route().current('show_profile')} icon={
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A9 9 0 1118.88 6.197a9 9 0 01-13.758 11.607z" />
+                                </svg>
+                            }>Show Your Profile</MenuLink>
                         </>
                     )}
                 </div>
