@@ -8,9 +8,8 @@
 - **Messaging**: Direct messaging between users without needing third-party packages or APIs. Includes message deletion and editing, voice chat, file attachment, and emoji reactions.
 - **Group Chat**: Create and participate in group conversations.
 - **Place Chat**: Chat based on location or specific places.
-- **Post Reactions**: Users can like or react to posts with full emoji support.
-- **Repost**: Share posts with followers.
-- **Comments**: Users can comment on posts.
+- **Post Reactions**: Users can like, dislike, or react to posts with full emoji support.
+- **Comments**: Users can comment on posts and interact through likes and dislikes.
 - **Statistics System**: Visual charts for daily, monthly, annual, and overall statistics.
 - **PWA Support**: The application is installable as a Progressive Web App (PWA) on mobile and desktop, offering offline capabilities and push notifications.
 - **Admin Panel**: Manage users, posts, and overall system settings.
