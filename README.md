@@ -6,6 +6,8 @@
 - **Notifications**: Real-time notifications built into the system.
 - **Follow System**: Users can follow/unfollow each other easily.
 - **Messaging**: Direct messaging between users without needing third-party packages or APIs. Includes message deletion and editing, voice chat, file attachment, and emoji reactions.
+- **Group Chat**: Create and participate in group conversations.
+- **Place Chat**: Chat based on location or specific places.
 - **Post Reactions**: Users can like or react to posts with full emoji support.
 - **Repost**: Share posts with followers.
 - **Comments**: Users can comment on posts.
