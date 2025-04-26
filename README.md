@@ -17,7 +17,7 @@
 
 ## Youtube Learning
 
-[Watch Tutorial](https://www.youtube.com/watch?v=FoWrrlCx7QI)
+[Watch Tutorial](https://www.youtube.com/watch?v=jmQ7DwdBjAY)
 
 ## Additional Notes
 
