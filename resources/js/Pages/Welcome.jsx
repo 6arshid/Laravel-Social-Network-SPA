@@ -1,7 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/Components/LanguageSwitcher';
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
+    const { t } = useTranslation();
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -31,6 +34,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                              </Link>
                             </div>
                             <nav className="-mx-3 flex flex-1 justify-end">
+                            <LanguageSwitcher />
                                 {auth.user ? (
                                     <Link
                                         href={route('dashboard')}
@@ -96,7 +100,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                             <div className="pt-3 sm:pt-5 lg:pt-0">
                                                 <h2 className="text-xl font-semibold text-black dark:text-white">
-                                                Laravel Social Network
+                                                Laravel Social Network {t('welcome')}
                                                 </h2>
 
                                                 <p className="mt-4 text-sm/relaxed">

@@ -37,7 +37,15 @@ Route::get('/', function () {
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::post('/language/{locale}', function ($locale) {
+    $availableLocales = ['en', 'fa', 'da', 'tr'];
 
+    if (in_array($locale, $availableLocales)) {
+        session(['locale' => $locale]);
+    }
+
+    return back(); // یا مثلا return redirect()->back();
+});
 require __DIR__.'/auth.php';
 
 Route::middleware('auth')->group(function () {
@@ -126,9 +134,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     Route::get('/username-unregister', [AdminBaseController::class, 'usernameunregister'])->name('admin.usernameunregister.index');
     Route::post('/reserved-usernames', [AdminBaseController::class, 'usernameunregisterstore'])->name('reserved-usernames.store');
-
-
-
 
 });
 

@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\SetLocale::class, // 👈 این خط رو اضافه کردم
             // \App\Http\Middleware\CheckForInstallation::class,
             // \App\Http\Middleware\VerifyCsrfToken::class, 
             // \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -28,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withProviders([
         // Erag\LaravelPwa\Providers\LaravelPwaServiceProvider::class
-        ])
+    ])
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
