@@ -22,11 +22,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
-        // if (!Schema::hasTable('users')) {
-        //     config(['app.needs_installation' => true]);
-        // } else {
-        //     config(['app.needs_installation' => false]);
-        // }
+        if (!Schema::hasTable('users')) {
+            config(['app.needs_installation' => true]);
+        } else {
+            config(['app.needs_installation' => false]);
+        }
     }
     protected $policies = [
         \App\Models\Comment::class => \App\Policies\CommentPolicy::class,
