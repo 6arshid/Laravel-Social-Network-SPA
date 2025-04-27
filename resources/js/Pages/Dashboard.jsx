@@ -33,7 +33,7 @@ export default function Dashboard({ posts, suggestedUsers = [] }) {
 
       <div className="py-12">
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+          <div className="overflow-hidden shadow-sm sm:rounded-lg p-6">
 
             {/* 🔍 Suggested Users */}
             {suggestions.length > 0 && (

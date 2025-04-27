@@ -12,11 +12,11 @@ export default function Show({ post, comments, similarPosts }) {
         <AuthenticatedLayout
          
         >
-            <Head title="Dashboard" />
+            <Head title="Show" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg p-6">
+                    <div className="overflow-hidden shadow-sm sm:rounded-lg p-6">
                               <PostCard post={post} />
                             {/* بخش کامنت‌ها */}
                       
