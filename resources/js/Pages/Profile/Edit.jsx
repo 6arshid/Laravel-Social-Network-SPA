@@ -19,8 +19,7 @@ const tabs = [
 ];
 
 export default function Edit({ mustVerifyEmail, status, auth }) {
-    const [activeTab, setActiveTab] = useState('profile'); // <-- اینجا تغییر دادیم
-
+    const [activeTab, setActiveTab] = useState('profile');
     const renderTabContent = () => {
         switch (activeTab) {
             case 'profile':
