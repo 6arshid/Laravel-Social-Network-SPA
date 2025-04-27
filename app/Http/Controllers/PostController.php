@@ -107,7 +107,7 @@ public function show(Request $request, Post $post)
         'media',
         'user',
         'likes',
-        'repost' => fn ($q) => $q->with('user', 'media'), 
+        'repost' => fn ($q) => $q->with('user', 'media'),
     ]);
 
     $comments = $post->comments()
@@ -121,18 +121,7 @@ public function show(Request $request, Post $post)
         ->paginate(5)
         ->withQueryString();
 
-    $similarPosts = \App\Models\Post::where('user_id', $post->user_id)
-        ->where('id', '!=', $post->id)
-        ->latest()
-        ->take(10)
-        ->get();
-
-    if ($similarPosts->isEmpty()) {
-        $similarPosts = \App\Models\Post::where('id', '!=', $post->id)
-            ->latest()
-            ->take(10)
-            ->get();
-    }
+    $similarPosts = $this->getSimilarPosts($post);
 
     return Inertia::render('Posts/Show', [
         'post' => $post,
@@ -144,6 +133,27 @@ public function show(Request $request, Post $post)
         ],
     ]);
 }
+
+private function getSimilarPosts(Post $post)
+{
+    $query = \App\Models\Post::with([
+        'media',
+        'user',
+        'repost' => fn ($q) => $q->with('user', 'media'),
+    ])
+    ->where('id', '!=', $post->id)
+    ->latest()
+    ->take(10);
+
+    $similarPosts = (clone $query)->where('user_id', $post->user_id)->get();
+
+    if ($similarPosts->isEmpty()) {
+        $similarPosts = $query->get();
+    }
+
+    return $similarPosts;
+}
+
 
 
 
