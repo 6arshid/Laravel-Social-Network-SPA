@@ -18,17 +18,22 @@ class PostController extends Controller
     use AuthorizesRequests;
 
     public function index()
-    {
-        $posts = Post::with('media', 'user')
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->paginate(5)
-            ->withQueryString(); // for pagination link to work
-    
-        return Inertia::render('Posts/Index', [
-            'posts' => $posts,
-        ]);
-    }
+{
+    $posts = Post::with([
+            'media',
+            'user',
+            'repost' => fn ($q) => $q->with('user', 'media'),
+        ])
+        ->where('user_id', auth()->id())
+        ->latest()
+        ->paginate(5)
+        ->withQueryString(); // for pagination link to work
+
+    return Inertia::render('Posts/Index', [
+        'posts' => $posts,
+    ]);
+}
+
 
     public function store(Request $request)
     {
