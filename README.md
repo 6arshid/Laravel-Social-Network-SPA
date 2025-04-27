@@ -10,6 +10,8 @@
 - **Place Chat**: Chat based on location or specific places.
 - **Post Reactions**: Users can like, dislike, or react to posts with full emoji support.
 - **Comments**: Users can comment on posts and interact through likes and dislikes.
+- **Repost System**: Users can easily repost others' posts to share with their own followers.
+- **Related Posts**: Related posts are suggested to users based on the content they interact with.
 - **Statistics System**: Visual charts for daily, monthly, annual, and overall statistics.
 - **PWA Support**: The application is installable as a Progressive Web App (PWA) on mobile and desktop, offering offline capabilities and push notifications.
 - **Admin Panel**: Manage users, posts, and overall system settings.
