@@ -3,7 +3,7 @@ import { usePage, router } from '@inertiajs/react';
 import axios from 'axios';
 
 export default function CommentBox({ post, comments: initialComments }) {
-  const auth = usePage().props.auth;
+  const { auth } = usePage().props;
 
   const [comments, setComments] = useState(initialComments?.data || []);
   const [currentPage, setCurrentPage] = useState(initialComments.current_page);
@@ -62,7 +62,7 @@ export default function CommentBox({ post, comments: initialComments }) {
   };
 
   const handleDelete = (id) => {
-    if (confirm('Delete this comment?')) {
+    if (confirm('Are you sure you want to delete this comment?')) {
       router.delete(`/comments/${id}`, {
         preserveScroll: true,
         onSuccess: () => {
@@ -72,10 +72,37 @@ export default function CommentBox({ post, comments: initialComments }) {
     }
   };
 
-  const toggleLike = (commentId, is_like = true) => {
-    router.post(`/comments/${commentId}/like`, { is_like }, {
-      preserveScroll: true,
-    });
+  const handleToggleLike = async (commentId, isLike = true) => {
+    try {
+      await axios.post(`/comments/${commentId}/like`, { is_like: isLike });
+
+      // Optimistic update
+      setComments(prevComments =>
+        prevComments.map(comment => {
+          if (comment.id !== commentId) return comment;
+
+          const existingLikeIndex = comment.likes.findIndex(
+            like => like.user_id === auth.user.id
+          );
+
+          let updatedLikes = [...comment.likes];
+
+          if (existingLikeIndex !== -1) {
+            updatedLikes.splice(existingLikeIndex, 1);
+          }
+
+          updatedLikes.push({
+            user_id: auth.user.id,
+            is_like: isLike,
+          });
+
+          return { ...comment, likes: updatedLikes };
+        })
+      );
+    } catch (error) {
+      console.error('Failed to toggle like/dislike:', error);
+      alert('Failed to like or dislike. Please try again.');
+    }
   };
 
   const loadMore = async () => {
@@ -94,41 +121,46 @@ export default function CommentBox({ post, comments: initialComments }) {
       setCurrentPage(newCurrentPage);
       setLastPage(newLastPage);
     } catch (err) {
-      console.error("Load more failed:", err);
+      console.error("Failed to load more comments:", err);
     } finally {
       setLoadingMore(false);
     }
   };
 
   const renderComment = (comment) => {
-    const isOwner = auth.user && auth.user.id === comment.user_id;
+    const isOwner = auth?.user?.id === comment.user_id;
     const likeCount = comment.likes?.filter(l => l.is_like).length || 0;
     const dislikeCount = comment.likes?.filter(l => !l.is_like).length || 0;
 
     return (
       <div key={comment.id} className="p-3 bg-gray-100 rounded mb-3">
-        <div className="text-sm">
-          <strong>{comment.user.name}</strong>:
-          {editingId === comment.id ? (
-            <form onSubmit={handleUpdate}>
-              <textarea
-                value={editBody}
-                onChange={(e) => setEditBody(e.target.value)}
-                className="w-full mt-1 p-1 border rounded"
-              />
-              <div className="mt-1 flex gap-2">
-                <button className="text-blue-500">Save</button>
-                <button type="button" onClick={() => setEditingId(null)} className="text-gray-500">Cancel</button>
-              </div>
-            </form>
-          ) : (
-            <span className="ml-1">{comment.body}</span>
-          )}
+        <div className="text-sm font-semibold">
+          {comment.user.name}:
         </div>
 
-        <div className="text-xs text-gray-600 flex flex-wrap gap-4 mt-1">
-          <button onClick={() => toggleLike(comment.id, true)} className="hover:underline">👍 {likeCount}</button>
-          <button onClick={() => toggleLike(comment.id, false)} className="hover:underline">👎 {dislikeCount}</button>
+        {editingId === comment.id ? (
+          <form onSubmit={handleUpdate} className="mt-1">
+            <textarea
+              value={editBody}
+              onChange={(e) => setEditBody(e.target.value)}
+              className="w-full mt-1 p-2 border rounded"
+            />
+            <div className="mt-2 flex gap-2">
+              <button className="px-3 py-1 bg-green-500 text-white rounded">Save</button>
+              <button type="button" onClick={() => setEditingId(null)} className="px-3 py-1 bg-gray-400 text-white rounded">Cancel</button>
+            </div>
+          </form>
+        ) : (
+          <p className="mt-1">{comment.body}</p>
+        )}
+
+        <div className="text-xs text-gray-600 flex gap-4 mt-2">
+          <button onClick={() => handleToggleLike(comment.id, true)} className="hover:underline">
+            👍 {likeCount}
+          </button>
+          <button onClick={() => handleToggleLike(comment.id, false)} className="hover:underline">
+            👎 {dislikeCount}
+          </button>
 
           {isOwner && editingId !== comment.id && (
             <>
@@ -142,21 +174,21 @@ export default function CommentBox({ post, comments: initialComments }) {
   };
 
   return (
-    <div className="mt-6">
-      <form onSubmit={handleSubmit}>
+    <div className="mt-8">
+      <form onSubmit={handleSubmit} className="mb-6">
         <textarea
           value={newBody}
           onChange={(e) => setNewBody(e.target.value)}
-          className="w-full border p-2 rounded"
-          placeholder="Write a comment..."
+          className="w-full border p-3 rounded"
+          placeholder="Write your comment..."
           required
         />
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 bg-blue-500 text-white px-3 py-1 rounded"
+          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
         >
-          {submitting ? 'Sending...' : 'Submit'}
+          {submitting ? 'Submitting...' : 'Submit Comment'}
         </button>
       </form>
 
@@ -165,13 +197,15 @@ export default function CommentBox({ post, comments: initialComments }) {
       </div>
 
       {currentPage < lastPage && (
-        <button
-          onClick={loadMore}
-          disabled={loadingMore}
-          className="mt-4 text-blue-500 underline"
-        >
-          {loadingMore ? 'Loading...' : 'Load more comments...'}
-        </button>
+        <div className="text-center mt-6">
+          <button
+            onClick={loadMore}
+            disabled={loadingMore}
+            className="text-blue-600 underline hover:text-blue-800"
+          >
+            {loadingMore ? 'Loading...' : 'Load more comments'}
+          </button>
+        </div>
       )}
     </div>
   );

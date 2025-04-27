@@ -9,22 +9,28 @@ use Illuminate\Http\Request;
 class CommentLikeController extends Controller
 {
     public function toggle(Request $request, Comment $comment)
-    {
-        $request->validate([
-            'is_like' => 'required|boolean',
-        ]);
+{
+    $request->validate([
+        'is_like' => 'required|boolean',
+    ]);
 
-        $existing = $comment->likes()->where('user_id', auth()->id())->first();
+    $user = $request->user();
 
-        if ($existing) {
-            $existing->delete();
-        }
+    $existing = $comment->likes()->where('user_id', $user->id)->first();
 
-        $comment->likes()->create([
-            'user_id' => auth()->id(),
-            'is_like' => $request->is_like,
-        ]);
-
-        return back();
+    if ($existing) {
+        $existing->delete();
     }
+
+    $like = $comment->likes()->create([
+        'user_id' => $user->id,
+        'is_like' => $request->is_like,
+    ]);
+
+    return response()->json([
+        'message' => 'Like updated successfully',
+        'like' => $like,
+    ]);
+}
+
 }
