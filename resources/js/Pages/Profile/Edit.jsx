@@ -14,13 +14,12 @@ const tabs = [
     { name: 'Profile Image', key: 'avatar' },
     { name: 'Links', key: 'links' },
     { name: 'Password', key: 'password' },
-    { name: 'Notifications', key: 'notifications' }, 
+    { name: 'Notifications', key: 'notifications' },
     { name: 'Delete Account', key: 'delete' },
 ];
 
-
 export default function Edit({ mustVerifyEmail, status, auth }) {
-    const [activeTab, setActiveTab] = useState('avatar');
+    const [activeTab, setActiveTab] = useState('profile'); // <-- اینجا تغییر دادیم
 
     const renderTabContent = () => {
         switch (activeTab) {
@@ -36,11 +35,10 @@ export default function Edit({ mustVerifyEmail, status, auth }) {
                 return <UpdateAvatarCoverForm user={auth.user} />;
             case 'links':
                 return <Links user={auth.user} />;
-     
             case 'password':
                 return <UpdatePasswordForm className="max-w-xl" />;
-                case 'notifications':
-            return <NotificationSettingsForm user={auth.user} />;
+            case 'notifications':
+                return <NotificationSettingsForm user={auth.user} />;
             case 'delete':
                 return <DeleteUserForm className="max-w-xl" />;
             default:
