@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     putenv("DB_USERNAME=$dbUser");
     putenv("DB_PASSWORD=$dbPass");
 
-    // Run CLI commands without bootstrapping HTTP Kernel
+    // Change directory to project root
     chdir($basePath);
 
     // 1. Clear configs and caches
@@ -42,7 +42,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         shell_exec('php artisan db:seed --force');
     }
 
-    // 4. Manually create admin user
+    // 4. Delete existing storage link if exists
+    if (file_exists($basePath . '/public/storage') || is_link($basePath . '/public/storage')) {
+        if (is_link($basePath . '/public/storage')) {
+            unlink($basePath . '/public/storage');
+        } else {
+            // if it's a folder (not symbolic link)
+            shell_exec('rm -rf ' . escapeshellarg($basePath . '/public/storage'));
+        }
+    }
+
+    // 5. Create new storage link
+    shell_exec('php artisan storage:link');
+
+    // 6. Create Admin User
     require_once $basePath . '/vendor/autoload.php';
     $app = require_once $basePath . '/bootstrap/app.php';
 
@@ -60,10 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]
     );
 
-    // Remove the installer file
+    // 7. Remove the installer file
     @unlink(__FILE__);
 
-    // Success message
+    // 8. Show success page
     echo "<!DOCTYPE html>
 <html lang='en'>
 <head>
