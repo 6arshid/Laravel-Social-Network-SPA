@@ -134,9 +134,11 @@ export default function Show() {
                     {user?.avatar ? (
                         <img src={getImageUrl(user.avatar)} alt="avatar" className="w-24 h-24 rounded-full border-4 border-white object-cover shadow" />
                     ) : (
-                        <div className="w-24 h-24 rounded-full border-4 border-white bg-gray-500 text-white flex items-center justify-center shadow text-2xl font-bold">
-                            {(user?.name || user?.username)?.charAt(0) || '?'}
-                        </div>
+                        <img
+                        src="/default-avatar.png"
+                        alt="default avatar"
+                        className="w-24 h-24 rounded-full border-4 border-white object-cover shadow"
+                    />
                     )}
                     {loggedInUser && isOwner && (
                         <div className="mt-2">
