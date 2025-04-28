@@ -6,8 +6,10 @@ import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
+    const { t } = useTranslation();
     const user = usePage().props.auth.user;
 
     const { data, setData, patch, errors, processing, recentlySuccessful, clearErrors } = useForm({
@@ -16,7 +18,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
         username: user.username ?? '',
     });
 
-    const [usernameStatus, setUsernameStatus] = useState(null); // true = available, false = taken/reserved, null = unknown
+    const [usernameStatus, setUsernameStatus] = useState(null);
     const [checkingUsername, setCheckingUsername] = useState(false);
 
     useEffect(() => {
@@ -31,7 +33,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                 .then((res) => {
                     setUsernameStatus(res.data.available);
                     if (!res.data.available) {
-                        clearErrors('username'); // don't overwrite Laravel validation
+                        clearErrors('username');
                     }
                 })
                 .catch(() => setUsernameStatus(null))
@@ -49,15 +51,17 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                    {t('profile_information')}
+                </h2>
                 <p className="mt-1 text-sm text-gray-600">
-                    Update your account's profile information and email address.
+                    {t('update_profile_info')}
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="name" value={t('name')} />
                     <TextInput
                         id="name"
                         className="mt-1 block w-full"
@@ -71,7 +75,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="username" value="Username" />
+                    <InputLabel htmlFor="username" value={t('username')} />
                     <TextInput
                         id="username"
                         className="mt-1 block w-full"
@@ -85,18 +89,18 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                     {data.username.length >= 4 && (
                         <div className="mt-1 text-sm">
                             {checkingUsername ? (
-                                <span className="text-gray-500">Checking username availability...</span>
+                                <span className="text-gray-500">{t('checking_username')}</span>
                             ) : usernameStatus === true ? (
-                                <span className="text-green-600">Username is available.</span>
+                                <span className="text-green-600">{t('username_available')}</span>
                             ) : usernameStatus === false ? (
-                                <span className="text-red-600">This username is not available.</span>
+                                <span className="text-red-600">{t('username_not_available')}</span>
                             ) : null}
                         </div>
                     )}
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value={t('email')} />
                     <TextInput
                         id="email"
                         type="email"
@@ -112,27 +116,29 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
                         <p className="mt-2 text-sm text-gray-800">
-                            Your email address is unverified.
+                            {t('email_unverified')}{' '}
                             <Link
                                 href={route('verification.send')}
                                 method="post"
                                 as="button"
                                 className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                Click here to re-send the verification email.
+                                {t('resend_verification')}
                             </Link>
                         </p>
 
                         {status === 'verification-link-sent' && (
                             <div className="mt-2 text-sm font-medium text-green-600">
-                                A new verification link has been sent to your email address.
+                                {t('verification_sent')}
                             </div>
                         )}
                     </div>
                 )}
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={processing}>
+                        {t('save')}
+                    </PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}
@@ -141,7 +147,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">Saved.</p>
+                        <p className="text-sm text-gray-600">{t('saved')}</p>
                     </Transition>
                 </div>
             </form>

@@ -1,14 +1,14 @@
-// resources/js/Pages/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage, router, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function Dashboard() {
   const { users, following } = usePage().props;
+  const { t } = useTranslation();
   const [followed, setFollowed] = useState(following || []);
   const [search, setSearch] = useState('');
 
-  // AJAX follow toggle
   const toggleFollow = async (username, userId) => {
     try {
       const res = await fetch(route('follow.ajax', { user: username }), {
@@ -32,12 +32,10 @@ export default function Dashboard() {
     }
   };
 
-  // Go to chat page
   const goToChat = (id) => {
     router.visit(route('chat.show', { user: id }));
   };
 
-  // Debounced live search with page preservation
   useEffect(() => {
     const delay = setTimeout(() => {
       const params = new URLSearchParams(window.location.search);
@@ -62,30 +60,30 @@ export default function Dashboard() {
     <AuthenticatedLayout
       header={
         <h2 className="text-xl font-semibold leading-tight text-gray-800">
-          Users
+          {/* {t('users')} */}
         </h2>
       }
     >
-      <Head title="Users" />
+      <Head title={t('users')} />
 
       <div className="py-12">
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="bg-white shadow-sm sm:rounded-lg p-6">
             <div className="p-6 max-w-4xl mx-auto">
-              <h1 className="text-3xl font-bold mb-6">Users</h1>
+              <h1 className="text-3xl font-bold mb-6">{t('users')}</h1>
 
               {/* 🔍 Search Input */}
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by name or username..."
+                placeholder={t('search_by_name_or_username')}
                 className="w-full mb-6 p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
 
               {/* ❌ No users */}
               {users.data.length === 0 && (
-                <p className="text-gray-500">No users found</p>
+                <p className="text-gray-500">{t('no_users_found')}</p>
               )}
 
               {/* ✅ User List */}
@@ -93,13 +91,13 @@ export default function Dashboard() {
                 {users.data.map(user => (
                   <li key={user.id} className="flex items-center justify-between border p-4 rounded">
                     <div className="flex items-center gap-4">
-                    <Link href={`/${user.username}`}>
-  <img
-    src={user.avatar ? `/storage/${user.avatar}` : '/default-avatar.png'}
-    alt={user.name}
-    className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
-  />
-</Link>
+                      <Link href={`/${user.username}`}>
+                        <img
+                          src={user.avatar ? `/storage/${user.avatar}` : '/default-avatar.png'}
+                          alt={user.name}
+                          className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
+                        />
+                      </Link>
                       <div>
                         <Link href={`/${user.username}`} className="font-bold text-blue-600 hover:underline">
                           @{user.username}
@@ -113,14 +111,14 @@ export default function Dashboard() {
                           className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                           onClick={() => toggleFollow(user.username, user.id)}
                         >
-                          {followed.includes(user.id) ? 'Unfollow' : 'Follow'}
+                          {followed.includes(user.id) ? t('unfollow') : t('follow')}
                         </button>
                       )}
                       <button
                         className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
                         onClick={() => goToChat(user.id)}
                       >
-                        Message
+                        {t('message')}
                       </button>
                     </div>
                   </li>

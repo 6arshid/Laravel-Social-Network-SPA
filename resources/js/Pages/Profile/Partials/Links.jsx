@@ -6,8 +6,10 @@ import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
+    const { t } = useTranslation();
     const user = usePage().props.auth.user;
 
     const { data, setData, patch, errors, processing, recentlySuccessful, clearErrors } = useForm({
@@ -31,10 +33,6 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
         telegram: user.telegram ?? '',
     });
 
-    const [usernameStatus, setUsernameStatus] = useState(null);
-    const [checkingUsername, setCheckingUsername] = useState(false);
-
-
     const submit = (e) => {
         e.preventDefault();
         patch(route('profile.update'));
@@ -43,15 +41,15 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Profile Links Information</h2>
+                <h2 className="text-lg font-medium text-gray-900">{t('profile_links_information')}</h2>
                 <p className="mt-1 text-sm text-gray-600">
-                    Update your social network information.
+                    {t('update_social_network_info')}
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="bio" value="Bio" />
+                    <InputLabel htmlFor="bio" value={t('bio')} />
                     <textarea
                         id="bio"
                         className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-indigo-200"
@@ -62,24 +60,24 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                     <InputError className="mt-2" message={errors.bio} />
                 </div>
 
-                {[ // link fields with base URLs
-                    ['location', 'Location', ''],
-                    ['website', 'Website', 'https://'],
-                    ['phone', 'Phone', ''],
-                    ['instagram', 'Instagram', 'https://instagram.com/'],
-                    ['twitter', 'Twitter', 'https://twitter.com/'],
-                    ['facebook', 'Facebook', 'https://facebook.com/'],
-                    ['linkedin', 'LinkedIn', 'https://linkedin.com/in/'],
-                    ['github', 'GitHub', 'https://github.com/'],
-                    ['tiktok', 'TikTok', 'https://tiktok.com/@'],
-                    ['snapchat', 'Snapchat', 'https://snapchat.com/add/'],
-                    ['youtube', 'YouTube', 'https://youtube.com/@'],
-                    ['pinterest', 'Pinterest', 'https://pinterest.com/'],
-                    ['whatsapp', 'WhatsApp', 'https://wa.me/'],
-                    ['telegram', 'Telegram', 'https://t.me/'],
+                {[
+                    ['location', 'location', ''],
+                    ['website', 'website', 'https://'],
+                    ['phone', 'phone', ''],
+                    ['instagram', 'instagram', 'https://instagram.com/'],
+                    ['twitter', 'twitter', 'https://twitter.com/'],
+                    ['facebook', 'facebook', 'https://facebook.com/'],
+                    ['linkedin', 'linkedin', 'https://linkedin.com/in/'],
+                    ['github', 'github', 'https://github.com/'],
+                    ['tiktok', 'tiktok', 'https://tiktok.com/@'],
+                    ['snapchat', 'snapchat', 'https://snapchat.com/add/'],
+                    ['youtube', 'youtube', 'https://youtube.com/@'],
+                    ['pinterest', 'pinterest', 'https://pinterest.com/'],
+                    ['whatsapp', 'whatsapp', 'https://wa.me/'],
+                    ['telegram', 'telegram', 'https://t.me/'],
                 ].map(([key, label, base]) => (
                     <div key={key}>
-                        <InputLabel htmlFor={key} value={label} />
+                        <InputLabel htmlFor={key} value={t(label)} />
                         <div className="flex items-center gap-2">
                             {base && (
                                 <span className="text-sm text-gray-500">{base}</span>
@@ -97,7 +95,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                 ))}
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={processing}>{t('save')}</PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}
@@ -106,7 +104,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">Saved.</p>
+                        <p className="text-sm text-gray-600">{t('saved')}</p>
                     </Transition>
                 </div>
             </form>

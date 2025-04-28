@@ -3,6 +3,7 @@ import Dropdown from '@/Components/Dropdown';
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth?.user;
@@ -10,6 +11,7 @@ export default function AuthenticatedLayout({ header, children }) {
     const [unreadCount, setUnreadCount] = useState(0);
     const [showNotifications, setShowNotifications] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (user) {
@@ -103,7 +105,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         </svg>
                                     }
                                 >
-                                    Admin Panel
+                                    {t('AdminPanel')}
                                 </MenuLink>
                             )}
 
@@ -126,7 +128,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </svg>
                                 }
                             >
-                                Dashboard
+                                {t('dashboard')}
                             </MenuLink>
 
                             <MenuLink
@@ -148,7 +150,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </svg>
                                 }
                             >
-                                Chat
+                                {t('chat')}
                             </MenuLink>
 
                             <MenuLink
@@ -170,7 +172,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </svg>
                                 }
                             >
-                                Posts
+                                 {t('posts')}
                             </MenuLink>
 
                             <MenuLink
@@ -192,7 +194,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </svg>
                                 }
                             >
-                                Users
+                                 {t('users')}
                             </MenuLink>
 
                             <MenuLink
@@ -214,7 +216,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </svg>
                                 }
                             >
-                                Statistics
+                                 {t('statistics')}
                             </MenuLink>
 
                             <MenuLink
@@ -236,7 +238,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </svg>
                                 }
                             >
-                                Your Profile
+                                {t('YourProfile')}
                             </MenuLink>
                         </>
                     )}
@@ -288,7 +290,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                                      {showNotifications && (
                                                          <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg rounded-md z-50 max-h-96 overflow-y-auto">
                                                              {notifications.length === 0 ? (
-                                                                 <div className="p-4 text-sm text-gray-500 text-center">No notifications available</div>
+                                                                 <div className="p-4 text-sm text-gray-500 text-center"> {t('No notifications available')}</div>
                                                              ) : (
                                                                  notifications.map((notif) => (
                                                                      <Link
@@ -325,9 +327,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                                          </span>
                                                      </Dropdown.Trigger>
                                                      <Dropdown.Content>
-                                                         <Dropdown.Link href={route('profile.edit')}>Edit Profile</Dropdown.Link>
+                                                         <Dropdown.Link href={route('profile.edit')}>{t('Edit Profile')}</Dropdown.Link>
                                                          <Dropdown.Link href={route('logout')} method="post" as="button">
-                                                             Log Out
+                                                         {t('log_out')}
                                                          </Dropdown.Link>
                                                      </Dropdown.Content>
                                                  </Dropdown>

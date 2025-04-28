@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { usePage, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 export default function CommentBox({ post, comments: initialComments }) {
+  const { t } = useTranslation();
   const { auth } = usePage().props;
 
   const [comments, setComments] = useState(initialComments?.data || []);
@@ -32,13 +34,13 @@ export default function CommentBox({ post, comments: initialComments }) {
       setNewBody('');
     } catch (err) {
       if (err.response?.status === 401) {
-        alert('You must be logged in to submit a comment.');
+        alert(t('You must be logged in to submit a comment.'));
         setTimeout(() => {
           router.visit('/login');
         }, 3000);
       } else {
         console.error('Error submitting comment:', err);
-        alert('Error while submitting comment.');
+        alert(t('Error while submitting comment.'));
       }
     } finally {
       setSubmitting(false);
@@ -62,7 +64,7 @@ export default function CommentBox({ post, comments: initialComments }) {
   };
 
   const handleDelete = (id) => {
-    if (confirm('Are you sure you want to delete this comment?')) {
+    if (confirm(t('Are you sure you want to delete this comment?'))) {
       router.delete(`/comments/${id}`, {
         preserveScroll: true,
         onSuccess: () => {
@@ -76,7 +78,6 @@ export default function CommentBox({ post, comments: initialComments }) {
     try {
       await axios.post(`/comments/${commentId}/like`, { is_like: isLike });
 
-      // Optimistic update
       setComments(prevComments =>
         prevComments.map(comment => {
           if (comment.id !== commentId) return comment;
@@ -101,7 +102,7 @@ export default function CommentBox({ post, comments: initialComments }) {
       );
     } catch (error) {
       console.error('Failed to toggle like/dislike:', error);
-      alert('Failed to like or dislike. Please try again.');
+      alert(t('Failed to like or dislike. Please try again.'));
     }
   };
 
@@ -146,8 +147,8 @@ export default function CommentBox({ post, comments: initialComments }) {
               className="w-full mt-1 p-2 border rounded"
             />
             <div className="mt-2 flex gap-2">
-              <button className="px-3 py-1 bg-green-500 text-white rounded">Save</button>
-              <button type="button" onClick={() => setEditingId(null)} className="px-3 py-1 bg-gray-400 text-white rounded">Cancel</button>
+              <button className="px-3 py-1 bg-green-500 text-white rounded">{t('Save')}</button>
+              <button type="button" onClick={() => setEditingId(null)} className="px-3 py-1 bg-gray-400 text-white rounded">{t('Cancel')}</button>
             </div>
           </form>
         ) : (
@@ -164,8 +165,8 @@ export default function CommentBox({ post, comments: initialComments }) {
 
           {isOwner && editingId !== comment.id && (
             <>
-              <button onClick={() => { setEditingId(comment.id); setEditBody(comment.body); }} className="text-yellow-600 hover:underline">Edit</button>
-              <button onClick={() => handleDelete(comment.id)} className="text-red-600 hover:underline">Delete</button>
+              <button onClick={() => { setEditingId(comment.id); setEditBody(comment.body); }} className="text-yellow-600 hover:underline">{t('Edit')}</button>
+              <button onClick={() => handleDelete(comment.id)} className="text-red-600 hover:underline">{t('Delete')}</button>
             </>
           )}
         </div>
@@ -180,7 +181,7 @@ export default function CommentBox({ post, comments: initialComments }) {
           value={newBody}
           onChange={(e) => setNewBody(e.target.value)}
           className="w-full border p-3 rounded"
-          placeholder="Write your comment..."
+          placeholder={t('Write your comment...')}
           required
         />
         <button
@@ -188,7 +189,7 @@ export default function CommentBox({ post, comments: initialComments }) {
           disabled={submitting}
           className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
         >
-          {submitting ? 'Submitting...' : 'Submit Comment'}
+          {submitting ? t('Submitting...') : t('Submit Comment')}
         </button>
       </form>
 
@@ -203,7 +204,7 @@ export default function CommentBox({ post, comments: initialComments }) {
             disabled={loadingMore}
             className="text-blue-600 underline hover:text-blue-800"
           >
-            {loadingMore ? 'Loading...' : 'Load more comments'}
+            {loadingMore ? t('Loading...') : t('Load more comments')}
           </button>
         </div>
       )}

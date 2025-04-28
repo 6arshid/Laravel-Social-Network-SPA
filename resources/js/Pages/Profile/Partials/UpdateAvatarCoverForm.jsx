@@ -2,8 +2,10 @@ import { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '@/Utils/cropImage';
 import { Inertia } from '@inertiajs/inertia';
+import { useTranslation } from 'react-i18next';
 
 export default function UpdateAvatarCoverForm({ user }) {
+    const { t } = useTranslation();
     const [selectedType, setSelectedType] = useState(null); // 'avatar' or 'cover'
     const [imageSrc, setImageSrc] = useState(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -11,7 +13,7 @@ export default function UpdateAvatarCoverForm({ user }) {
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
     const handleDelete = (type) => {
-        if (confirm(`Are you sure you want to delete the ${type === 'avatar' ? 'avatar' : 'cover'}?`)) {
+        if (confirm(t('confirm_delete_image', { type: t(type) }))) {
             Inertia.post(route('profile.image.delete'), { type }, {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -78,7 +80,7 @@ export default function UpdateAvatarCoverForm({ user }) {
             <div>
                 {user?.avatar && (
                     <div className="mb-4">
-                        <label className="text-sm text-gray-500">Current Avatar</label>
+                        <label className="text-sm text-gray-500">{t('current_avatar')}</label>
                         <div className="flex items-center space-x-4 mt-2">
                             <img
                                 src={`/storage/${user.avatar}`}
@@ -89,13 +91,13 @@ export default function UpdateAvatarCoverForm({ user }) {
                                 onClick={() => handleDelete('avatar')}
                                 className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
                             >
-                                Delete Avatar
+                                {t('delete_avatar')}
                             </button>
                         </div>
                     </div>
                 )}
 
-                <label className="font-semibold">Upload Avatar</label>
+                <label className="font-semibold">{t('upload_avatar')}</label>
                 <div
                     onDrop={(e) => handleDrop(e, 'avatar')}
                     onDragOver={preventDefaults}
@@ -103,7 +105,7 @@ export default function UpdateAvatarCoverForm({ user }) {
                     className="mt-2 flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-500"
                 >
                     <label className="w-full h-full cursor-pointer">
-                        <p className="text-gray-500 text-sm">Drag & Drop avatar here or click to upload</p>
+                        <p className="text-gray-500 text-sm">{t('drag_drop_avatar')}</p>
                         <input
                             type="file"
                             accept="image/*"
@@ -118,7 +120,7 @@ export default function UpdateAvatarCoverForm({ user }) {
             <div>
                 {user?.cover && (
                     <div className="mb-4">
-                        <label className="text-sm text-gray-500">Current Cover</label>
+                        <label className="text-sm text-gray-500">{t('current_cover')}</label>
                         <div className="flex items-center space-x-4 mt-2">
                             <img
                                 src={`/storage/${user.cover}`}
@@ -129,13 +131,13 @@ export default function UpdateAvatarCoverForm({ user }) {
                                 onClick={() => handleDelete('cover')}
                                 className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
                             >
-                                Delete Cover
+                                {t('delete_cover')}
                             </button>
                         </div>
                     </div>
                 )}
 
-                <label className="font-semibold">Upload Cover</label>
+                <label className="font-semibold">{t('upload_cover')}</label>
                 <div
                     onDrop={(e) => handleDrop(e, 'cover')}
                     onDragOver={preventDefaults}
@@ -143,7 +145,7 @@ export default function UpdateAvatarCoverForm({ user }) {
                     className="mt-2 flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-500"
                 >
                     <label className="w-full h-full cursor-pointer">
-                        <p className="text-gray-500 text-sm">Drag & Drop cover here or click to upload</p>
+                        <p className="text-gray-500 text-sm">{t('drag_drop_cover')}</p>
                         <input
                             type="file"
                             accept="image/*"
@@ -175,7 +177,7 @@ export default function UpdateAvatarCoverForm({ user }) {
                         onClick={uploadCroppedImage}
                         className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                     >
-                        Save Image
+                        {t('save_image')}
                     </button>
                     <button
                         onClick={() => {
@@ -184,7 +186,7 @@ export default function UpdateAvatarCoverForm({ user }) {
                         }}
                         className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
                     >
-                        Cancel
+                        {t('cancel')}
                     </button>
                 </div>
             )}

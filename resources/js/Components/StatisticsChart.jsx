@@ -2,13 +2,16 @@ import React from 'react';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 export default function StatisticsChart({ daily, monthly, yearly, total }) {
+    const { t } = useTranslation();
+
     return (
         <div className="p-6">
 
             <div className="mb-8">
-                <h2 className="text-lg font-semibold mb-2">Daily Views</h2>
+                <h2 className="text-lg font-semibold mb-2">{t('daily_views')}</h2>
                 <div className="w-full h-72">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={daily}>
@@ -24,7 +27,7 @@ export default function StatisticsChart({ daily, monthly, yearly, total }) {
             </div>
 
             <div className="mb-8">
-                <h2 className="text-lg font-semibold mb-2">Monthly Views</h2>
+                <h2 className="text-lg font-semibold mb-2">{t('monthly_views')}</h2>
                 <div className="w-full h-72">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={monthly}>
@@ -40,7 +43,7 @@ export default function StatisticsChart({ daily, monthly, yearly, total }) {
             </div>
 
             <div className="mb-8">
-                <h2 className="text-lg font-semibold mb-2">Yearly Views</h2>
+                <h2 className="text-lg font-semibold mb-2">{t('yearly_views')}</h2>
                 <div className="w-full h-72">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={yearly}>
@@ -56,7 +59,7 @@ export default function StatisticsChart({ daily, monthly, yearly, total }) {
             </div>
 
             <div className="text-lg mt-8">
-                <strong>Total Views:</strong> {total}
+                <strong>{t('total_views')}:</strong> {total}
             </div>
         </div>
     );

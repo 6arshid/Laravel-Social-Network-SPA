@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { usePage, router, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import MediaModal from '@/Components/MediaModal';
 import RepostButton from '@/Components/RepostButton';
 import dayjs from 'dayjs';
@@ -10,6 +11,7 @@ import Reactions from '@/Components/Reactions';
 dayjs.extend(relativeTime);
 
 export default function PostCard({ post }) {
+  const { t } = useTranslation();
   const auth = usePage().props.auth;
   const [modalIndex, setModalIndex] = useState(null);
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -18,10 +20,10 @@ export default function PostCard({ post }) {
 
   const media = post.media || [];
   const isOwner = auth.user && auth.user.id === post.user_id;
-  const isDeletedByReport = post.content === 'This post has been removed due to reporting abuse.';
+  const isDeletedByReport = post.content === t('This post has been removed due to reporting abuse.');
 
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this post?')) {
+    if (confirm(t('Are you sure you want to delete this post?'))) {
       router.delete(`/posts/${post.id}`);
     }
   };
@@ -29,7 +31,7 @@ export default function PostCard({ post }) {
   const handleReportSubmit = (e) => {
     e.preventDefault();
     if (parseInt(reportForm.captcha) !== captchaAnswer) {
-      alert('Incorrect captcha!');
+      alert(t('Incorrect captcha!'));
       return;
     }
     router.post('/reports', {
@@ -49,13 +51,12 @@ export default function PostCard({ post }) {
     <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300 space-y-5 mt-6">
       {isDeletedByReport ? (
         <p className="text-red-600 text-center text-lg font-semibold">
-          This post has been removed due to a violation report.
+          {t('This post has been removed due to a violation report.')}
         </p>
       ) : (
         <>
           {/* User Info with Avatar and Timestamp */}
           <div className="flex items-center justify-between">
-            {/* Left: Avatar + Username */}
             <div className="flex items-center gap-3">
               {post.user && (
                 <>
@@ -74,14 +75,13 @@ export default function PostCard({ post }) {
                       @{post.user.username}
                     </Link>
                     {typeof post.views === 'number' && (
-                      <span className="text-neutral-500 text-xs">{post.views} views</span>
+                      <span className="text-neutral-500 text-xs">{post.views} {t('views')}</span>
                     )}
                   </div>
                 </>
               )}
             </div>
 
-            {/* Right: Time Ago */}
             <Link
               href={route('posts.show', post.id)}
               className="text-neutral-500 text-xs hover:underline whitespace-nowrap"
@@ -100,9 +100,9 @@ export default function PostCard({ post }) {
               )}
               <div className="border border-neutral-200 rounded-xl p-4 bg-neutral-50 mt-2 space-y-2">
                 <div className="text-sm text-neutral-500 italic">
-                  🔁 Reposted from{' '}
+                  🔁 {t('Reposted from')}{' '}
                   <Link href={route('posts.show', post.repost.id)} className="text-blue-600 hover:underline">
-                    @{post.repost.user?.username || 'Deleted User'}
+                    @{post.repost.user?.username || t('Deleted User')}
                   </Link>
                 </div>
                 <div className="text-neutral-800 text-sm whitespace-pre-wrap">
@@ -163,22 +163,21 @@ export default function PostCard({ post }) {
           <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-neutral-600">
             <Reactions postId={post.id} reactions={post.likes} currentUserId={auth.user?.id} />
             <button onClick={() => setReportModalOpen(true)} className="text-red-600 hover:underline">
-              📣 Report
+              📣 {t('Report')}
             </button>
             {!isOwner && <RepostButton postId={post.id} />}
             {isOwner && (
               <>
                 <button onClick={() => router.get(`/posts/${post.id}/edit`)} className="text-yellow-600 hover:underline">
-                  ✏️ Edit
+                  ✏️ {t('Edit')}
                 </button>
                 <button onClick={handleDelete} className="text-red-600 hover:underline">
-                  🗑️ Delete
+                  🗑️ {t('Delete')}
                 </button>
               </>
             )}
           </div>
 
-          {/* Media Modal */}
           <MediaModal media={media} index={modalIndex} onClose={(i = null) => setModalIndex(i)} />
         </>
       )}
@@ -187,18 +186,18 @@ export default function PostCard({ post }) {
       {reportModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-5 relative">
-            <h2 className="text-xl font-semibold text-red-600">📣 Report Post</h2>
+            <h2 className="text-xl font-semibold text-red-600">📣 {t('Report Post')}</h2>
             <form onSubmit={handleReportSubmit}>
               <textarea
                 value={reportForm.reason}
                 onChange={(e) => setReportForm({ ...reportForm, reason: e.target.value })}
-                placeholder="Describe the issue clearly..."
+                placeholder={t('Describe the issue clearly...')}
                 required
                 rows={4}
                 className="w-full rounded-xl border border-neutral-300 bg-white p-4 text-sm text-neutral-800 placeholder-neutral-400 shadow-sm focus:border-red-400 focus:ring-2 focus:ring-red-300 transition duration-200 resize-none"
               />
               <div className="mb-4">
-                <label className="text-sm text-neutral-700 block mb-1">Please solve: 3 + 4 =</label>
+                <label className="text-sm text-neutral-700 block mb-1">{t('Please solve: 3 + 4 =')}</label>
                 <input
                   type="number"
                   value={reportForm.captcha}
@@ -209,10 +208,10 @@ export default function PostCard({ post }) {
               </div>
               <div className="flex justify-between items-center mt-4">
                 <button type="submit" className="bg-red-600 text-white px-5 py-2 rounded hover:bg-red-700 transition">
-                  Submit
+                  {t('Submit')}
                 </button>
                 <button type="button" onClick={() => setReportModalOpen(false)} className="text-neutral-600 hover:underline">
-                  Cancel
+                  {t('Cancel')}
                 </button>
               </div>
             </form>

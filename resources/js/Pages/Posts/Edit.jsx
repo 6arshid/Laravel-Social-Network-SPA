@@ -2,19 +2,19 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import React, { useState } from 'react';
 import { useForm, usePage, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function Dashboard({ post }) {
-  // Using the useForm hook for handling the edit form state and submission
   const { data, setData, put, processing, errors } = useForm({
     content: post.content,
   });
+  const { t } = useTranslation();
 
-  // Handle form submission to update the post content
   const handleSubmit = (e) => {
     e.preventDefault();
     put(`/posts/${post.id}`, {
       onSuccess: () => {
-        router.get(`/posts/${post.id}`); // Redirect to the updated post's page after success
+        router.get(`/posts/${post.id}`);
       },
     });
   };
@@ -23,26 +23,25 @@ export default function Dashboard({ post }) {
     <AuthenticatedLayout
       header={
         <h2 className="text-xl font-semibold leading-tight text-gray-800">
-          Dashboard
+          {t('dashboard')}
         </h2>
       }
     >
-      <Head title="Dashboard" />
+      <Head title={t('dashboard')} />
 
       <div className="py-12">
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
             <div className="p-6 text-gray-900">
-              {/* Edit Post Form */}
               <div className="max-w-4xl mx-auto mt-10 p-4 border rounded space-y-6">
-                <h2 className="text-xl font-bold text-gray-800">Edit Post</h2>
+                <h2 className="text-xl font-bold text-gray-800">{t('edit_post')}</h2>
 
                 <form onSubmit={handleSubmit}>
                   <textarea
                     value={data.content}
                     onChange={(e) => setData('content', e.target.value)}
                     className="w-full p-2 border rounded"
-                    placeholder="Edit your post..."
+                    placeholder={t('edit_your_post_placeholder')}
                   />
                   {errors.content && (
                     <div className="text-red-500">{errors.content}</div>
@@ -53,7 +52,7 @@ export default function Dashboard({ post }) {
                     className="mt-2 bg-blue-500 text-white px-3 py-1 rounded"
                     disabled={processing}
                   >
-                    Save Changes
+                    {t('save_changes')}
                   </button>
                 </form>
               </div>

@@ -4,6 +4,7 @@ import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import MessageReactions from '@/Components/MessageReactions';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { useTranslation } from 'react-i18next';
 
 export default function ChatPage({ user, messages: initialMessages }) {
     const [messages, setMessages] = useState(initialMessages);
@@ -12,7 +13,7 @@ export default function ChatPage({ user, messages: initialMessages }) {
     const [showEmoji, setShowEmoji] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const [seenStatus, setSeenStatus] = useState(false);
-
+    const { t } = useTranslation();
     const fileRef = useRef();
     const scrollRef = useRef();
 
@@ -107,7 +108,7 @@ export default function ChatPage({ user, messages: initialMessages }) {
     };
 
     const handleDelete = (id) => {
-        if (confirm('Delete this message?')) {
+        if (confirm(t('delete_message_confirm'))) {
             fetch(`/chat/message/${id}`, {
                 method: 'DELETE',
                 headers: {
@@ -119,7 +120,7 @@ export default function ChatPage({ user, messages: initialMessages }) {
     };
 
     const handleEdit = (msg) => {
-        const newContent = prompt('Edit your message:', msg.content);
+        const newContent = prompt(t('edit_message_prompt'), msg.content);
         if (!newContent || newContent === msg.content) return;
         fetch(`/chat/message/${msg.id}`, {
             method: 'PUT',
@@ -158,13 +159,9 @@ export default function ChatPage({ user, messages: initialMessages }) {
 
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold text-gray-800">
-                    Chat with {user.name}
-                </h2>
-            }
+            header={<h2 className="text-xl font-semibold text-gray-800">{t('chat_with_user', { name: user.name })}</h2>}
         >
-            <Head title="Chat" />
+            <Head title={t('chat')} />
 
             <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                 <div className="p-4 flex flex-col h-screen bg-gray-50 text-black rounded-lg shadow">
@@ -172,43 +169,27 @@ export default function ChatPage({ user, messages: initialMessages }) {
                         {[...messages].reverse().map((msg) => {
                             const isMine = msg.sender_id !== user.id;
                             return (
-                                <div
-                                    key={msg.id}
-                                    className={`relative max-w-sm p-2 rounded-xl ${
-                                        isMine
-                                            ? 'bg-blue-500 text-white self-end'
-                                            : 'bg-gray-200 self-start'
-                                    }`}
-                                >
+                                <div key={msg.id} className={`relative max-w-sm p-2 rounded-xl ${isMine ? 'bg-blue-500 text-white self-end' : 'bg-gray-200 self-start'}`}>
                                     <div>
                                         {msg.content && <p>{msg.content}</p>}
-                                        {msg.is_edited && msg.content !== '(message deleted)' && (
-                                            <span className="text-xs italic ml-2">(edited)</span>
-                                        )}
-                                        {msg.content === '(message deleted)' && (
-                                            <span className="text-xs italic ml-2">(deleted)</span>
-                                        )}
+                                        {msg.is_edited && msg.content !== '(message deleted)' && <span className="text-xs italic ml-2">{t('message_edited')}</span>}
+                                        {msg.content === '(message deleted)' && <span className="text-xs italic ml-2">{t('message_deleted')}</span>}
                                         {renderFile(msg.file_path)}
                                     </div>
                                     <MessageReactions
                                         messageId={msg.id}
                                         reactions={messageReactions[msg.id] || []}
                                         currentUserId={user.id}
-                                        refresh={(newList) =>
-                                            setMessageReactions((prev) => ({
-                                                ...prev,
-                                                [msg.id]: newList,
-                                            }))
-                                        }
+                                        refresh={(newList) => setMessageReactions((prev) => ({ ...prev, [msg.id]: newList }))}
                                     />
                                     {isMine && msg.content !== '(message deleted)' && (
                                         <div className="absolute top-1 right-2 flex gap-2 text-xs text-white">
-                                            <button onClick={() => handleEdit(msg)} title="Edit">✏️</button>
-                                            <button onClick={() => handleDelete(msg.id)} title="Delete">🗑️</button>
+                                            <button onClick={() => handleEdit(msg)} title={t('edit_message')}>✏️</button>
+                                            <button onClick={() => handleDelete(msg.id)} title={t('delete_message')}>🗑️</button>
                                         </div>
                                     )}
                                     {isMine && msg.id === messages[0]?.id && seenStatus && (
-                                        <div className="text-xs text-right mt-1">✅ Seen</div>
+                                        <div className="text-xs text-right mt-1">✅ {t('seen')}</div>
                                     )}
                                 </div>
                             );
@@ -216,92 +197,57 @@ export default function ChatPage({ user, messages: initialMessages }) {
                         <div ref={scrollRef} />
                     </div>
 
-                    {isTyping && <div className="text-sm text-gray-500 mb-2">Typing...</div>}
+                    {isTyping && <div className="text-sm text-gray-500 mb-2">{t('typing')}</div>}
 
                     <form onSubmit={submit} className="mt-auto relative">
-    {showEmoji && (
-        <div className="absolute bottom-24 left-0 z-50">
-            <Picker data={data} onEmojiSelect={handleEmojiSelect} />
-        </div>
-    )}
+                        {showEmoji && (
+                            <div className="absolute bottom-24 left-0 z-50">
+                                <Picker data={data} onEmojiSelect={handleEmojiSelect} />
+                            </div>
+                        )}
 
-    {/* emoji + input */}
-    <div className="flex items-center gap-2">
-        <button
-            type="button"
-            onClick={() => setShowEmoji(!showEmoji)}
-            className="text-2xl p-2"
-            title="Pick emoji"
-        >
-            😊
-        </button>
+                        <div className="flex items-center gap-2">
+                            <button type="button" onClick={() => setShowEmoji(!showEmoji)} className="text-2xl p-2" title={t('pick_emoji')}>
+                                😊
+                            </button>
+                            <input
+                                type="text"
+                                className="flex-1 border rounded-lg px-3 py-2 text-sm"
+                                placeholder={t('type_message_placeholder')}
+                                value={formData.content}
+                                onChange={(e) => setData('content', e.target.value)}
+                            />
+                        </div>
 
-        <input
-            type="text"
-            className="flex-1 border rounded-lg px-3 py-2 text-sm"
-            placeholder="Type a message..."
-            value={formData.content}
-            onChange={(e) => setData('content', e.target.value)}
-        />
-    </div>
+                        <div className="flex items-center justify-between mt-2 gap-2">
+                            {!recording ? (
+                                <button type="button" onClick={startRecording} className="text-2xl p-2 text-red-500" title={t('start_recording')}>
+                                    🎙️
+                                </button>
+                            ) : (
+                                <button type="button" onClick={stopRecording} className="text-2xl p-2 text-green-600" title={t('stop_recording')}>
+                                    ⏹️
+                                </button>
+                            )}
 
-    {/* voice, attach, send */}
-    <div className="flex items-center justify-between mt-2 gap-2">
-        {!recording ? (
-            <button
-                type="button"
-                onClick={startRecording}
-                className="text-2xl p-2 text-red-500"
-                title="Start recording"
-            >
-                🎙️
-            </button>
-        ) : (
-            <button
-                type="button"
-                onClick={stopRecording}
-                className="text-2xl p-2 text-green-600"
-                title="Stop recording"
-            >
-                ⏹️
-            </button>
-        )}
+                            <button type="button" onClick={triggerFileInput} className="text-2xl p-2" title={t('attach_file')}>
+                                📎
+                            </button>
 
-        <button
-            type="button"
-            onClick={triggerFileInput}
-            className="text-2xl p-2"
-            title="Attach file"
-        >
-            📎
-        </button>
+                            <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" onChange={(e) => setData('file', e.target.files[0])} className="hidden" />
 
-        <input
-            type="file"
-            ref={fileRef}
-            accept="image/*,video/*,audio/*"
-            onChange={(e) => setData('file', e.target.files[0])}
-            className="hidden"
-        />
+                            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm" title={t('send')}>
+                                {t('send')}
+                            </button>
+                        </div>
 
-        <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
-            title="Send"
-        >
-            Send
-        </button>
-    </div>
-
-    {audioURL && (
-        <audio controls className="mt-2 w-full">
-            <source src={audioURL} type="audio/webm" />
-            Your browser does not support the audio element.
-        </audio>
-    )}
-</form>
-
-
+                        {audioURL && (
+                            <audio controls className="mt-2 w-full">
+                                <source src={audioURL} type="audio/webm" />
+                                Your browser does not support the audio element.
+                            </audio>
+                        )}
+                    </form>
                 </div>
             </div>
         </AuthenticatedLayout>

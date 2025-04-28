@@ -1,11 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function Dashboard({ chats, search }) {
     const [query, setQuery] = useState(search || '');
     const [placeQuery, setPlaceQuery] = useState('');
     const [placeError, setPlaceError] = useState('');
+    const { t } = useTranslation();
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -34,10 +36,10 @@ export default function Dashboard({ chats, search }) {
             if (res.ok) {
                 router.visit(`/chat/place/${encodeURIComponent(name)}`);
             } else {
-                setPlaceError('❌ Place not found or no chat exists for it.');
+                setPlaceError(t('place_not_found'));
             }
         } catch (err) {
-            setPlaceError('⚠️ An error occurred. Try again.');
+            setPlaceError(t('error_occurred'));
         }
     };
 
@@ -45,50 +47,48 @@ export default function Dashboard({ chats, search }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Chat
+                    {t('chat')}
                 </h2>
             }
         >
-            <Head title="Chat" />
+            <Head title={t('chat')} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             <div className="p-4 space-y-6 max-w-2xl mx-auto">
-                                <h1 className="text-2xl font-bold text-center">💬 Your Chats</h1>
+                                <h1 className="text-2xl font-bold text-center">{t('your_chats')}</h1>
 
-                                {/* Search user input */}
                                 <input
                                     type="text"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
-                                    placeholder="Search by name or email..."
+                                    placeholder={t('search_by_name_or_email')}
                                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                 />
 
-                                {/* Search place form */}
                                 <form onSubmit={handlePlaceSearch} className="flex gap-2 items-center">
                                     <input
                                         type="text"
                                         value={placeQuery}
                                         onChange={(e) => setPlaceQuery(e.target.value)}
-                                        placeholder="Search place..."
+                                        placeholder={t('search_place_placeholder')}
                                         className="w-full p-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                     />
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                                     >
-                                        Go
+                                        {t('go')}
                                     </button>
                                 </form>
+
                                 {placeError && <p className="text-red-500">{placeError}</p>}
 
-                                {/* Chat list */}
                                 <div className="space-y-2 mt-4">
                                     {Object.entries(chats).length === 0 && (
-                                        <p className="text-gray-500 text-center">No results found.</p>
+                                        <p className="text-gray-500 text-center">{t('no_results_found')}</p>
                                     )}
 
                                     {Object.entries(chats)
@@ -129,7 +129,7 @@ export default function Dashboard({ chats, search }) {
                                                 >
                                                     <div className="font-semibold text-lg">{displayName}</div>
                                                     <div className="text-gray-600 text-sm truncate">
-                                                        {firstMsg.content || '📎 Sent a file or no messages yet'}
+                                                        {firstMsg.content || t('sent_a_file_or_no_message')}
                                                     </div>
                                                 </Link>
                                             );

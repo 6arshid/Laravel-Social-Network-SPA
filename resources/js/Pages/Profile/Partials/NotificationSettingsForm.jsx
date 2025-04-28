@@ -1,6 +1,8 @@
 import { useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function NotificationSettingsForm({ user }) {
+    const { t } = useTranslation();
     const { data, setData, post, processing, recentlySuccessful } = useForm({
         disable_notifications: user.disable_notifications,
     });
@@ -18,7 +20,7 @@ export default function NotificationSettingsForm({ user }) {
                     checked={data.disable_notifications}
                     onChange={(e) => setData('disable_notifications', e.target.checked)}
                 />
-                <span>Disable email notifications</span>
+                <span>{t('disable_email_notifications')}</span>
             </label>
 
             <button
@@ -26,10 +28,10 @@ export default function NotificationSettingsForm({ user }) {
                 className="px-4 py-2 bg-indigo-600 text-white rounded"
                 disabled={processing}
             >
-                Save
+                {t('save')}
             </button>
 
-            {recentlySuccessful && <p className="text-green-600">Saved!</p>}
+            {recentlySuccessful && <p className="text-green-600">{t('saved')}</p>}
         </form>
     );
 }

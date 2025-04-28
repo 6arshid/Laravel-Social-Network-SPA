@@ -8,18 +8,21 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 import UpdateAvatarCoverForm from './Partials/UpdateAvatarCoverForm';
 import Links from './Partials/Links';
 import NotificationSettingsForm from './Partials/NotificationSettingsForm';
-
-const tabs = [
-    { name: 'Profile Info', key: 'profile' },
-    { name: 'Profile Image', key: 'avatar' },
-    { name: 'Links', key: 'links' },
-    { name: 'Password', key: 'password' },
-    { name: 'Notifications', key: 'notifications' },
-    { name: 'Delete Account', key: 'delete' },
-];
+import { useTranslation } from 'react-i18next';
 
 export default function Edit({ mustVerifyEmail, status, auth }) {
     const [activeTab, setActiveTab] = useState('profile');
+    const { t } = useTranslation();
+
+    const tabs = [
+        { name: t('profile_info'), key: 'profile' },
+        { name: t('profile_image'), key: 'avatar' },
+        { name: t('links'), key: 'links' },
+        { name: t('password'), key: 'password' },
+        { name: t('notifications'), key: 'notifications' },
+        { name: t('delete_account'), key: 'delete' },
+    ];
+
     const renderTabContent = () => {
         switch (activeTab) {
             case 'profile':
@@ -49,11 +52,11 @@ export default function Edit({ mustVerifyEmail, status, auth }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Edit Profile
+                    {t('edit_profile')}
                 </h2>
             }
         >
-            <Head title="Profile" />
+            <Head title={t('profile')} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">

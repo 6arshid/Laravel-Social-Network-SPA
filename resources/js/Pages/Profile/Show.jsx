@@ -7,6 +7,7 @@ import SocialLinks from '@/Components/SocialLinks';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(relativeTime);
 dayjs.locale('en');
@@ -49,6 +50,7 @@ async function getCroppedImg(imageSrc, pixelCrop) {
 
 export default function Show() {
     const { auth, user, posts, isOwner, isFollowing, appName } = usePage().props;
+    const { t } = useTranslation();
     const loggedInUser = auth?.user;
     const [allPosts, setAllPosts] = useState(posts.data);
     const [nextPageUrl, setNextPageUrl] = useState(posts.next_page_url);
@@ -125,7 +127,7 @@ export default function Show() {
                     <div className="absolute top-2 right-2 space-x-2">
                         <input type="file" accept="image/*" id="cover-upload" onChange={(e) => handleFileChange(e, 'cover')} className="hidden" />
                         <label htmlFor="cover-upload" className="text-sm text-white bg-black/50 px-2 py-1 rounded cursor-pointer">{user.cover ? 'Change Cover' : 'Add Cover'}</label>
-                        {user.cover && <button onClick={() => deleteImage('cover')} className="text-sm bg-red-600 text-white px-2 py-1 rounded">Delete</button>}
+                        {user.cover && <button onClick={() => deleteImage('cover')} className="text-sm bg-red-600 text-white px-2 py-1 rounded">{t('delete')}</button>}
                     </div>
                 )}
                 <div className="absolute -bottom-12 left-4">
@@ -140,7 +142,7 @@ export default function Show() {
                         <div className="mt-2">
                             <input type="file" accept="image/*" id="avatar-upload" onChange={(e) => handleFileChange(e, 'avatar')} className="hidden" />
                             <label htmlFor="avatar-upload" className="text-blue-600 text-sm cursor-pointer">{user.avatar ? 'Change Avatar' : 'Add Avatar'}</label>
-                            {user.avatar && <button onClick={() => deleteImage('avatar')} className="ml-2 text-red-600 text-sm">Delete</button>}
+                            {user.avatar && <button onClick={() => deleteImage('avatar')} className="ml-2 text-red-600 text-sm">{t('delete')}</button>}
                         </div>
                     )}
                 </div>
@@ -153,7 +155,7 @@ export default function Show() {
                 {user && <SocialLinks user={user} />}
                 {loggedInUser && !isOwner && (
                     <div className="px-4 mt-4 flex space-x-4">
-                        <Link href={route('chat.show', user.id)} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Message</Link>
+                        <Link href={route('chat.show', user.id)} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">{t('message')}</Link>
                         <button onClick={() => Inertia.post(route('follow.toggle', user.username), {}, { onSuccess: () => setFollowing(!following) })} className={`px-4 py-2 ${following ? 'bg-gray-600' : 'bg-blue-600'} text-white rounded hover:opacity-90`}>
                             {following ? 'Following' : 'Follow'}
                         </button>
@@ -176,8 +178,8 @@ export default function Show() {
                     </div>
                     <div className="flex space-x-4 items-center">
                         <button onClick={uploadCroppedImage} className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700" disabled={isUploading}>{isUploading ? 'Uploading...' : 'Save Image'}</button>
-                        <button onClick={() => { setImageSrc(null); setSelectedType(null); }} className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500" disabled={isUploading}>Cancel</button>
-                        {isUploading && <span className="text-sm text-gray-500 animate-pulse">Uploading image, please wait...</span>}
+                        <button onClick={() => { setImageSrc(null); setSelectedType(null); }} className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500" disabled={isUploading}>{t('cancel')}</button>
+                        {isUploading && <span className="text-sm text-gray-500 animate-pulse">{t('uploading_please_wait')}</span>}
                     </div>
                 </div>
             )}
@@ -188,13 +190,13 @@ export default function Show() {
 
             {nextPageUrl && (
                 <div className="text-center mt-6">
-                    <button onClick={loadMore} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Load more</button>
+                    <button onClick={loadMore} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">{t('load_more')}</button>
                 </div>
             )}
 
             <div className="flex items-center justify-center mt-10">
                 <Link href="/" className="text-center text-gray-600 hover:text-blue-600 transition">
-                    Made with <span className="text-red-500">❤️</span> by <span className="font-semibold">{appName}</span>
+                {t('Made_with')} <span className="text-red-500">❤️</span> {t('by')} <span className="font-semibold">{appName}</span>
                 </Link>
             </div>
         </div>

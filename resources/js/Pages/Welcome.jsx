@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/Components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const { t } = useTranslation();
@@ -43,7 +43,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         href={route('dashboard')}
                                         className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                     >
-                                        Dashboard
+                                        {t('dashboard')}
                                     </Link>
                                 ) : (
                                     <>
@@ -51,13 +51,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                             href={route('login')}
                                             className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                         >
-                                            Log in
+                                           {t('login')}
                                         </Link>
                                         <Link
                                             href={route('register')}
                                             className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                         >
-                                            Register
+                                            {t('register')}
                                         </Link>
                                     </>
                                 )}
@@ -103,12 +103,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                             <div className="pt-3 sm:pt-5 lg:pt-0">
                                                 <h2 className="text-xl font-semibold text-black dark:text-white">
-                                                Laravel Social Network {t('welcome')}
+                                                {t('laravel_social_network')}
                                                 </h2>
 
                                                 <p className="mt-4 text-sm/relaxed">
-                                                is a modern, fast, and secure social platform built with the powerful Laravel framework. It offers a dynamic space for connecting, sharing content, creating groups, private messaging, and meaningful user interactions. With a responsive design, advanced features, and top-notch security, we bring you a new and refreshing social networking experience.
-
+                                                {t('social_network_description')}
 
                                                 </p>
                                             </div>
@@ -142,12 +141,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                     <div className="pt-3 sm:pt-5">
                                         <h2 className="text-xl font-semibold text-black dark:text-white">
-                                        Follow System
+                                        {t('follow_system')}
                                         </h2>
 
                                         <p className="mt-4 text-sm/relaxed">
-                                        The Follow System allows users to easily follow or unfollow each other, helping them stay connected with the people and content they care about. It’s designed to be fast, intuitive, and seamless, enhancing the overall social experience.
-
+                                        {t('follow_system_description')}
 
                                         </p>
                                     </div>
@@ -179,12 +177,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                     <div className="pt-3 sm:pt-5">
                                         <h2 className="text-xl font-semibold text-black dark:text-white">
-                                        Messaging
+                                        {t('messaging')}
                                         </h2>
 
                                         <p className="mt-4 text-sm/relaxed">
-                                        The Messaging feature enables users to communicate directly with each other. It supports message deletion and editing, voice chats, file attachments, and emoji reactions — providing a rich, smooth, and private conversation experience.
-
+                                        {t('messaging_description')}
 
                                         </p>
                                     </div>
@@ -214,12 +211,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                     <div className="pt-3 sm:pt-5">
                                         <h2 className="text-xl font-semibold text-black dark:text-white">
-                                        Place Chat
+                                        {t('place_chat')}
                                         </h2>
 
                                         <p className="mt-4 text-sm/relaxed">
-                                        The Place Chat feature allows users to join chats based on their current location or specific places, making it easy to connect with nearby communities, events, or shared interests.
-
+                                        {t('place_chat_description')}
 
                                         </p>
                                     </div>
