@@ -327,7 +327,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                                          </span>
                                                      </Dropdown.Trigger>
                                                      <Dropdown.Content>
-                                                         <Dropdown.Link href={route('profile.edit')}>{t('Edit Profile')}</Dropdown.Link>
+                                                         <Dropdown.Link href={route('profile.edit')}>{t('edit_profile')}</Dropdown.Link>
                                                          <Dropdown.Link href={route('logout')} method="post" as="button">
                                                          {t('log_out')}
                                                          </Dropdown.Link>
