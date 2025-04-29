@@ -24,8 +24,9 @@ class DatabaseSeeder extends Seeder
             ReservedUsernamesSeeder::class,
         ]);
         $this->call([
-            LanguageSeeder::class, // اینجا کال شده
+            LanguageSeeder::class, 
         ]);
+        $this->call(PageSeeder::class);
 
     }
     

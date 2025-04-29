@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\PageController as AdminPageController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\ReportAdminController;
 use App\Http\Controllers\Admin\AdminBaseController;
 use App\Http\Controllers\ProfileController;
@@ -44,6 +46,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::post('/language/{code}', [LanguageController::class, 'switchLanguage'])->name('languages.switch');
 Route::get('/get-languages', [LanguageController::class, 'getAll'])->name('languages.getAll');
 Route::get('/get-translations/{code}', [TranslationController::class, 'getTranslations'])->name('translations.get');
+Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 
 require __DIR__.'/auth.php';
 
@@ -138,9 +141,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/languages', [LanguageController::class, 'store'])->name('languages.store');
     Route::delete('/languages/{language}', [LanguageController::class, 'destroy'])->name('languages.destroy');
 
-    // Route::get('/get-languages', [LanguageController::class, 'getAll'])->name('languages.getAll');
-    // Route::get('/get-translations/{code}', [TranslationController::class, 'getTranslations'])->name('translations.get');
     Route::post('/update-translations/{code}', [TranslationController::class, 'updateTranslations'])->name('translations.update');
+
+    Route::get('/pages', [AdminPageController::class, 'index'])->name('admin.pages.index');
+    Route::get('/pages/create', [AdminPageController::class, 'create'])->name('admin.pages.create');
+    Route::post('/pages', [AdminPageController::class, 'store'])->name('admin.pages.store');
+    Route::get('/pages/{page:slug}/edit', [AdminPageController::class, 'edit'])->name('admin.pages.edit');
+    Route::put('/pages/{page}', [AdminPageController::class, 'update'])->name('admin.pages.update');
+    Route::delete('/pages/{page}', [AdminPageController::class, 'destroy'])->name('admin.pages.destroy');
 });
 
 Route::get('/{username}', [ProfileController::class, 'show_profile'])->name('show_profile');

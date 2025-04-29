@@ -12,6 +12,7 @@ export default function AuthenticatedLayout({ header, children }) {
     const [showNotifications, setShowNotifications] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { t } = useTranslation();
+    const pages = usePage().props.pagesByLang;
 
     useEffect(() => {
         if (user) {
@@ -240,6 +241,27 @@ export default function AuthenticatedLayout({ header, children }) {
                             >
                                 {t('YourProfile')}
                             </MenuLink>
+
+                            {pages.length > 0 && (
+  <div className="mt-4 border-t pt-2">
+    <h2 className="text-sm text-gray-500 px-2">Site Pages</h2>
+    {pages.map((page) => (
+      <MenuLink
+        key={page.slug}
+        href={`/page/${page.slug}`}
+        active={route().current('page.show') && route().params.slug === page.slug}
+        icon={
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        }
+      >
+        {page.title}
+      </MenuLink>
+    ))}
+  </div>
+)}
+
                         </>
                     )}
                 </div>

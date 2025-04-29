@@ -119,6 +119,27 @@ export default function Dashboard() {
       </div>
   
       </div>
+      <div >
+      
+      <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-5 h-min flex items-center max-w-full py-8 px-4 dark:border-zinc-800">
+        <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full min-h-[68px] min-w-[68px]">
+          <img
+            className="aspect-square h-full w-full"
+            src="/assets/images/admin/pages_admin.png"
+            alt="Profile"
+          />
+        </span>
+        <div>
+          <p className="text-xl font-extrabold text-zinc-950 leading-[100%] dark:text-white pl-4 md:text-3xl">
+          Pages
+          </p>
+          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 md:mt-2 pl-4 md:text-base">
+            <Link href={route('admin.pages.index')} className="text-blue-500 hover:underline">Click here to manage pages</Link>
+          </p>
+        </div>
+      </div>
+  
+      </div>
     {/* <div >5</div>
     <div >6</div>
     <div >7</div>
