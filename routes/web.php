@@ -18,7 +18,8 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\RootController;
 use App\Http\Controllers\StatisticController;
-
+use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\TranslationController;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -37,15 +38,13 @@ Route::get('/', function () {
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::post('/language/{locale}', function ($locale) {
-    $availableLocales = ['en', 'fa', 'da', 'tr'];
 
-    if (in_array($locale, $availableLocales)) {
-        session(['locale' => $locale]);
-    }
 
-    return back(); // یا مثلا return redirect()->back();
-});
+
+Route::post('/language/{code}', [LanguageController::class, 'switchLanguage'])->name('languages.switch');
+Route::get('/get-languages', [LanguageController::class, 'getAll'])->name('languages.getAll');
+Route::get('/get-translations/{code}', [TranslationController::class, 'getTranslations'])->name('translations.get');
+
 require __DIR__.'/auth.php';
 
 Route::middleware('auth')->group(function () {
@@ -135,6 +134,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/username-unregister', [AdminBaseController::class, 'usernameunregister'])->name('admin.usernameunregister.index');
     Route::post('/reserved-usernames', [AdminBaseController::class, 'usernameunregisterstore'])->name('reserved-usernames.store');
 
+    Route::get('/languages', [LanguageController::class, 'index'])->name('languages.index');
+    Route::post('/languages', [LanguageController::class, 'store'])->name('languages.store');
+    Route::delete('/languages/{language}', [LanguageController::class, 'destroy'])->name('languages.destroy');
+
+    // Route::get('/get-languages', [LanguageController::class, 'getAll'])->name('languages.getAll');
+    // Route::get('/get-translations/{code}', [TranslationController::class, 'getTranslations'])->name('translations.get');
+    Route::post('/update-translations/{code}', [TranslationController::class, 'updateTranslations'])->name('translations.update');
 });
 
 Route::get('/{username}', [ProfileController::class, 'show_profile'])->name('show_profile');

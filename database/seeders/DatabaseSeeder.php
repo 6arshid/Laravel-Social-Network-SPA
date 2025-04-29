@@ -23,6 +23,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ReservedUsernamesSeeder::class,
         ]);
+        $this->call([
+            LanguageSeeder::class, // اینجا کال شده
+        ]);
 
     }
     
