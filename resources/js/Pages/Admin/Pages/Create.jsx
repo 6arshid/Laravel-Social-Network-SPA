@@ -1,5 +1,7 @@
-import React from 'react';
+// resources/js/Pages/Admin/Pages/Create.jsx
+import AuthenticatedLayoutAdmin from '@/Layouts/AuthenticatedLayoutAdmin';
 import { Head, useForm, Link } from '@inertiajs/react';
+import React from 'react';
 
 export default function Create({ languages }) {
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -17,79 +19,95 @@ export default function Create({ languages }) {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-xl">
-      <Head title="ایجاد صفحه جدید" />
-      <h1 className="text-2xl font-bold mb-4">ایجاد صفحه جدید</h1>
-      <form onSubmit={submit}>
-        {/* فیلد عنوان */}
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">عنوان صفحه:</label>
-          <input 
-            type="text" 
-            value={data.title} 
-            onChange={e => setData('title', e.target.value)} 
-            className="w-full border px-3 py-2 rounded"
-          />
-          {errors.title && <div className="text-red-600 text-sm mt-1">{errors.title}</div>}
-        </div>
+    <AuthenticatedLayoutAdmin
+      header={
+        <h2 className="text-xl font-semibold leading-tight text-gray-800">
+          Create New Page
+        </h2>
+      }
+    >
+      <Head title="Create New Page" />
 
-        {/* فیلد Slug */}
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">نامک (Slug):</label>
-          <input 
-            type="text" 
-            value={data.slug} 
-            onChange={e => setData('slug', e.target.value)} 
-            className="w-full border px-3 py-2 rounded"
-          />
-          {errors.slug && <div className="text-red-600 text-sm mt-1">{errors.slug}</div>}
-        </div>
+      <div className="py-12">
+        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+            <div className="p-6 text-gray-900">
+              <div className="container mx-auto p-4 max-w-xl">
+                <form onSubmit={submit}>
+                  {/* Title field */}
+                  <div className="mb-4">
+                    <label className="block mb-1 font-medium">Page Title:</label>
+                    <input
+                      type="text"
+                      value={data.title}
+                      onChange={e => setData('title', e.target.value)}
+                      className="w-full border px-3 py-2 rounded"
+                    />
+                    {errors.title && <div className="text-red-600 text-sm mt-1">{errors.title}</div>}
+                  </div>
 
-        {/* فیلد زبان */}
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">زبان:</label>
-          <select 
-            value={data.lang}
-            onChange={e => setData('lang', e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          >
-            {languages.map(lang => (
-              <option key={lang.code} value={lang.code}>
-                {lang.name} ({lang.code})
-              </option>
-            ))}
-          </select>
-          {errors.lang && <div className="text-red-600 text-sm mt-1">{errors.lang}</div>}
-        </div>
+                  {/* Slug field */}
+                  <div className="mb-4">
+                    <label className="block mb-1 font-medium">Slug:</label>
+                    <input
+                      type="text"
+                      value={data.slug}
+                      onChange={e => setData('slug', e.target.value)}
+                      className="w-full border px-3 py-2 rounded"
+                    />
+                    {errors.slug && <div className="text-red-600 text-sm mt-1">{errors.slug}</div>}
+                  </div>
 
-        {/* فیلد محتوا */}
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">محتوا:</label>
-          <textarea 
-            value={data.content} 
-            onChange={e => setData('content', e.target.value)} 
-            className="w-full border px-3 py-2 rounded h-32"
-          />
-          {errors.content && <div className="text-red-600 text-sm mt-1">{errors.content}</div>}
-        </div>
+                  {/* Language field */}
+                  <div className="mb-4">
+                    <label className="block mb-1 font-medium">Language:</label>
+                    <select
+                      value={data.lang}
+                      onChange={e => setData('lang', e.target.value)}
+                      className="w-full border px-3 py-2 rounded"
+                    >
+                      {languages.map(lang => (
+                        <option key={lang.code} value={lang.code}>
+                          {lang.name} ({lang.code})
+                        </option>
+                      ))}
+                    </select>
+                    {errors.lang && <div className="text-red-600 text-sm mt-1">{errors.lang}</div>}
+                  </div>
 
-        {/* دکمه‌ها */}
-        <div className="flex items-center justify-between">
-          <button 
-            type="submit" 
-            disabled={processing} 
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            ذخیره
-          </button>
-          <Link 
-            href={route('admin.pages.index')} 
-            className="text-gray-600 hover:underline"
-          >
-            لغو
-          </Link>
+                  {/* Content field */}
+                  <div className="mb-4">
+                    <label className="block mb-1 font-medium">Content:</label>
+                    <textarea
+                      value={data.content}
+                      onChange={e => setData('content', e.target.value)}
+                      className="w-full border px-3 py-2 rounded h-32"
+                    />
+                    {errors.content && <div className="text-red-600 text-sm mt-1">{errors.content}</div>}
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="submit"
+                      disabled={processing}
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      Save
+                    </button>
+                    <Link
+                      href={route('admin.pages.index')}
+                      className="text-gray-600 hover:underline"
+                    >
+                      Cancel
+                    </Link>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+    </AuthenticatedLayoutAdmin>
   );
 }

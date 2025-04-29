@@ -57,15 +57,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Dashboard
                                 </NavLink>
-                                {/* <NavLink href={route('chat.index')} active={route().current('chat.index')}>
-                                    Chat
-                                </NavLink>
-                                <NavLink href={route('posts.index')} active={route().current('posts.index')}>
-                                    Posts
-                                </NavLink>
-                                <NavLink href={route('show_profile', user.username)} active={route().current('show_profile')}>
-                                    Show Your Profile
-                                </NavLink> */}
+                              
                        
                             </div>
                         </div>
@@ -151,9 +143,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             </ResponsiveNavLink>
                         )}
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>Dashboard</ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('chat.index')} active={route().current('chat.index')}>Chat</ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('posts.index')} active={route().current('posts.index')}>Posts</ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('show_profile', user.username)} active={route().current('show_profile')}>Show Your Profile</ResponsiveNavLink>
+                       
                     
                     </div>
 
