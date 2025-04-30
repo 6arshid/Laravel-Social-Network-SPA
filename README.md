@@ -14,6 +14,8 @@
 - **Related Posts**: Related posts are suggested to users based on the content they interact with.
 - **Statistics System**: Visual charts for daily, monthly, annual, and overall statistics.
 - **PWA Support**: The application is installable as a Progressive Web App (PWA) on mobile and desktop, offering offline capabilities and push notifications.
+- **Multi-language Support**: Supports multiple languages using Laravel localization and React i18n.
+ **Custom Pages**: Easily create and render custom static or dynamic pages.
 - **Admin Panel**: Manage users, posts, and overall system settings.
 - **Post Report System**: Users can report inappropriate posts.
 - **Reserved Usernames**: Prevent registration of specific usernames.
