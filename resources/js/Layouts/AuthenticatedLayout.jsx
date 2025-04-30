@@ -244,7 +244,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
                             {pages.length > 0 && (
   <div className="mt-4 border-t pt-2">
-    <h2 className="text-sm text-gray-500 px-2">Site Pages</h2>
+    <h2 className="text-sm text-gray-500 px-2">Site pages</h2>
     {pages.map((page) => (
       <MenuLink
         key={page.slug}
