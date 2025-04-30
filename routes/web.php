@@ -149,6 +149,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/pages/{page:slug}/edit', [AdminPageController::class, 'edit'])->name('admin.pages.edit');
     Route::put('/pages/{page}', [AdminPageController::class, 'update'])->name('admin.pages.update');
     Route::delete('/pages/{page}', [AdminPageController::class, 'destroy'])->name('admin.pages.destroy');
+
+    Route::post('/settings/update-maxupload', [AdminBaseController::class, 'updateMaxUpload']);
+
 });
 
 Route::get('/{username}', [ProfileController::class, 'show_profile'])->name('show_profile');

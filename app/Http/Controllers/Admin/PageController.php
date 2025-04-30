@@ -11,11 +11,11 @@ use Inertia\Inertia;
 
 class PageController extends Controller
 {
-    // نمایش لیست صفحات
+    // Display the list of pages
     public function index()
     {
         $pages = Page::orderBy('id', 'asc')->get();
-        // ارسال داده‌ها به کامپوننت React "Admin/Pages/Index"
+        // Pass data to the React component "Admin/Pages/Index"
         return Inertia::render('Admin/Pages/Index', [
             'pages' => $pages
         ]);
@@ -30,26 +30,26 @@ class PageController extends Controller
         ]);
     }
 
-    // ذخیره صفحه جدید
+    // Store a new page
     public function store(Request $request)
     {
-        // اعتبارسنجی داده‌های ورودی
-        $request->validate([
+        // Validate the incoming request data
+        $data = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:pages,slug',
             'content' => 'required|string',
             'lang' => 'required|string|in:en,fa',
         ]);
 
-        // ایجاد رکورد جدید در دیتابیس
+        // Create a new record in the database
         Page::create($data);
 
-        // ریدایرکت به لیست صفحات با یک پیام موفقیت (فلش‌پیام)
+        // Redirect to the page list with a success flash message
         return redirect()->route('admin.pages.index')
-                         ->with('success', 'صفحه جدید با موفقیت ایجاد شد.');
+                         ->with('success', 'New page created successfully.');
     }
 
-    // نمایش فرم ویرایش صفحه (پیدا کردن بر اساس id به صورت خودکار با Route Model Binding)
+    // Show the edit page form
     public function edit(Page $page)
     {
         $languages = Language::select('code', 'name')->get();
@@ -60,30 +60,30 @@ class PageController extends Controller
         ]);
     }
 
-    // به‌روزرسانی صفحه موجود
+    // Update an existing page
     public function update(Request $request, Page $page)
     {
-        // اعتبارسنجی ورودی‌ها (اجازه تکرار slug برای همین رکورد)
-        $request->validate([
+        // Validate the inputs (allowing the current record to keep its slug)
+        $data = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:pages,slug',
+            'slug' => 'required|string|max:255|unique:pages,slug,' . $page->id,
             'content' => 'required|string',
             'lang' => 'required|string|in:en,fa',
         ]);
 
-        // بروزرسانی و ذخیره تغییرات
+        // Update and save changes
         $page->update($data);
 
-        // ریدایرکت به صفحه لیست با پیام موفقیت
+        // Redirect to the page list with a success message
         return redirect()->route('admin.pages.index')
-                         ->with('success', 'صفحه موردنظر با موفقیت ویرایش شد.');
+                         ->with('success', 'Page updated successfully.');
     }
 
-    // حذف صفحه
+    // Delete a page
     public function destroy(Page $page)
     {
         $page->delete();
         return redirect()->route('admin.pages.index')
-                         ->with('success', 'صفحه موردنظر حذف شد.');
+                         ->with('success', 'Page deleted successfully.');
     }
 }

@@ -39,7 +39,7 @@ class PostController extends Controller
     {
         $data = $request->validate([
             'content' => 'required|string',
-            'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:20480'
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:'. env('MAX_UPLOAD_SIZE')
         ]);
     
         $post = Post::create([

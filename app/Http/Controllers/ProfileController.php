@@ -181,7 +181,7 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
         $request->validate([
-            'file' => 'required|image|max:2048',
+            'file' => 'required|image|max:'. env('MAX_UPLOAD_SIZE'),
             'type' => 'required|in:avatar,cover',
         ]);
 

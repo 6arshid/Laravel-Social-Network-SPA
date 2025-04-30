@@ -11,6 +11,7 @@ export default function Settings() {
   const [logo, setLogo] = useState(null);
   const [pwaIcon, setPwaIcon] = useState(null);
   const [tab, setTab] = useState('logo');
+  const maxUploadSize = props.max_upload_size;
 
   const handleSubmitLogo = (e) => {
     e.preventDefault();
@@ -42,19 +43,21 @@ export default function Settings() {
 
           {/* Tabs */}
           <div className="flex border-b mb-6">
-            {['logo', 'app', 'mail', 'google', 'pwa'].map((key) => (
-              <button
-                key={key}
-                onClick={() => setTab(key)}
-                className={`px-4 py-2 border-b-2 ${tab === key ? 'border-blue-600 text-blue-600 font-bold' : 'border-transparent text-gray-600'}`}
-              >
-                {key === 'logo' && 'Upload Logo'}
-                {key === 'app' && 'App Name'}
-                {key === 'mail' && 'Mail Settings'}
-                {key === 'google' && 'Google Login'}
-                {key === 'pwa' && 'PWA Settings'}
-              </button>
-            ))}
+          {['logo', 'app', 'mail', 'google', 'pwa', 'maxupload'].map((key) => (
+  <button
+    key={key}
+    onClick={() => setTab(key)}
+    className={`px-4 py-2 border-b-2 ${tab === key ? 'border-blue-600 text-blue-600 font-bold' : 'border-transparent text-gray-600'}`}
+  >
+    {key === 'logo' && 'Upload Logo'}
+    {key === 'app' && 'App Name'}
+    {key === 'mail' && 'Mail Settings'}
+    {key === 'google' && 'Google Login'}
+    {key === 'pwa' && 'PWA Settings'}
+    {key === 'maxupload' && 'Max Upload'}
+  </button>
+))}
+
           </div>
 
           {/* Upload Logo */}
@@ -205,7 +208,29 @@ export default function Settings() {
               </form>
             </>
           )}
-
+{tab === 'maxupload' && (
+  <form onSubmit={(e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    router.post('/admin/settings/update-maxupload', {
+      max_upload_size: formData.get('max_upload_size'),
+    });
+  }}>
+    <div className="mb-4">
+      <label className="block mb-1 font-semibold">Max Upload Size (KB)</label>
+      <input
+        type="number"
+        name="max_upload_size"
+        defaultValue={maxUploadSize}
+        min={1}
+        className="w-full border px-3 py-2 rounded"
+      />
+    </div>
+    <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+      Save
+    </button>
+  </form>
+)}
         </div>
       </div>
     </AuthenticatedLayoutAdmin>

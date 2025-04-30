@@ -10,6 +10,8 @@ use App\Models\UsernameUnregister;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\File;
+
 class AdminBaseController extends Controller
 {
     public function index(){
@@ -40,7 +42,24 @@ class AdminBaseController extends Controller
 
         return back()->with('message', 'User and related data deleted successfully.');
     }
-
+    private function getLatestEnvValue($key, $default = null)
+    {
+        $envPath = base_path('.env');
+    
+        if (!file_exists($envPath)) {
+            return $default;
+        }
+    
+        $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    
+        foreach ($envLines as $line) {
+            if (strpos(trim($line), "{$key}=") === 0) {
+                return trim(substr($line, strlen($key) + 1));
+            }
+        }
+    
+        return $default;
+    }
     public function makeAdmin($id)
     {
         $user = User::findOrFail($id);
@@ -50,39 +69,39 @@ class AdminBaseController extends Controller
         return back()->with('message', 'User is now an admin.');
     }
     public function setting(){
-        $googleConfig = config('services.google');
-
         return Inertia::render('Admin/Setting', [
-           'google' => [
-            'client_id' => env('GOOGLE_CLIENT_ID'),
-            'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-            'redirect_uri' => env('GOOGLE_REDIRECT_URI'), // ← این خط مهمه
-        ],
-        'pwa' => [
-        'install_button' => env('PWA_INSTALL_BUTTON', false),
-        'name' => env('PWA_NAME'),
-        'short_name' => env('PWA_SHORT_NAME'),
-        'background_color' => env('PWA_BACKGROUND_COLOR'),
-        'display' => env('PWA_DISPLAY'),
-        'description' => env('PWA_DESCRIPTION'),
-        'theme_color' => env('PWA_THEME_COLOR'),
-        'icon' => env('PWA_ICON'),
-        ],
-        'app_name' => env('APP_NAME'),
-        'mail' => [
-        'host' => env('MAIL_HOST'),
-        'port' => env('MAIL_PORT'),
-        'username' => env('MAIL_USERNAME'),
-        'password' => env('MAIL_PASSWORD'),
-        'from_address' => env('MAIL_FROM_ADDRESS'),
-        'from_name' => env('MAIL_FROM_NAME'),
-    ],
+            'google' => [
+                'client_id' => env('GOOGLE_CLIENT_ID'),
+                'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+                'redirect_uri' => env('GOOGLE_REDIRECT_URI'),
+            ],
+            'pwa' => [
+                'install_button' => env('PWA_INSTALL_BUTTON', false),
+                'name' => env('PWA_NAME'),
+                'short_name' => env('PWA_SHORT_NAME'),
+                'background_color' => env('PWA_BACKGROUND_COLOR'),
+                'display' => env('PWA_DISPLAY'),
+                'description' => env('PWA_DESCRIPTION'),
+                'theme_color' => env('PWA_THEME_COLOR'),
+                'icon' => env('PWA_ICON'),
+            ],
+            'app_name' => env('APP_NAME'),
+            'mail' => [
+                'host' => env('MAIL_HOST'),
+                'port' => env('MAIL_PORT'),
+                'username' => env('MAIL_USERNAME'),
+                'password' => env('MAIL_PASSWORD'),
+                'from_address' => env('MAIL_FROM_ADDRESS'),
+                'from_name' => env('MAIL_FROM_NAME'),
+            ],
+           'max_upload_size' => $this->getLatestEnvValue('MAX_UPLOAD_SIZE', 2048),
         ]);
     }
+    
     public function upload_logo(Request $request)
     {
         $request->validate([
-            'logo' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+            'logo' => 'required|image|mimes:png,jpg,jpeg|max:'. env('MAX_UPLOAD_SIZE'),
         ]);
     
         $logo = $request->file('logo');
@@ -209,7 +228,7 @@ public function updateMailSettings(Request $request)
     public function uploadPwaIcon(Request $request)
     {
         $request->validate([
-            'icon' => 'required|image|mimes:png,jpg,jpeg,svg,ico|max:2048',
+            'icon' => 'required|image|mimes:png,jpg,jpeg,svg,ico|max:'. env('MAX_UPLOAD_SIZE'),
         ]);
 
         $icon = $request->file('icon');
@@ -232,5 +251,35 @@ public function updateMailSettings(Request $request)
 
         return redirect()->route('admin.usernameunregister.index')->with('success', 'Username has been reserved.');
     }
+    public function updateMaxUpload(Request $request)
+{
+
+    $request->validate([
+        'max_upload_size' => 'required|numeric|min:1'
+    ]);
+
+    $newValue = $request->input('max_upload_size');
+
+    // مسیر فایل env
+    $envPath = base_path('.env');
+    $key = 'MAX_UPLOAD_SIZE';
+
+    // مقدار موجود را جایگزین کن، یا اضافه کن اگر نبود
+    if (File::exists($envPath)) {
+        $env = File::get($envPath);
+
+        if (str_contains($env, $key . '=')) {
+            // جایگزین کن
+            $env = preg_replace("/^{$key}=.*/m", "{$key}={$newValue}", $env);
+        } else {
+            // اضافه کن
+            $env .= "\n{$key}={$newValue}";
+        }
+
+        File::put($envPath, $env);
+    }
+
+    return back()->with('success', 'Max upload size updated!');
+}
     
 }

@@ -96,7 +96,7 @@ class MessageController extends Controller
             'receiver_id' => 'nullable|exists:users,id',
             'room_name' => 'nullable|string|max:255',
             'content' => 'nullable|string',
-            'file' => 'nullable|mimetypes:image/jpeg,image/png,image/gif,video/mp4,video/quicktime,audio/webm,video/webm|max:10240',
+            'file' => 'nullable|mimetypes:image/jpeg,image/png,image/gif,video/mp4,video/quicktime,audio/webm,video/webm|max:'. env('MAX_UPLOAD_SIZE'),
         ]);
     
         $data['sender_id'] = auth()->id();
