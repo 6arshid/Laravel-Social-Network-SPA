@@ -165,7 +165,9 @@ export default function PostCard({ post }) {
             <button onClick={() => setReportModalOpen(true)} className="text-red-600 hover:underline">
               📣 {t('Report')}
             </button>
-            {!isOwner && <RepostButton postId={post.id} />}
+            {/* {!isOwner && <RepostButton postId={post.id} />} */}
+            <RepostButton postId={post.id} isOwner={isOwner} />
+
             {isOwner && (
               <>
                 <button onClick={() => router.get(`/posts/${post.id}/edit`)} className="text-yellow-600 hover:underline">
