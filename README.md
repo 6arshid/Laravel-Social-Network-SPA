@@ -43,6 +43,10 @@ This guide will help you set up the project locally.
 - Git
 - MySQL or any compatible database
 
+## Image demo
+
+![BlueCMS](public/assets/Screenshot 2025-05-01 133619.png)
+
 ## Installation Steps
 
 ### 1. Clone the Repository
