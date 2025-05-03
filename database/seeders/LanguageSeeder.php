@@ -333,6 +333,21 @@ class LanguageSeeder extends Seeder
             'monthly_views' => ['en' => 'Monthly Views', 'fa' => 'بازدیدهای ماهانه'],
             'yearly_views' => ['en' => 'Yearly Views', 'fa' => 'بازدیدهای سالانه'],
             'total_views' => ['en' => 'Total Views', 'fa' => 'مجموع بازدیدها'],
+            
+
+            'dashboard' => ['en' => 'Dashboard', 'fa' => 'داشبورد'],
+            'followed_users' => ['en' => 'Followed Users', 'fa' => 'کاربران دنبال‌شده'],
+            'explorer' => ['en' => 'Explorer', 'fa' => 'اکسپلور'],
+            'load_more' => ['en' => 'Load More', 'fa' => 'بارگذاری بیشتر'],
+            'no_posts_to_display' => ['en' => 'No posts to display', 'fa' => 'پستی برای نمایش وجود ندارد'],
+            'no_followed_posts' => ['en' => 'No posts from followed users yet.', 'fa' => 'هنوز پستی از کاربران دنبال‌شده وجود ندارد.'],
+            'no_explorer_posts' => ['en' => 'No posts available to explore.', 'fa' => 'پستی برای اکسپلور وجود ندارد.'],
+            'suggested_users_to_follow' => ['en' => 'Suggested Users to Follow', 'fa' => 'کاربران پیشنهادی برای دنبال‌کردن'],
+            'follow' => ['en' => 'Follow', 'fa' => 'دنبال‌کردن'],
+            'loading' => ['en' => 'Loading', 'fa' => 'در حال بارگذاری'],
+            'back_to_top' => ['en' => 'Back to Top', 'fa' => 'بازگشت به بالا'],
+            'retry' => ['en' => 'Retry', 'fa' => 'تلاش مجدد'],
+
         ];
 
         foreach ($translations as $key => $values) {

@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import PostCard from '@/Components/PostCard';
-import CommentBox from '@/Components/CommentBox';
 import { useTranslation } from 'react-i18next';
 
-export default function Dashboard({ posts, suggestedUsers = [] }) {
+export default function Dashboard({ followedPosts, explorerPosts, suggestedUsers = [] }) {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState('followed');
   const [suggestions, setSuggestions] = useState(suggestedUsers);
+
+  const [followedData, setFollowedData] = useState(followedPosts);
+  const [explorerData, setExplorerData] = useState(explorerPosts);
+
+  const observer = useRef();
+  const loaderRef = useRef(null);
+
+  const activeData = activeTab === 'followed' ? followedData : explorerData;
+  const setActiveData = activeTab === 'followed' ? setFollowedData : setExplorerData;
 
   const handleFollow = async (username, id) => {
     try {
       const { data } = await axios.post(`/ajax/follow/${username}`);
-
       if (data.status === 'followed') {
         setSuggestions((prev) => prev.filter((user) => user.id !== id));
       }
@@ -22,13 +30,83 @@ export default function Dashboard({ posts, suggestedUsers = [] }) {
     }
   };
 
+  const fetchMorePosts = async () => {
+    if (!activeData?.links?.next) return;
+    try {
+      const response = await axios.get(activeData.links.next);
+      const newPosts = response.data;
+
+      setActiveData((prev) => ({
+        ...newPosts,
+        data: [...prev.data, ...newPosts.data],
+      }));
+    } catch (err) {
+      console.error("Failed to load more posts", err);
+    }
+  };
+
+  const handleRetry = () => {
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    if (!loaderRef.current || !activeData?.links?.next) return;
+
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          fetchMorePosts();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.current.observe(loaderRef.current);
+  }, [activeData.links?.next, activeTab]);
+
+  const renderPosts = (posts) => {
+    if (posts.data.length === 0) {
+      if (activeTab === 'explorer') {
+        return (
+          <div className="text-center text-gray-500 py-10">
+            <p className="mb-4">{t('no_explorer_posts')}</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                {t('back_to_top')}
+              </button>
+              <button
+                onClick={handleRetry}
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                {t('retry')}
+              </button>
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className="text-center text-gray-500 py-10">
+            <p>{t('no_followed_posts')}</p>
+          </div>
+        );
+      }
+    }
+
+    return posts.data.map((post) => (
+      <div key={post.id} className="mb-8">
+        <PostCard post={post} />
+      </div>
+    ));
+  };
+
   return (
     <AuthenticatedLayout
-      header={
-        <h2 className="text-xl font-semibold leading-tight text-gray-800">
-          {/* {t('dashboard')} */}
-        </h2>
-      }
+      header={<h2 className="text-xl font-semibold leading-tight text-gray-800">{t('dashboard')}</h2>}
     >
       <Head title={t('dashboard')} />
 
@@ -68,33 +146,38 @@ export default function Dashboard({ posts, suggestedUsers = [] }) {
               </div>
             )}
 
-            {/* 📢 Feed Header */}
-            <h1 className="text-2xl font-bold mb-6 text-gray-800">📢 {t('posts_from_followed_users')}</h1>
+            {/* 📌 Tabs */}
+            <div className="mb-6 flex gap-4 border-b">
+              <button
+                onClick={() => setActiveTab('followed')}
+                className={`px-4 py-2 border-b-2 transition ${
+                  activeTab === 'followed'
+                    ? 'border-blue-600 text-blue-600 font-semibold'
+                    : 'border-transparent text-gray-600'
+                }`}
+              >
+                {t('followed_users')}
+              </button>
+              <button
+                onClick={() => setActiveTab('explorer')}
+                className={`px-4 py-2 border-b-2 transition ${
+                  activeTab === 'explorer'
+                    ? 'border-blue-600 text-blue-600 font-semibold'
+                    : 'border-transparent text-gray-600'
+                }`}
+              >
+                {t('explorer')}
+              </button>
+            </div>
 
-            {/* Posts */}
-            {posts.data.length === 0 ? (
-              <p className="text-gray-600">{t('no_posts_to_display')}</p>
-            ) : (
-              posts.data.map((post) => (
-                <div key={post.id} className="mb-8">
-                  <PostCard post={post} />
-                  <CommentBox post={post} comments={post.comments?.data || []} />
-                </div>
-              ))
-            )}
+            {/* 📢 Posts */}
+            {renderPosts(activeData)}
 
-            {/* Pagination */}
-            {posts.links?.next && (
-              <div className="text-center mt-6">
-                <Link
-                  href={posts.links.next}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  preserveScroll
-                >
-                  {t('load_more')}
-                </Link>
-              </div>
-            )}
+            {/* 🔁 Infinite Scroll Loader */}
+            <div ref={loaderRef} className="h-10 mt-6 text-center text-gray-500">
+              {activeData?.links?.next && <span>{t('loading')}...</span>}
+            </div>
+
           </div>
         </div>
       </div>
