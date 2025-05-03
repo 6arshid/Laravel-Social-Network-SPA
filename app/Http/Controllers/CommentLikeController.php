@@ -22,15 +22,19 @@ class CommentLikeController extends Controller
         $existing->delete();
     }
 
-    $like = $comment->likes()->create([
+    $comment->likes()->create([
         'user_id' => $user->id,
         'is_like' => $request->is_like,
     ]);
 
+    // برای اطمینان از این‌که `likes` همیشه ارسال می‌شود:
+    $comment->load('likes');
+
     return response()->json([
         'message' => 'Like updated successfully',
-        'like' => $like,
+        'likes' => $comment->likes,
     ]);
 }
+
 
 }

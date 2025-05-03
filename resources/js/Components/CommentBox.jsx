@@ -77,27 +77,27 @@ export default function CommentBox({ post, comments: initialComments }) {
   const handleToggleLike = async (commentId, isLike = true) => {
     try {
       await axios.post(`/comments/${commentId}/like`, { is_like: isLike });
-
+  
       setComments(prevComments =>
         prevComments.map(comment => {
           if (comment.id !== commentId) return comment;
-
-          const existingLikeIndex = comment.likes.findIndex(
+  
+          const likesArray = Array.isArray(comment.likes) ? [...comment.likes] : [];
+  
+          const existingLikeIndex = likesArray.findIndex(
             like => like.user_id === auth.user.id
           );
-
-          let updatedLikes = [...comment.likes];
-
+  
           if (existingLikeIndex !== -1) {
-            updatedLikes.splice(existingLikeIndex, 1);
+            likesArray.splice(existingLikeIndex, 1);
           }
-
-          updatedLikes.push({
+  
+          likesArray.push({
             user_id: auth.user.id,
             is_like: isLike,
           });
-
-          return { ...comment, likes: updatedLikes };
+  
+          return { ...comment, likes: likesArray };
         })
       );
     } catch (error) {
@@ -105,6 +105,7 @@ export default function CommentBox({ post, comments: initialComments }) {
       alert(t('Failed to like or dislike. Please try again.'));
     }
   };
+  
 
   const loadMore = async () => {
     if (currentPage >= lastPage) return;
