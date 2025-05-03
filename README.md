@@ -22,7 +22,7 @@
 
 ## Youtube Learning
 
-[Watch Tutorial](https://www.youtube.com/watch?v=jmQ7DwdBjAY)
+[Watch Tutorial](https://www.youtube.com/watch?v=Ll8t6B62w8s)
 
 ## Additional Notes
 
