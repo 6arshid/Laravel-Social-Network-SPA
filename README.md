@@ -43,6 +43,8 @@ This guide will help you set up the project locally.
 - Git
 - MySQL or any compatible database
 
+
+
 ## Installation Steps
 
 ### 1. Clone the Repository
