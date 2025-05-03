@@ -52,7 +52,7 @@ class AdminBaseController extends Controller
     
         $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     
-        foreach ($envLines as $line) {
+        foreach (array_reverse($envLines) as $line) {
             if (strpos(trim($line), "{$key}=") === 0) {
                 return trim(substr($line, strlen($key) + 1));
             }
@@ -60,6 +60,7 @@ class AdminBaseController extends Controller
     
         return $default;
     }
+    
     public function makeAdmin($id)
     {
         $user = User::findOrFail($id);
@@ -68,35 +69,39 @@ class AdminBaseController extends Controller
 
         return back()->with('message', 'User is now an admin.');
     }
-    public function setting(){
+    public function setting()
+    {
         return Inertia::render('Admin/Setting', [
             'google' => [
-                'client_id' => env('GOOGLE_CLIENT_ID'),
-                'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-                'redirect_uri' => env('GOOGLE_REDIRECT_URI'),
+                'client_id'     => $this->getLatestEnvValue('GOOGLE_CLIENT_ID'),
+                'client_secret' => $this->getLatestEnvValue('GOOGLE_CLIENT_SECRET'),
+                'redirect_uri'  => $this->getLatestEnvValue('GOOGLE_REDIRECT_URI'),
             ],
             'pwa' => [
-                'install_button' => env('PWA_INSTALL_BUTTON', false),
-                'name' => env('PWA_NAME'),
-                'short_name' => env('PWA_SHORT_NAME'),
-                'background_color' => env('PWA_BACKGROUND_COLOR'),
-                'display' => env('PWA_DISPLAY'),
-                'description' => env('PWA_DESCRIPTION'),
-                'theme_color' => env('PWA_THEME_COLOR'),
-                'icon' => env('PWA_ICON'),
+                'install_button'   => filter_var($this->getLatestEnvValue('PWA_INSTALL_BUTTON', false), FILTER_VALIDATE_BOOLEAN),
+                'name'             => $this->getLatestEnvValue('PWA_NAME'),
+                'short_name'       => $this->getLatestEnvValue('PWA_SHORT_NAME'),
+                'background_color' => $this->getLatestEnvValue('PWA_BACKGROUND_COLOR'),
+                'display'          => $this->getLatestEnvValue('PWA_DISPLAY'),
+                'description'      => $this->getLatestEnvValue('PWA_DESCRIPTION'),
+                'theme_color'      => $this->getLatestEnvValue('PWA_THEME_COLOR'),
+                'icon'             => $this->getLatestEnvValue('PWA_ICON'),
             ],
-            'app_name' => env('APP_NAME'),
+            'app_name' => $this->getLatestEnvValue('APP_NAME'),
+    
             'mail' => [
-                'host' => env('MAIL_HOST'),
-                'port' => env('MAIL_PORT'),
-                'username' => env('MAIL_USERNAME'),
-                'password' => env('MAIL_PASSWORD'),
-                'from_address' => env('MAIL_FROM_ADDRESS'),
-                'from_name' => env('MAIL_FROM_NAME'),
+                'host'          => $this->getLatestEnvValue('MAIL_HOST'),
+                'port'          => $this->getLatestEnvValue('MAIL_PORT'),
+                'username'      => $this->getLatestEnvValue('MAIL_USERNAME'),
+                'password'      => $this->getLatestEnvValue('MAIL_PASSWORD'),
+                'from_address'  => $this->getLatestEnvValue('MAIL_FROM_ADDRESS'),
+                'from_name'     => $this->getLatestEnvValue('MAIL_FROM_NAME'),
             ],
-           'max_upload_size' => $this->getLatestEnvValue('MAX_UPLOAD_SIZE', 2048),
+    
+            'max_upload_size' => $this->getLatestEnvValue('MAX_UPLOAD_SIZE', 2048),
         ]);
     }
+
     
     public function upload_logo(Request $request)
     {
@@ -139,18 +144,20 @@ class AdminBaseController extends Controller
         $envContent = file_get_contents($envPath);
     
         foreach ($values as $key => $value) {
-            $pattern = "/^{$key}=.*/m";
+            // پاک کردن نقل‌قول‌های اضافه از مقدار ورودی
+            $value = trim($value, "\"'"); // حذف "" یا ''
             $replacement = "{$key}=\"{$value}\"";
+            $pattern = "/^{$key}=.*/m";
     
             if (preg_match($pattern, $envContent)) {
                 $envContent = preg_replace($pattern, $replacement, $envContent);
             } else {
-                // Add at the end if not exists
                 $envContent .= "\n{$replacement}";
             }
         }
     
         file_put_contents($envPath, $envContent);
+    
         \Artisan::call('config:clear');
         \Artisan::call('cache:clear');
         \Artisan::call('optimize:clear');
