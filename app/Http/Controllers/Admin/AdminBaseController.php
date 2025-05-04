@@ -43,23 +43,25 @@ class AdminBaseController extends Controller
         return back()->with('message', 'User and related data deleted successfully.');
     }
     private function getLatestEnvValue($key, $default = null)
-    {
-        $envPath = base_path('.env');
-    
-        if (!file_exists($envPath)) {
-            return $default;
-        }
-    
-        $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    
-        foreach (array_reverse($envLines) as $line) {
-            if (strpos(trim($line), "{$key}=") === 0) {
-                return trim(substr($line, strlen($key) + 1));
-            }
-        }
-    
+{
+    $envPath = base_path('.env');
+
+    if (!file_exists($envPath)) {
         return $default;
     }
+
+    $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+    foreach (array_reverse($envLines) as $line) {
+        if (strpos(trim($line), "{$key}=") === 0) {
+            $rawValue = trim(substr($line, strlen($key) + 1));
+            return trim($rawValue, "\"'"); // حذف " و '
+        }
+    }
+
+    return $default;
+}
+
     
     public function makeAdmin($id)
     {
