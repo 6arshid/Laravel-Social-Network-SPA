@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             \App\Http\Middleware\SetLocale::class, // 👈 این خط رو اضافه کردم
-            \App\Http\Middleware\CheckForInstallation::class,
+            // \App\Http\Middleware\CheckForInstallation::class,
             \App\Http\Middleware\VerifyCsrfToken::class, 
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
