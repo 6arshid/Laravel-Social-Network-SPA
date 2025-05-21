@@ -13,7 +13,9 @@ export default function Edit({ page, languages }) {
 
   const submit = (e) => {
     e.preventDefault();
-    put(route('admin.pages.update', page.id));
+
+    put(route('admin.pages.update', page.slug));
+
   };
 
   return (
