@@ -1,7 +1,7 @@
-// resources/js/Pages/Profile/Private.jsx
-
 import React from 'react';
 import { Inertia } from '@inertiajs/inertia';
+
+const getImageUrl = (path) => `/storage/${path}`;
 
 export default function Private({ user, isFollowing, hasPendingRequest }) {
   const sendFollowRequest = () => {
@@ -10,7 +10,23 @@ export default function Private({ user, isFollowing, hasPendingRequest }) {
 
   return (
     <div className="max-w-xl mx-auto mt-20 text-center">
-      <h1 className="text-2xl font-bold">This profile is private</h1>
+      <div className="flex justify-center mt-6">
+        {user?.avatar ? (
+          <img
+            src={getImageUrl(user.avatar)}
+            alt="avatar"
+            className="w-24 h-24 rounded-full border-4 border-white object-cover shadow"
+          />
+        ) : (
+          <img
+            src="/default-avatar.png"
+            alt="default avatar"
+            className="w-24 h-24 rounded-full border-4 border-white object-cover shadow"
+          />
+        )}
+      </div>
+
+      <h1 className="text-2xl font-bold mt-4">This profile is private</h1>
       <p className="text-gray-600 mt-2">You must follow @{user.username} to view their content.</p>
 
       {!isFollowing && !hasPendingRequest && (
