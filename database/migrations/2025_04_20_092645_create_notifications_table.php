@@ -19,6 +19,8 @@ return new class extends Migration
             $table->boolean('read')->default(false);
             $table->string('type')->default('general');
             $table->json('data')->nullable();
+            $table->morphs('notifiable'); // notifiable_type و notifiable_id
+            $table->timestamp('read_at')->nullable(); // جایگزین `read` boolean
             $table->timestamps();
         });
     }
