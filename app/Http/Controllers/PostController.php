@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use DB;
 class PostController extends Controller
 {
     use AuthorizesRequests;
@@ -105,15 +106,36 @@ class PostController extends Controller
 }
 public function show(Request $request, Post $post)
 {
-    // افزایش تعداد بازدید
-    $post->increment('views');
-
+    
     $post->load([
         'media',
         'user',
         'likes',
         'repost' => fn ($q) => $q->with('user', 'media'),
     ]);
+
+    $owner = $post->user;
+    $authUser = Auth::user();
+
+    if ($owner->is_private) {
+        if (!$authUser) {
+            abort(403, 'Login required.');
+        }
+
+        if ($authUser->id !== $owner->id) {
+            $isFollower = DB::table('follows')
+                ->where('follower_id', $authUser->id)
+                ->where('following_id', $owner->id)
+                ->where('accepted', true)
+                ->exists();
+
+            if (!$isFollower) {
+                abort(403, 'You are not allowed to view this post.');
+            }
+        }
+    }
+
+    $post->increment('views');
 
     $comments = $post->comments()
         ->with([
@@ -134,10 +156,12 @@ public function show(Request $request, Post $post)
         'reactions' => $post->likes,
         'similarPosts' => $similarPosts,
         'auth' => [
-            'user' => Auth::user(),
+            'user' => $authUser,
         ],
     ]);
 }
+
+
 
 private function getSimilarPosts(Post $post)
 {
