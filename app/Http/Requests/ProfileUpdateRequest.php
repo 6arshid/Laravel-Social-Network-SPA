@@ -29,7 +29,10 @@ class ProfileUpdateRequest extends FormRequest
                     $fail('This username cannot be used.');
                 }
             },
+            
+
             ],
+                'is_private' => 'boolean',
             'email' => [
                 'required',
                 'string',

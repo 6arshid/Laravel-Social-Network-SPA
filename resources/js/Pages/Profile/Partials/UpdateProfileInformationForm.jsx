@@ -16,6 +16,8 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
         name: user.name,
         email: user.email,
         username: user.username ?? '',
+        is_private: user.is_private ?? false, 
+
     });
 
     const [usernameStatus, setUsernameStatus] = useState(null);
@@ -98,7 +100,20 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         </div>
                     )}
                 </div>
-
+<div>
+    <InputLabel htmlFor="is_private" value={t('private_profile')} />
+    <label className="flex items-center mt-2">
+        <input
+            id="is_private"
+            type="checkbox"
+            checked={data.is_private}
+            onChange={(e) => setData('is_private', e.target.checked)}
+            className="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+        />
+        <span className="ml-2 text-sm text-gray-600">{t('make_profile_private')}</span>
+    </label>
+    <InputError className="mt-2" message={errors.is_private} />
+</div>
                 <div>
                     <InputLabel htmlFor="email" value={t('email')} />
                     <TextInput

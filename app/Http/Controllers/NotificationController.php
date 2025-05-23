@@ -7,24 +7,38 @@ use App\Models\Notification;
 
 class NotificationController extends Controller
 {
-    public function getUserNotifications()
-    {
-        $user = auth()->user();
+public function getUserNotifications()
+{
+    $user = auth()->user();
 
-        $notifications = Notification::where('user_id', $user->id)
-            ->latest()
-            ->take(10)
-            ->get();
+    $notifications = \App\Models\Notification::where('user_id', $user->id)
+        ->latest()
+        ->take(10)
+        ->get()
+        ->map(function ($notif) {
+            return [
+                'id' => $notif->id,
+                'message' => $notif->message,
+                'link' => $notif->link,
+                'read' => $notif->read,
+                'type' => $notif->type ?? 'general',
+                'data' => is_string($notif->data) ? json_decode($notif->data, true) : $notif->data, // 👈 این خط مهمه
+                'created_at' => $notif->created_at->diffForHumans(),
+            ];
+        });
 
-        $unreadCount = Notification::where('user_id', $user->id)
-            ->where('read', false)
-            ->count();
+    $unreadCount = \App\Models\Notification::where('user_id', $user->id)
+        ->where('read', false)
+        ->count();
 
-        return response()->json([
-            'notifications' => $notifications,
-            'unread_count' => $unreadCount,
-        ]);
-    }
+    return response()->json([
+        'notifications' => $notifications,
+        'unread_count' => $unreadCount,
+    ]);
+}
+
+
+
 
     public function markAsRead($id)
     {

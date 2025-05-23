@@ -25,7 +25,8 @@ class User extends Authenticatable
         'avatar', 'cover','google_id','bio','location','website',
         'phone','instagram','twitter','facebook','linkedin',
         'github','tiktok','snapchat','youtube','pinterest',
-        'whatsapp','telegram','is_admin','verify','disable_notifications'
+        'whatsapp','telegram','is_admin','verify','disable_notifications',
+        'is_private'
     ];
 
     /**
@@ -49,6 +50,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'disable_notifications' => 'boolean',
+            'is_private' => 'boolean',
+
         ];
     }
 
@@ -62,14 +65,32 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id');
     }
 
-    public function followers()
-    {
-        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id');
-    }
+    // public function followers()
+    // {
+    //     return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id');
+    // }
 
     public function isFollowing(User $user)
     {
         return $this->followings->contains($user->id);
+    }
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id')
+                    ->withTimestamps()
+                    ->wherePivot('accepted', true);
+    }
+
+    public function followRequests()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id')
+                    ->withTimestamps()
+                    ->wherePivot('accepted', false);
+    }
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id')
+                    ->withTimestamps();
     }
 
 }

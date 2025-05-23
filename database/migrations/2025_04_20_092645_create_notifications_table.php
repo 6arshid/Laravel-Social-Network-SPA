@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('message');
             $table->string('link')->nullable();
             $table->boolean('read')->default(false);
+            $table->string('type')->default('general');
+            $table->json('data')->nullable();
             $table->timestamps();
         });
     }

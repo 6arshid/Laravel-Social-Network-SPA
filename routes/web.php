@@ -82,6 +82,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
     Route::post('/follow/{user:username}', [FollowController::class, 'toggle'])->name('follow.toggle');
     Route::post('/ajax/follow/{user:username}', [FollowController::class, 'ajaxToggle'])->name('follow.ajax');
+    Route::post('/follow/{user}/accept', [FollowController::class, 'acceptRequest'])->name('follow.accept');
+    Route::post('/follow/{user}/reject', [FollowController::class, 'rejectRequest'])->name('follow.reject');
     Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
     Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead']);
     Route::post('/username-check', function (Request $request) {
@@ -108,7 +110,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/{username}/posts', [ProfileController::class, 'loadPosts']);
     Route::get('/hashtag/{name}', [HashtagController::class, 'show'])->name('hashtag.show');
     Route::get('/statistics', [StatisticController::class, 'index'])->name('user.statistics');
-
+   Route::post('/profile/privacy', function (\Illuminate\Http\Request $request) {
+    $request->validate(['is_private' => 'boolean']);
+    auth()->user()->update(['is_private' => $request->is_private]);
+    return back();
+    })->name('profile.privacy.update');
 
 });
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle']);

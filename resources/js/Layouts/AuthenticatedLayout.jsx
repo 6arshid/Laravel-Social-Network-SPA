@@ -13,7 +13,13 @@ export default function AuthenticatedLayout({ header, children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { t } = useTranslation();
     const pages = usePage().props.pagesByLang;
-
+const handleFollowAction = (followerId, action, notifId) => {
+    axios.post(`/follow/${user.username}/${action}`, { follower_id: followerId })
+        .then(() => {
+            markAsRead(notifId);
+        })
+        .catch(err => console.error(err));
+};
     useEffect(() => {
         if (user) {
             fetchNotifications();
@@ -240,28 +246,56 @@ export default function AuthenticatedLayout({ header, children }) {
                     )}
                 </button>
 
-                {showNotifications && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg rounded-md z-50 max-h-96 overflow-y-auto">
-                        {notifications.length === 0 ? (
-                            <div className="p-4 text-sm text-gray-500 text-center">
-                                {t('No notifications available')}
-                            </div>
-                        ) : (
-                            notifications.map((notif) => (
-                                <Link
-                                    key={notif.id}
-                                    href={notif.link || '#'}
-                                    onClick={() => markAsRead(notif.id)}
-                                    className={`block px-4 py-2 text-sm border-b ${
-                                        notif.read ? 'text-gray-500' : 'font-bold text-black'
-                                    } hover:bg-gray-100`}
-                                >
-                                    {notif.message}
-                                </Link>
-                            ))
-                        )}
+{showNotifications && (
+    <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg rounded-md z-50 max-h-96 overflow-y-auto">
+        {notifications.length === 0 ? (
+            <div className="p-4 text-sm text-gray-500 text-center">
+                {t('No notifications available')}
+            </div>
+        ) : (
+            notifications.map((notif) => {
+                // console.log("NOTIF DEBUG", notif);
+
+                let data;
+                try {
+                    data = typeof notif.data === 'string' ? JSON.parse(notif.data) : notif.data;
+                } catch {
+                    data = {};
+                }
+
+                return (
+                    <div
+                        key={notif.id}
+                        className={`px-4 py-2 text-sm border-b ${
+                            notif.read ? 'text-gray-500' : 'font-bold text-black'
+                        } hover:bg-gray-100`}
+                    >
+                        <div className="flex justify-between items-center">
+                            <div>{notif.message}</div>
+                            {!notif.read && notif.type === 'follow_request' && data?.follower_id && (
+                                <div className="flex space-x-2 ml-2">
+                                    <button
+                                        onClick={() => handleFollowAction(data.follower_id, 'accept', notif.id)}
+                                        className="px-2 py-1 text-xs bg-green-500 text-white rounded"
+                                    >
+                                        Confirm
+                                    </button>
+                                    <button
+                                        onClick={() => handleFollowAction(data.follower_id, 'reject', notif.id)}
+                                        className="px-2 py-1 text-xs bg-red-500 text-white rounded"
+                                    >
+                                        Reject
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                )}
+                );
+            })
+        )}
+    </div>
+)}
+
             </div>
 
             {/* Profile Dropdown */}

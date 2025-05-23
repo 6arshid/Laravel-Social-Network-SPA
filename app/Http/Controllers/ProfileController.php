@@ -126,13 +126,43 @@ class ProfileController extends Controller
         return back()->with('success', 'Image deleted successfully.');
     }
 
-    public function show_profile($username, Request $request)
-    {
-        \App\Helpers\StatisticHelper::record('profile_visited');
+   public function show_profile($username, Request $request)
+{
+    \App\Helpers\StatisticHelper::record('profile_visited');
 
-        $user = User::where('username', $username)->firstOrFail();
-    
-        $posts = $user->posts()
+    $user = User::where('username', $username)->firstOrFail();
+    $authUser = auth()->user();
+
+    // اگر حساب خصوصی است و کاربر دسترسی ندارد
+    $isAcceptedFollower = false;
+    if ($authUser) {
+        $isAcceptedFollower = \DB::table('follows')
+            ->where('follower_id', $authUser->id)
+            ->where('following_id', $user->id)
+            ->where('accepted', true)
+            ->exists();
+    }
+
+    $isOwner = $authUser && $authUser->id === $user->id;
+
+    if ($user->is_private && !$isOwner && !$isAcceptedFollower) {
+        return Inertia::render('Profile/Private', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'username' => $user->username,
+                'avatar' => $user->avatar,
+            ],
+            'isFollowing' => $authUser ? $authUser->isFollowing($user) : false,
+            'hasPendingRequest' => $authUser ? \DB::table('follows')
+                ->where('follower_id', $authUser->id)
+                ->where('following_id', $user->id)
+                ->where('accepted', false)
+                ->exists() : false,
+        ]);
+    }
+
+    $posts = $user->posts()
         ->with([
             'media',
             'likes',
@@ -142,39 +172,37 @@ class ProfileController extends Controller
         ->latest()
         ->paginate(5)
         ->withQueryString();
-    
-        $authUser = auth()->user();
-    
-        return Inertia::render('Profile/Show', [
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'username' => $user->username,
-                'avatar' => $user->avatar,
-                'cover' => $user->cover,
-                'bio' => $user->bio,
-                'location' => $user->location,
-                'website' => $user->website,
-                'phone' => $user->phone,
-                'instagram' => $user->instagram,
-                'twitter' => $user->twitter,
-                'facebook' => $user->facebook,
-                'linkedin' => $user->linkedin,
-                'github' => $user->github,
-                'tiktok' => $user->tiktok,
-                'snapchat' => $user->snapchat,
-                'youtube' => $user->youtube,
-                'pinterest' => $user->pinterest,
-                'whatsapp' => $user->whatsapp,
-                'telegram' => $user->telegram,
-            ],
-            'appName' => config('app.name'),
 
-            'posts' => $posts,
-            'isOwner' => $authUser && $authUser->id === $user->id,
-            'isFollowing' => $authUser ? $authUser->isFollowing($user) : false,
-        ]);
-    }
+    return Inertia::render('Profile/Show', [
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'username' => $user->username,
+            'avatar' => $user->avatar,
+            'cover' => $user->cover,
+            'bio' => $user->bio,
+            'location' => $user->location,
+            'website' => $user->website,
+            'phone' => $user->phone,
+            'instagram' => $user->instagram,
+            'twitter' => $user->twitter,
+            'facebook' => $user->facebook,
+            'linkedin' => $user->linkedin,
+            'github' => $user->github,
+            'tiktok' => $user->tiktok,
+            'snapchat' => $user->snapchat,
+            'youtube' => $user->youtube,
+            'pinterest' => $user->pinterest,
+            'whatsapp' => $user->whatsapp,
+            'telegram' => $user->telegram,
+        ],
+        'appName' => config('app.name'),
+        'posts' => $posts,
+        'isOwner' => $isOwner,
+        'isFollowing' => $authUser ? $authUser->isFollowing($user) : false,
+    ]);
+}
+
     
 
     public function updateImage(Request $request)
