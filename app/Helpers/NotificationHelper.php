@@ -26,6 +26,9 @@ public static function send($userId, $message, $link = null, $type = 'general', 
         });
     }
 }
-
+public static function markAllAsReadForUser($user)
+{
+    $user->unreadNotifications->markAsRead();
+}
 
 }

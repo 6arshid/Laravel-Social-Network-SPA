@@ -13,13 +13,19 @@ export default function AuthenticatedLayout({ header, children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { t } = useTranslation();
     const pages = usePage().props.pagesByLang;
-const handleFollowAction = (followerId, action, notifId) => {
-    axios.post(`/follow/${user.username}/${action}`, { follower_id: followerId })
-        .then(() => {
-            markAsRead(notifId);
-        })
-        .catch(err => console.error(err));
+    const handleFollowAction = (followerId, action, notifId) => {
+        axios.post(`/follow/${user.username}/${action}`, { follower_id: followerId })
+            .then(() => {
+                markAsRead(notifId);
+            })
+            .catch(err => console.error(err));
+    };
+const markAllAsRead = () => {
+    axios.get('/notifications/mark-all-read').then(() => {
+        fetchNotifications();
+    }).catch(err => console.error('Error marking all as read:', err));
 };
+
     useEffect(() => {
         if (user) {
             fetchNotifications();
@@ -234,6 +240,7 @@ const handleFollowAction = (followerId, action, notifId) => {
         <>
             {/* Notifications */}
             <div className="relative">
+
                 <button
                     onClick={() => setShowNotifications(!showNotifications)}
                     className="relative text-2xl"
@@ -248,6 +255,12 @@ const handleFollowAction = (followerId, action, notifId) => {
 
 {showNotifications && (
     <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg rounded-md z-50 max-h-96 overflow-y-auto">
+                         <button
+        onClick={markAllAsRead}
+        className="text-xs text-blue-600 hover:underline"
+    >
+        {t('Mark all as read')}
+    </button>
         {notifications.length === 0 ? (
             <div className="p-4 text-sm text-gray-500 text-center">
                 {t('No notifications available')}

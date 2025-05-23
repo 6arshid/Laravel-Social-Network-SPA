@@ -121,7 +121,7 @@ Route::middleware('auth')->group(function () {
     })->name('profile.privacy.update');
     Route::get('/{username}/followers', [ProfileController::class, 'followers'])->name('profile.followers');
     Route::get('/{username}/following', [ProfileController::class, 'following'])->name('profile.following');
-    // Route::post('/remove-following/{user}', [FollowController::class, 'removeFollowing'])->name('follow.remove');
+Route::get('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->middleware('auth');
 
 
 
