@@ -25,15 +25,18 @@ class DashboardController extends Controller
         ->latest()
         ->paginate(10, ['*'], 'followed_page');
 
-    // پست‌های اکسپلور (همه کاربران)
-    $explorerPosts = Post::with([
-            'media', 'user', 'likes',
-            'comments.user', 'comments.likes',
-            'comments.replies.user', 'comments.replies.likes',
-            'repost' => fn($q) => $q->with('user', 'media'),
-        ])
-        ->latest()
-        ->paginate(10, ['*'], 'explorer_page');
+  $explorerPosts = Post::with([
+        'media', 'user', 'likes',
+        'comments.user', 'comments.likes',
+        'comments.replies.user', 'comments.replies.likes',
+        'repost' => fn($q) => $q->with('user', 'media'),
+    ])
+    ->whereHas('user', function ($query) {
+        $query->where('is_private', false);
+    })
+    ->latest()
+    ->paginate(10, ['*'], 'explorer_page');
+
 
     $suggestedUsers = [];
     if ($followingIds->isEmpty()) {
