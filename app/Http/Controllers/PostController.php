@@ -20,15 +20,38 @@ class PostController extends Controller
 
     public function index()
 {
+    $authUser = auth()->user();
+
     $posts = Post::with([
             'media',
             'user',
-            'repost' => fn ($q) => $q->with('user', 'media'),
+            'repost' => fn ($q) => $q->with(['user', 'media']),
         ])
-        ->where('user_id', auth()->id())
+        ->where('user_id', $authUser->id)
         ->latest()
         ->paginate(5)
-        ->withQueryString(); // for pagination link to work
+        ->withQueryString();
+
+    // فیلتر نمایش repost فقط برای پست‌های مجاز
+    $posts->getCollection()->transform(function ($post) use ($authUser) {
+        $repost = $post->repost;
+
+        if ($repost && $repost->user->is_private) {
+            $isOwner = $authUser->id === $repost->user->id;
+
+            $isFollower = DB::table('follows')
+                ->where('follower_id', $authUser->id)
+                ->where('following_id', $repost->user->id)
+                ->where('accepted', true)
+                ->exists();
+
+            if (!$isOwner && !$isFollower) {
+                $post->repost = null; // مخفی کردن repost
+            }
+        }
+
+        return $post;
+    });
 
     return Inertia::render('Posts/Index', [
         'posts' => $posts,
@@ -36,32 +59,58 @@ class PostController extends Controller
 }
 
 
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'content' => 'required|string',
-            'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:'. env('MAX_UPLOAD_SIZE')
-        ]);
-    
-        $post = Post::create([
-            'user_id' => auth()->id(),
-            'content' => $data['content']
-        ]);
-    
-        if ($request->hasFile('media')) {
-            foreach ($request->file('media') as $file) {
-                $path = $file->store('posts', 'public');
-                $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
-    
-                $post->media()->create([
-                    'file_path' => $path,
-                    'type' => $type,
-                ]);
+
+  public function store(Request $request)
+{
+    $data = $request->validate([
+        'content' => 'required|string',
+        'repost_id' => 'nullable|exists:posts,id',
+        'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:' . env('MAX_UPLOAD_SIZE'),
+    ]);
+
+    $authUser = auth()->user();
+
+    // اگر repost هست، بررسی کن که مجاز هست یا نه
+    if (!empty($data['repost_id'])) {
+        $original = Post::with('user')->findOrFail($data['repost_id']);
+        $owner = $original->user;
+
+        if ($owner->is_private && $owner->id !== $authUser->id) {
+            $isFollower = DB::table('follows')
+                ->where('follower_id', $authUser->id)
+                ->where('following_id', $owner->id)
+                ->where('accepted', true)
+                ->exists();
+
+            if (!$isFollower) {
+                return redirect()->back()->withErrors(['error' => 'This post is private and cannot be reposted.']);
             }
         }
-    
-        return redirect()->route('posts.show', $post->id);
     }
+
+    // پست جدید ایجاد شود
+    $post = Post::create([
+        'user_id' => $authUser->id,
+        'content' => $data['content'],
+        'repost_id' => $data['repost_id'] ?? null,
+    ]);
+
+    // اگر فایل داشت
+    if ($request->hasFile('media')) {
+        foreach ($request->file('media') as $file) {
+            $path = $file->store('posts', 'public');
+            $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
+
+            $post->media()->create([
+                'file_path' => $path,
+                'type' => $type,
+            ]);
+        }
+    }
+
+    return redirect()->route('posts.show', $post->id);
+}
+
 
     public function edit(Post $post)
     {
@@ -104,9 +153,36 @@ class PostController extends Controller
 
     return redirect()->route('welcome'); // Redirect to home or any other route
 }
+
+private function getSimilarPosts(Post $post)
+{
+    $authUser = auth()->user();
+
+    return Post::where('id', '!=', $post->id)
+        ->whereHas('user', function ($query) use ($authUser) {
+            $query->where(function ($q) use ($authUser) {
+                $q->where('is_private', false);
+
+                if ($authUser) {
+                    $q->orWhereIn('id', function ($sub) use ($authUser) {
+                        $sub->select('following_id')
+                            ->from('follows')
+                            ->where('follower_id', $authUser->id)
+                            ->where('accepted', true);
+                    });
+
+                    $q->orWhere('id', $authUser->id);
+                }
+            });
+        })
+        ->latest()
+        ->take(5)
+        ->with(['user', 'media'])
+        ->get();
+}
+
 public function show(Request $request, Post $post)
 {
-    
     $post->load([
         'media',
         'user',
@@ -148,7 +224,28 @@ public function show(Request $request, Post $post)
         ->paginate(5)
         ->withQueryString();
 
-    $similarPosts = $this->getSimilarPosts($post);
+    // ✨ similarPosts با محدودیت خصوصی بودن
+    $similarPosts = Post::where('id', '!=', $post->id)
+        ->whereHas('user', function ($query) use ($authUser) {
+            $query->where(function ($q) use ($authUser) {
+                $q->where('is_private', false);
+
+                if ($authUser) {
+                    $q->orWhereIn('id', function ($sub) use ($authUser) {
+                        $sub->select('following_id')
+                            ->from('follows')
+                            ->where('follower_id', $authUser->id)
+                            ->where('accepted', true);
+                    });
+
+                    $q->orWhere('id', $authUser->id);
+                }
+            });
+        })
+        ->latest()
+        ->take(5)
+        ->with(['user', 'media'])
+        ->get();
 
     return Inertia::render('Posts/Show', [
         'post' => $post,
@@ -161,27 +258,6 @@ public function show(Request $request, Post $post)
     ]);
 }
 
-
-
-private function getSimilarPosts(Post $post)
-{
-    $query = \App\Models\Post::with([
-        'media',
-        'user',
-        'repost' => fn ($q) => $q->with('user', 'media'),
-    ])
-    ->where('id', '!=', $post->id)
-    ->latest()
-    ->take(10);
-
-    $similarPosts = (clone $query)->where('user_id', $post->user_id)->get();
-
-    if ($similarPosts->isEmpty()) {
-        $similarPosts = $query->get();
-    }
-
-    return $similarPosts;
-}
 
 
 
@@ -207,15 +283,29 @@ public function repost(Request $request, $id)
         'content' => 'nullable|string|max:1000',
     ]);
 
-    $original = Post::with('media')->findOrFail($id);
+    $original = Post::with(['media', 'user'])->findOrFail($id);
+    $authUser = auth()->user();
+    $owner = $original->user;
+
+    // بررسی محدودیت اکانت خصوصی
+    if ($owner->is_private && $authUser->id !== $owner->id) {
+        $isFollower = DB::table('follows')
+            ->where('follower_id', $authUser->id)
+            ->where('following_id', $owner->id)
+            ->where('accepted', true)
+            ->exists();
+
+        if (!$isFollower) {
+            return redirect()->back()->withErrors(['error' => 'This post is private and cannot be reposted.']);
+        }
+    }
 
     $post = Post::create([
-        'user_id' => auth()->id(),
-        'content' => $request->input('content'), // توضیح کاربر
+        'user_id' => $authUser->id,
+        'content' => $request->input('content'),
         'repost_id' => $original->id,
     ]);
 
-    // اگر خواستی media هم کپی بشه
     foreach ($original->media as $media) {
         $post->media()->create([
             'file_path' => $media->file_path,
@@ -223,6 +313,7 @@ public function repost(Request $request, $id)
         ]);
     }
 
-    return redirect()->route('posts.show', $post->id);
+    return redirect()->route('posts.show', $post->id)->with('success', 'Reposted successfully.');
 }
+
 }
