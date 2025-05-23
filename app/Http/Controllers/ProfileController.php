@@ -240,4 +240,35 @@ class ProfileController extends Controller
 
         return back()->with('status', 'Notification settings updated.');
     }
+    public function followers($username)
+{
+    $user = User::where('username', $username)->firstOrFail();
+
+    if (auth()->id() !== $user->id) {
+        abort(403);
+    }
+
+    $followers = $user->followers()->paginate(20);
+
+    return Inertia::render('Profile/Followers', [
+        'user' => $user,
+        'followers' => $followers,
+    ]);
+}
+
+public function following($username)
+{
+    $user = User::where('username', $username)->firstOrFail();
+
+    if (auth()->id() !== $user->id) {
+        abort(403);
+    }
+
+    $following = $user->following()->paginate(20);
+
+    return Inertia::render('Profile/Following', [
+        'user' => $user,
+        'following' => $following,
+    ]);
+}
 }

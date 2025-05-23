@@ -56,12 +56,12 @@ public function toggle(User $user)
     return back();
 }
 
-public function ajaxToggle(User $user): JsonResponse
+public function ajaxToggle(User $user)
 {
     $authUser = auth()->user();
 
     if ($authUser->id === $user->id) {
-        return response()->json(['error' => 'Cannot follow yourself.'], 403);
+        return redirect()->back()->with('error', 'You cannot follow yourself.');
     }
 
     $existingFollow = DB::table('follows')
@@ -71,7 +71,7 @@ public function ajaxToggle(User $user): JsonResponse
 
     if ($existingFollow) {
         DB::table('follows')->where('id', $existingFollow->id)->delete();
-        return response()->json(['status' => 'unfollowed']);
+        return redirect()->back()->with('success', 'Unfollowed successfully!');
     } else {
         DB::table('follows')->insert([
             'follower_id' => $authUser->id,
@@ -89,7 +89,7 @@ public function ajaxToggle(User $user): JsonResponse
                 'follow_request',
                 ['follower_id' => $authUser->id]
             );
-            return response()->json(['status' => 'request_sent']);
+            return redirect()->back()->with('success', 'Follow request sent.');
         } else {
             \App\Helpers\NotificationHelper::send(
                 $user->id,
@@ -98,11 +98,19 @@ public function ajaxToggle(User $user): JsonResponse
                 'follow',
                 ['follower_id' => $authUser->id]
             );
-            return response()->json(['status' => 'followed']);
+            return redirect()->back()->with('success', 'Now following.');
         }
     }
 }
+public function removeFollower(User $user)
+{
+    DB::table('follows')
+        ->where('follower_id', $user->id)
+        ->where('following_id', auth()->id())
+        ->delete();
 
+    return redirect()->back()->with('success', 'Follower removed.');
+}
 
 
 public function acceptRequest(Request $request, User $user)
@@ -140,6 +148,13 @@ public function rejectRequest(Request $request, User $user)
 
     return response()->json(['status' => 'rejected']);
 }
+public function removeFollowing(User $user)
+{
+    logger()->info('REMOVE FOLLOW DEBUG:', [
+        'auth_id' => auth()->id(),
+        'target_user_id' => $user->id,
+    ]);
 
-
+    return redirect()->back()->with('success', 'Route hit!');
+}
 }

@@ -37,6 +37,8 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('welcome');
+
+
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
@@ -82,6 +84,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
     Route::post('/follow/{user:username}', [FollowController::class, 'toggle'])->name('follow.toggle');
     Route::post('/ajax/follow/{user:username}', [FollowController::class, 'ajaxToggle'])->name('follow.ajax');
+    Route::post('/ajax/remove-follower/{user:username}', [FollowController::class, 'removeFollower'])->name('follow.remove_follower');
+
     Route::post('/follow/{user}/accept', [FollowController::class, 'acceptRequest'])->name('follow.accept');
     Route::post('/follow/{user}/reject', [FollowController::class, 'rejectRequest'])->name('follow.reject');
     Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
@@ -110,11 +114,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/{username}/posts', [ProfileController::class, 'loadPosts']);
     Route::get('/hashtag/{name}', [HashtagController::class, 'show'])->name('hashtag.show');
     Route::get('/statistics', [StatisticController::class, 'index'])->name('user.statistics');
-   Route::post('/profile/privacy', function (\Illuminate\Http\Request $request) {
+    Route::post('/profile/privacy', function (\Illuminate\Http\Request $request) {
     $request->validate(['is_private' => 'boolean']);
     auth()->user()->update(['is_private' => $request->is_private]);
     return back();
     })->name('profile.privacy.update');
+    Route::get('/{username}/followers', [ProfileController::class, 'followers'])->name('profile.followers');
+    Route::get('/{username}/following', [ProfileController::class, 'following'])->name('profile.following');
+    // Route::post('/remove-following/{user}', [FollowController::class, 'removeFollowing'])->name('follow.remove');
+
+
 
 });
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle']);
@@ -159,5 +168,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/settings/update-maxupload', [AdminBaseController::class, 'updateMaxUpload']);
 
 });
+
 
 Route::get('/{username}', [ProfileController::class, 'show_profile'])->name('show_profile');

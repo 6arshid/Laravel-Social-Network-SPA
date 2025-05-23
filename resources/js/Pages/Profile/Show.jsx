@@ -152,8 +152,15 @@ export default function Show() {
 
             <div className="pt-16 px-4">
                 <h1 className="text-xl font-bold">{user?.name || 'User Profile'}</h1>
+                {isOwner && (
+  <div className="mt-4 flex space-x-4">
+    <Link href={route('profile.followers', user.username)} className="text-blue-600 underline">Followers</Link>
+    <Link href={route('profile.following', user.username)} className="text-blue-600 underline">Following</Link>
+  </div>
+)}
                 {user?.username && <p className="text-gray-500">@{user.username}</p>}
                 {user?.bio && <p className="text-gray-500">Bio : {user.bio}</p>}
+
                 {user && <SocialLinks user={user} />}
                 {loggedInUser && !isOwner && (
                     <div className="px-4 mt-4 flex space-x-4">
