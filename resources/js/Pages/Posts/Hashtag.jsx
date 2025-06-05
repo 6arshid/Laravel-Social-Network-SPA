@@ -4,8 +4,9 @@ import { Head, Link } from '@inertiajs/react';
 import PostCard from '@/Components/PostCard';
 import { useTranslation } from 'react-i18next';
 
-export default function Hashtag({ hashtag, posts }) {
+export default function Hashtag({ hashtag, posts, captcha }) {
   const { t } = useTranslation();
+
   return (
     <AuthenticatedLayout
       header={
@@ -23,7 +24,7 @@ export default function Hashtag({ hashtag, posts }) {
               <p className="text-gray-500">{t('no_posts_found_with_hashtag')}</p>
             ) : (
               posts.data.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <PostCard key={post.id} post={post} captcha={captcha} />
               ))
             )}
 

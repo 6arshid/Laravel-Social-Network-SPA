@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use DB;
+use Illuminate\Support\Str;
+
 class PostController extends Controller
 {
     use AuthorizesRequests;
@@ -224,7 +226,6 @@ public function show(Request $request, Post $post)
         ->paginate(5)
         ->withQueryString();
 
-    // ✨ similarPosts با محدودیت خصوصی بودن
     $similarPosts = Post::where('id', '!=', $post->id)
         ->whereHas('user', function ($query) use ($authUser) {
             $query->where(function ($q) use ($authUser) {
@@ -247,16 +248,33 @@ public function show(Request $request, Post $post)
         ->with(['user', 'media'])
         ->get();
 
-    return Inertia::render('Posts/Show', [
-        'post' => $post,
-        'comments' => $comments,
-        'reactions' => $post->likes,
-        'similarPosts' => $similarPosts,
-        'auth' => [
-            'user' => $authUser,
-        ],
-    ]);
+    $operators = ['+', '-', '*', '/'];
+$a = rand(1, 10);
+$b = rand(1, 10);
+$op = $operators[array_rand($operators)];
+
+if ($op === '/') {
+    $a = $a * $b; // تقسیم صحیح
 }
+
+$captchaQuestion = "$a $op $b";
+$captchaAnswer = eval("return $captchaQuestion;");
+
+return Inertia::render('Posts/Show', [
+    'post' => $post,
+    'comments' => $comments,
+    'reactions' => $post->likes,
+    'similarPosts' => $similarPosts,
+    'auth' => [
+        'user' => $authUser,
+    ],
+    'captcha' => [
+        'question' => $captchaQuestion,
+        'answer' => $captchaAnswer,
+    ],
+]);
+}
+
 
 
 

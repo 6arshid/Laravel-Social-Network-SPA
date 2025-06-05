@@ -12,11 +12,12 @@ dayjs.extend(relativeTime);
 
 export default function PostCard({ post }) {
   const { t } = useTranslation();
-  const auth = usePage().props.auth;
+  const { auth, captcha } = usePage().props;
+
   const [modalIndex, setModalIndex] = useState(null);
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportForm, setReportForm] = useState({ reason: '', captcha: '' });
-  const [captchaAnswer] = useState(7);
+  const [captchaAnswer] = useState(captcha?.answer ?? null);
 
   const media = post.media || [];
   const isOwner = auth.user && auth.user.id === post.user_id;
@@ -30,7 +31,7 @@ export default function PostCard({ post }) {
 
   const handleReportSubmit = (e) => {
     e.preventDefault();
-    if (parseInt(reportForm.captcha) !== captchaAnswer) {
+    if (!captchaAnswer || parseFloat(reportForm.captcha) !== parseFloat(captchaAnswer)) {
       alert(t('Incorrect captcha!'));
       return;
     }
@@ -55,7 +56,7 @@ export default function PostCard({ post }) {
         </p>
       ) : (
         <>
-          {/* User Info with Avatar and Timestamp */}
+          {/* User Info */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {post.user && (
@@ -165,9 +166,7 @@ export default function PostCard({ post }) {
             <button onClick={() => setReportModalOpen(true)} className="text-red-600 hover:underline">
               📣 {t('Report')}
             </button>
-            {/* {!isOwner && <RepostButton postId={post.id} />} */}
             <RepostButton postId={post.id} isOwner={isOwner} />
-
             {isOwner && (
               <>
                 <button onClick={() => router.get(`/posts/${post.id}/edit`)} className="text-yellow-600 hover:underline">
@@ -199,7 +198,11 @@ export default function PostCard({ post }) {
                 className="w-full rounded-xl border border-neutral-300 bg-white p-4 text-sm text-neutral-800 placeholder-neutral-400 shadow-sm focus:border-red-400 focus:ring-2 focus:ring-red-300 transition duration-200 resize-none"
               />
               <div className="mb-4">
-                <label className="text-sm text-neutral-700 block mb-1">{t('Please solve: 3 + 4 =')}</label>
+                {captcha?.question && (
+                  <label className="text-sm text-neutral-700 block mb-1">
+                    {t('Please solve')}: {captcha.question}
+                  </label>
+                )}
                 <input
                   type="number"
                   value={reportForm.captcha}

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Inertia\Inertia;
-
+use Illuminate\Support\Str;
 class HashtagController extends Controller
 {
     public function show($name)
@@ -22,10 +22,24 @@ class HashtagController extends Controller
         ->latest()
         ->paginate(10)
         ->withQueryString();
+   $operators = ['+', '-', '*', '/'];
+$a = rand(1, 10);
+$b = rand(1, 10);
+$op = $operators[array_rand($operators)];
 
+if ($op === '/') {
+    $a = $a * $b; // تقسیم صحیح
+}
+
+$captchaQuestion = "$a $op $b";
+$captchaAnswer = eval("return $captchaQuestion;");
     return Inertia::render('Posts/Hashtag', [
         'hashtag' => $name,
         'posts' => $posts,
+               'captcha' => [
+        'question' => $captchaQuestion,
+        'answer' => $captchaAnswer,
+    ],
     ]);
 }
 }

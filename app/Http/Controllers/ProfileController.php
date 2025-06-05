@@ -7,6 +7,7 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver; 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str; // بالای فایل برای اطمینان
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -172,7 +173,17 @@ class ProfileController extends Controller
         ->latest()
         ->paginate(5)
         ->withQueryString();
+    $operators = ['+', '-', '*', '/'];
+$a = rand(1, 10);
+$b = rand(1, 10);
+$op = $operators[array_rand($operators)];
 
+if ($op === '/') {
+    $a = $a * $b; // تقسیم صحیح
+}
+
+$captchaQuestion = "$a $op $b";
+$captchaAnswer = eval("return $captchaQuestion;");
     return Inertia::render('Profile/Show', [
         'user' => [
             'id' => $user->id,
@@ -200,6 +211,10 @@ class ProfileController extends Controller
         'posts' => $posts,
         'isOwner' => $isOwner,
         'isFollowing' => $authUser ? $authUser->isFollowing($user) : false,
+               'captcha' => [
+        'question' => $captchaQuestion,
+        'answer' => $captchaAnswer,
+    ],
     ]);
 }
 

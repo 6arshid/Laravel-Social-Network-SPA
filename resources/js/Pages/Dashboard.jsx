@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import PostCard from '@/Components/PostCard';
 import { useTranslation } from 'react-i18next';
 
 export default function Dashboard({ followedPosts, explorerPosts, suggestedUsers = [] }) {
   const { t } = useTranslation();
+  const { captcha } = usePage().props;
+
   const [activeTab, setActiveTab] = useState('followed');
   const [suggestions, setSuggestions] = useState(suggestedUsers);
 
-  const [followedData, setFollowedData] = useState(followedPosts);
-  const [explorerData, setExplorerData] = useState(explorerPosts);
+  const [followedData, setFollowedData] = useState(followedPosts ?? { data: [] });
+  const [explorerData, setExplorerData] = useState(explorerPosts ?? { data: [] });
 
   const observer = useRef();
   const loaderRef = useRef(null);
@@ -67,7 +69,7 @@ export default function Dashboard({ followedPosts, explorerPosts, suggestedUsers
   }, [activeData.links?.next, activeTab]);
 
   const renderPosts = (posts) => {
-    if (posts.data.length === 0) {
+    if (!posts?.data?.length) {
       if (activeTab === 'explorer') {
         return (
           <div className="text-center text-gray-500 py-10">
@@ -99,7 +101,7 @@ export default function Dashboard({ followedPosts, explorerPosts, suggestedUsers
 
     return posts.data.map((post) => (
       <div key={post.id} className="mb-8">
-        <PostCard post={post} />
+        <PostCard post={post} captcha={captcha} />
       </div>
     ));
   };

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Post;
+use Illuminate\Support\Str; // بالای فایل برای اطمینان
+
 use Illuminate\Support\Facades\DB;
 class DashboardController extends Controller
 {
@@ -46,10 +48,26 @@ class DashboardController extends Controller
             ->get(['id', 'name', 'username', 'avatar']);
     }
 
+     $operators = ['+', '-', '*', '/'];
+$a = rand(1, 10);
+$b = rand(1, 10);
+$op = $operators[array_rand($operators)];
+
+if ($op === '/') {
+    $a = $a * $b; // تقسیم صحیح
+}
+
+$captchaQuestion = "$a $op $b";
+$captchaAnswer = eval("return $captchaQuestion;");
+
     return Inertia::render('Dashboard', [
         'followedPosts' => $followedPosts,
         'explorerPosts' => $explorerPosts,
         'suggestedUsers' => $suggestedUsers,
+         'captcha' => [
+        'question' => $captchaQuestion,
+        'answer' => $captchaAnswer,
+    ],
     ]);
 }
 

@@ -49,7 +49,7 @@ async function getCroppedImg(imageSrc, pixelCrop) {
 }
 
 export default function Show() {
-    const { auth, user, posts, isOwner, isFollowing, appName } = usePage().props;
+    const { auth, user, posts, isOwner, isFollowing, appName, captcha } = usePage().props;
     const { t } = useTranslation();
     const loggedInUser = auth?.user;
     const [allPosts, setAllPosts] = useState(posts.data);
@@ -135,10 +135,10 @@ export default function Show() {
                         <img src={getImageUrl(user.avatar)} alt="avatar" className="w-24 h-24 rounded-full border-4 border-white object-cover shadow" />
                     ) : (
                         <img
-                        src="/default-avatar.png"
-                        alt="default avatar"
-                        className="w-24 h-24 rounded-full border-4 border-white object-cover shadow"
-                    />
+                            src="/default-avatar.png"
+                            alt="default avatar"
+                            className="w-24 h-24 rounded-full border-4 border-white object-cover shadow"
+                        />
                     )}
                     {loggedInUser && isOwner && (
                         <div className="mt-2">
@@ -153,14 +153,13 @@ export default function Show() {
             <div className="pt-16 px-4">
                 <h1 className="text-xl font-bold">{user?.name || 'User Profile'}</h1>
                 {isOwner && (
-  <div className="mt-4 flex space-x-4">
-    <Link href={route('profile.followers', user.username)} className="text-blue-600 underline">Followers</Link>
-    <Link href={route('profile.following', user.username)} className="text-blue-600 underline">Following</Link>
-  </div>
-)}
+                    <div className="mt-4 flex space-x-4">
+                        <Link href={route('profile.followers', user.username)} className="text-blue-600 underline">Followers</Link>
+                        <Link href={route('profile.following', user.username)} className="text-blue-600 underline">Following</Link>
+                    </div>
+                )}
                 {user?.username && <p className="text-gray-500">@{user.username}</p>}
                 {user?.bio && <p className="text-gray-500">Bio : {user.bio}</p>}
-
                 {user && <SocialLinks user={user} />}
                 {loggedInUser && !isOwner && (
                     <div className="px-4 mt-4 flex space-x-4">
@@ -194,7 +193,7 @@ export default function Show() {
             )}
 
             <div className="px-4 mt-10 space-y-6">
-                {allPosts.map((post) => <PostCard key={post.id} post={post} />)}
+                {allPosts.map((post) => <PostCard key={post.id} post={post} captcha={captcha} />)}
             </div>
 
             {nextPageUrl && (
@@ -205,7 +204,7 @@ export default function Show() {
 
             <div className="flex items-center justify-center mt-10">
                 <Link href="/" className="text-center text-gray-600 hover:text-blue-600 transition">
-                {t('Made_with')} <span className="text-red-500">❤️</span> {t('by')} <span className="font-semibold">{appName}</span>
+                    {t('Made_with')} <span className="text-red-500">❤️</span> {t('by')} <span className="font-semibold">{appName}</span>
                 </Link>
             </div>
         </div>
