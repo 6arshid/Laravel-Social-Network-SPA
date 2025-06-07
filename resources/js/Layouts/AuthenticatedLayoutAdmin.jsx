@@ -36,6 +36,12 @@ export default function AuthenticatedLayout({ header, children }) {
         });
     };
 
+    const markAllAsRead = () => {
+        axios.post('/notifications/read-all').then(() => {
+            fetchNotifications();
+        });
+    };
+
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="border-b border-gray-100 bg-white">
@@ -77,6 +83,11 @@ export default function AuthenticatedLayout({ header, children }) {
 
                                 {showNotifications && (
                                     <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg rounded-md z-50 max-h-96 overflow-y-auto">
+                                        <div className="flex justify-end p-2 border-b">
+                                            <button onClick={markAllAsRead} className="text-xs text-blue-600 hover:underline">
+                                                Mark all as read
+                                            </button>
+                                        </div>
                                         {notifications.length === 0 ? (
                                             <div className="p-4 text-sm text-gray-500 text-center">هیچ نوتیفیکیشنی وجود ندارد</div>
                                         ) : (
