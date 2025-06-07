@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\BlockController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HashtagController;
 use App\Http\Controllers\MessageReactionController;
@@ -85,6 +86,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/follow/{user:username}', [FollowController::class, 'toggle'])->name('follow.toggle');
     Route::post('/ajax/follow/{user:username}', [FollowController::class, 'ajaxToggle'])->name('follow.ajax');
     Route::post('/ajax/remove-follower/{user:username}', [FollowController::class, 'removeFollower'])->name('follow.remove_follower');
+
+    Route::post('/block/{user:username}', [BlockController::class, 'block'])->name('user.block');
+    Route::delete('/block/{user:username}', [BlockController::class, 'unblock'])->name('user.unblock');
 
     Route::post('/follow/{user}/accept', [FollowController::class, 'acceptRequest'])->name('follow.accept');
     Route::post('/follow/{user}/reject', [FollowController::class, 'rejectRequest'])->name('follow.reject');
