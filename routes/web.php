@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/follow/{user}/reject', [FollowController::class, 'rejectRequest'])->name('follow.reject');
     Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
     Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
     Route::post('/username-check', function (Request $request) {
         $request->validate([
             'username' => 'required|string|min:4|max:222',
