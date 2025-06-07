@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProfileController extends Controller
 {
@@ -27,6 +28,10 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'blockedUsers' => $request->user()
+                ->blocks()
+                ->select('users.id as id', 'users.name', 'users.username', 'users.avatar')
+                ->get(),
         ]);
     }
 
@@ -163,16 +168,24 @@ class ProfileController extends Controller
         ]);
     }
 
-    $posts = $user->posts()
-        ->with([
-            'media',
-            'likes',
-            'user',
-            'repost' => fn($q) => $q->with('user', 'media'),
-        ])
-        ->latest()
-        ->paginate(5)
-        ->withQueryString();
+    $isBlocked = $authUser ? $authUser->hasBlocked($user) : false;
+    $isBlockedBy = $authUser ? $user->hasBlocked($authUser) : false;
+
+    $posts = collect([]);
+    if (!$isBlocked && !$isBlockedBy) {
+        $posts = $user->posts()
+            ->with([
+                'media',
+                'likes',
+                'user',
+                'repost' => fn($q) => $q->with('user', 'media'),
+            ])
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+    } else {
+        $posts = new LengthAwarePaginator([], 0, 5);
+    }
     $operators = ['+', '-', '*', '/'];
 $a = rand(1, 10);
 $b = rand(1, 10);
@@ -211,6 +224,8 @@ $captchaAnswer = eval("return $captchaQuestion;");
         'posts' => $posts,
         'isOwner' => $isOwner,
         'isFollowing' => $authUser ? $authUser->isFollowing($user) : false,
+        'isBlocked' => $isBlocked,
+        'isBlockedBy' => $isBlockedBy,
                'captcha' => [
         'question' => $captchaQuestion,
         'answer' => $captchaAnswer,
