@@ -170,9 +170,15 @@ export default function Show() {
                         </button>
                         <button
                             onClick={() => {
-                                const action = blocked ? Inertia.delete : Inertia.post;
-                                const routeName = blocked ? 'user.unblock' : 'user.block';
-                                action(route(routeName, user.username), {}, { onSuccess: () => setBlocked(!blocked) });
+                                if (blocked) {
+                                    Inertia.delete(route('user.unblock', user.username), {}, {
+                                        onSuccess: () => setBlocked(false),
+                                    });
+                                } else {
+                                    Inertia.post(route('user.block', user.username), {}, {
+                                        onSuccess: () => setBlocked(true),
+                                    });
+                                }
                             }}
                             className="px-4 py-2 bg-red-500 text-white rounded hover:opacity-90"
                         >
