@@ -27,6 +27,7 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'blockedUsers' => $request->user()->blocks()->get(['id','name','username','avatar']),
         ]);
     }
 
@@ -211,6 +212,7 @@ $captchaAnswer = eval("return $captchaQuestion;");
         'posts' => $posts,
         'isOwner' => $isOwner,
         'isFollowing' => $authUser ? $authUser->isFollowing($user) : false,
+        'isBlocked' => $authUser ? $authUser->hasBlocked($user) : false,
                'captcha' => [
         'question' => $captchaQuestion,
         'answer' => $captchaAnswer,

@@ -49,7 +49,7 @@ async function getCroppedImg(imageSrc, pixelCrop) {
 }
 
 export default function Show() {
-    const { auth, user, posts, isOwner, isFollowing, appName, captcha } = usePage().props;
+    const { auth, user, posts, isOwner, isFollowing, isBlocked, appName, captcha } = usePage().props;
     const { t } = useTranslation();
     const loggedInUser = auth?.user;
     const [allPosts, setAllPosts] = useState(posts.data);
@@ -60,6 +60,7 @@ export default function Show() {
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [following, setFollowing] = useState(isFollowing);
+    const [blocked, setBlocked] = useState(isBlocked);
     const [isUploading, setIsUploading] = useState(false);
 
     const getImageUrl = (path) => {
@@ -166,6 +167,16 @@ export default function Show() {
                         <Link href={route('chat.show', user.id)} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">{t('message')}</Link>
                         <button onClick={() => Inertia.post(route('follow.toggle', user.username), {}, { onSuccess: () => setFollowing(!following) })} className={`px-4 py-2 ${following ? 'bg-gray-600' : 'bg-blue-600'} text-white rounded hover:opacity-90`}>
                             {following ? 'Following' : 'Follow'}
+                        </button>
+                        <button
+                            onClick={() => {
+                                const action = blocked ? Inertia.delete : Inertia.post;
+                                const routeName = blocked ? 'user.unblock' : 'user.block';
+                                action(route(routeName, user.username), {}, { onSuccess: () => setBlocked(!blocked) });
+                            }}
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:opacity-90"
+                        >
+                            {blocked ? t('unblock') : t('block')}
                         </button>
                     </div>
                 )}

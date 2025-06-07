@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\BlockController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HashtagController;
 use App\Http\Controllers\MessageReactionController;
@@ -86,10 +87,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/ajax/follow/{user:username}', [FollowController::class, 'ajaxToggle'])->name('follow.ajax');
     Route::post('/ajax/remove-follower/{user:username}', [FollowController::class, 'removeFollower'])->name('follow.remove_follower');
 
+    Route::post('/block/{user:username}', [BlockController::class, 'block'])->name('user.block');
+    Route::delete('/block/{user:username}', [BlockController::class, 'unblock'])->name('user.unblock');
+
     Route::post('/follow/{user}/accept', [FollowController::class, 'acceptRequest'])->name('follow.accept');
     Route::post('/follow/{user}/reject', [FollowController::class, 'rejectRequest'])->name('follow.reject');
     Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
     Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
     Route::post('/username-check', function (Request $request) {
         $request->validate([
             'username' => 'required|string|min:4|max:222',
