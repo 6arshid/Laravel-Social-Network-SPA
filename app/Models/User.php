@@ -110,6 +110,11 @@ class User extends Authenticatable
         return $this->blocks()->where('blocked_id', $user->id)->exists();
     }
 
+    public function isBlockedBy(User $user)
+    {
+        return $this->blockedBy()->where('user_id', $user->id)->exists();
+    }
+
 
 
 
