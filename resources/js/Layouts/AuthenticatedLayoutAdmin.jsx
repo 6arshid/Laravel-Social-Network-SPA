@@ -4,10 +4,12 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
+    const { t } = useTranslation();
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -32,6 +34,12 @@ export default function AuthenticatedLayout({ header, children }) {
 
     const markAsRead = (id) => {
         axios.post(`/notifications/read/${id}`).then(() => {
+            fetchNotifications();
+        });
+    };
+
+    const markAllAsRead = () => {
+        axios.post('/notifications/read-all').then(() => {
             fetchNotifications();
         });
     };
@@ -77,6 +85,11 @@ export default function AuthenticatedLayout({ header, children }) {
 
                                 {showNotifications && (
                                     <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg rounded-md z-50 max-h-96 overflow-y-auto">
+                                        <div className="flex justify-end p-2 border-b">
+                                            <button onClick={markAllAsRead} className="text-xs text-blue-600 hover:underline">
+                                                Mark all as read
+                                            </button>
+                                        </div>
                                         {notifications.length === 0 ? (
                                             <div className="p-4 text-sm text-gray-500 text-center">هیچ نوتیفیکیشنی وجود ندارد</div>
                                         ) : (
@@ -113,6 +126,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </span>
                                 </Dropdown.Trigger>
                                 <Dropdown.Content>
+                                    <Dropdown.Link href={route('show_profile', { username: user.username })}>{t('YourProfile')}</Dropdown.Link>
                                     <Dropdown.Link href={route('profile.edit')}>Edit Profile</Dropdown.Link>
                                     <Dropdown.Link href={route('logout')} method="post" as="button">Log Out</Dropdown.Link>
                                 </Dropdown.Content>
@@ -158,6 +172,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="px-4">
                                 <span className="text-lg text-gray-700">🔔 {unreadCount > 0 && <span className="ml-1 text-red-600 text-sm font-bold">({unreadCount})</span>}</span>
                             </div>
+                            <ResponsiveNavLink href={route('show_profile', { username: user.username })}>{t('YourProfile')}</ResponsiveNavLink>
                             <ResponsiveNavLink href={route('profile.edit')}>Edit Profile</ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('logout')} as="button">Log Out</ResponsiveNavLink>
                         </div>
