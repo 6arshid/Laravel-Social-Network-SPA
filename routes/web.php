@@ -13,9 +13,11 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\BlockController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HashtagController;
 use App\Http\Controllers\MessageReactionController;
+use App\Http\Controllers\UserPageController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\RootController;
@@ -86,10 +88,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/ajax/follow/{user:username}', [FollowController::class, 'ajaxToggle'])->name('follow.ajax');
     Route::post('/ajax/remove-follower/{user:username}', [FollowController::class, 'removeFollower'])->name('follow.remove_follower');
 
+    Route::post('/block/{user:username}', [BlockController::class, 'block'])->name('user.block');
+    Route::delete('/block/{user:username}', [BlockController::class, 'unblock'])->name('user.unblock');
+
     Route::post('/follow/{user}/accept', [FollowController::class, 'acceptRequest'])->name('follow.accept');
     Route::post('/follow/{user}/reject', [FollowController::class, 'rejectRequest'])->name('follow.reject');
     Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
     Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
     Route::post('/username-check', function (Request $request) {
         $request->validate([
             'username' => 'required|string|min:4|max:222',
@@ -122,6 +128,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/{username}/followers', [ProfileController::class, 'followers'])->name('profile.followers');
     Route::get('/{username}/following', [ProfileController::class, 'following'])->name('profile.following');
     // Route::post('/remove-following/{user}', [FollowController::class, 'removeFollowing'])->name('follow.remove');
+
+    // User pages
+    Route::get('/pages', [UserPageController::class, 'index'])->name('user_pages.index');
+    Route::get('/pages/create', [UserPageController::class, 'create'])->name('user_pages.create');
+    Route::post('/pages', [UserPageController::class, 'store'])->name('user_pages.store');
+    Route::get('/pages/category/{slug}', [UserPageController::class, 'category'])->name('user_pages.category');
+    Route::get('/pages/{page:slug}', [UserPageController::class, 'show'])->name('user_pages.show');
+    Route::post('/pages/{page:slug}/like', [UserPageController::class, 'like'])->name('user_pages.like');
+    Route::post('/pages/{page:slug}/posts', [PostController::class, 'storeForPage'])->name('user_pages.posts.store');
 
 
 

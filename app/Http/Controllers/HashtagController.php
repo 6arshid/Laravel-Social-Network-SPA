@@ -12,16 +12,23 @@ class HashtagController extends Controller
 {
     $hashtag = '#' . $name;
 
-    $posts = Post::with([
+    $authUser = auth()->user();
+
+    $postsQuery = Post::with([
             'user',
             'media',
             'likes',
             'repost' => fn($q) => $q->with('user', 'media'),
         ])
         ->where('content', 'like', "%$hashtag%")
-        ->latest()
-        ->paginate(10)
-        ->withQueryString();
+        ->latest();
+
+    if ($authUser) {
+        $blockedIds = $authUser->blockedIds()->merge($authUser->blockedByIds());
+        $postsQuery->whereNotIn('user_id', $blockedIds);
+    }
+
+    $posts = $postsQuery->paginate(10)->withQueryString();
    $operators = ['+', '-', '*', '/'];
 $a = rand(1, 10);
 $b = rand(1, 10);

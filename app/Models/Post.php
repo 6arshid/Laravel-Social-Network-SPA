@@ -3,14 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\UserPage;
 
 class Post extends Model
 {
-    protected $fillable = ['user_id', 'content', 'repost_id', 'is_repost'];
+    protected $fillable = ['user_id', 'content', 'repost_id', 'is_repost', 'user_page_id'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function page()
+    {
+        return $this->belongsTo(UserPage::class, 'user_page_id');
     }
 
     public function media()

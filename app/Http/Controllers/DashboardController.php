@@ -15,6 +15,7 @@ class DashboardController extends Controller
 {
     $user = auth()->user();
     $followingIds = $user->followings()->pluck('users.id');
+    $blockedIds = $user->blockedIds()->merge($user->blockedByIds());
 
     // پست‌های کاربران فالو شده (تب Followed)
     $followedPosts = Post::with([
@@ -24,6 +25,7 @@ class DashboardController extends Controller
             'repost' => fn($q) => $q->with('user', 'media'),
         ])
         ->whereIn('user_id', $followingIds)
+        ->whereNotIn('user_id', $blockedIds)
         ->latest()
         ->paginate(10, ['*'], 'followed_page');
 
@@ -36,6 +38,7 @@ class DashboardController extends Controller
     ->whereHas('user', function ($query) {
         $query->where('is_private', false);
     })
+    ->whereNotIn('user_id', $blockedIds)
     ->latest()
     ->paginate(10, ['*'], 'explorer_page');
 

@@ -59,27 +59,40 @@ export default function PostCard({ post }) {
           {/* User Info */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {post.user && (
-                <>
-                  <Link href={route('show_profile', post.user.username)}>
-                    <img
-                      src={post.user.avatar ? `/storage/${post.user.avatar}` : '/default-avatar.png'}
-                      alt={post.user.username}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  </Link>
+              {post.page ? (
+                <div className="flex items-center gap-3">
                   <div className="flex flex-col">
                     <Link
-                      href={route('show_profile', post.user.username)}
+                      href={route('user_pages.show', post.page.slug)}
                       className="text-neutral-800 font-semibold hover:underline text-sm"
                     >
-                      @{post.user.username}
+                      {post.page.name}
                     </Link>
-                    {typeof post.views === 'number' && (
-                      <span className="text-neutral-500 text-xs">{post.views} {t('views')}</span>
-                    )}
                   </div>
-                </>
+                </div>
+              ) : (
+                post.user && (
+                  <>
+                    <Link href={route('show_profile', post.user.username)}>
+                      <img
+                        src={post.user.avatar ? `/storage/${post.user.avatar}` : '/default-avatar.png'}
+                        alt={post.user.username}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    </Link>
+                    <div className="flex flex-col">
+                      <Link
+                        href={route('show_profile', post.user.username)}
+                        className="text-neutral-800 font-semibold hover:underline text-sm"
+                      >
+                        @{post.user.username}
+                      </Link>
+                      {typeof post.views === 'number' && (
+                        <span className="text-neutral-500 text-xs">{post.views} {t('views')}</span>
+                      )}
+                    </div>
+                  </>
+                )
               )}
             </div>
 
