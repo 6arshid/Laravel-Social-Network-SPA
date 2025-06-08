@@ -45,6 +45,12 @@ const handleFollowAction = (followerId, action, notifId) => {
         });
     };
 
+    const markAllAsRead = () => {
+        axios.post('/notifications/read-all').then(() => {
+            fetchNotifications();
+        });
+    };
+
     const MenuLink = ({ href, active, icon, children }) => (
         <Link
             href={href}
@@ -140,6 +146,18 @@ const handleFollowAction = (followerId, action, notifId) => {
                 }
             >
                 {t('posts')}
+            </MenuLink>
+
+            <MenuLink
+                href={route('user_pages.index')}
+                active={route().current('user_pages.index')}
+                icon={
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                }
+            >
+                {t('pages')}
             </MenuLink>
 
             <MenuLink
@@ -248,6 +266,11 @@ const handleFollowAction = (followerId, action, notifId) => {
 
 {showNotifications && (
     <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg rounded-md z-50 max-h-96 overflow-y-auto">
+        <div className="flex justify-end p-2 border-b">
+            <button onClick={markAllAsRead} className="text-xs text-blue-600 hover:underline">
+                Mark all as read
+            </button>
+        </div>
         {notifications.length === 0 ? (
             <div className="p-4 text-sm text-gray-500 text-center">
                 {t('No notifications available')}
@@ -314,6 +337,9 @@ const handleFollowAction = (followerId, action, notifId) => {
                     </span>
                 </Dropdown.Trigger>
                 <Dropdown.Content>
+                    <Dropdown.Link href={route('show_profile', { username: user.username })}>
+                        {t('YourProfile')}
+                    </Dropdown.Link>
                     <Dropdown.Link href={route('profile.edit')}>
                         {t('edit_profile')}
                     </Dropdown.Link>

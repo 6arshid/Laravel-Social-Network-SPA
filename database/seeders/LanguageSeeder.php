@@ -274,8 +274,15 @@ class LanguageSeeder extends Seeder
             'YourProfile' => ['en' => 'Your Profile', 'fa' => 'پروفایل شما'],
             'posts' => ['en' => 'Posts', 'fa' => 'پست‌ها'],
             'chat' => ['en' => 'Chats', 'fa' => 'چت‌ها'],
+            'pages' => ['en' => 'Pages', 'fa' => 'صفحات'],
+            'create_page' => ['en' => 'Create Page', 'fa' => 'ایجاد صفحه'],
+            'page_name' => ['en' => 'Page Name', 'fa' => 'نام صفحه'],
+            'page_category' => ['en' => 'Page Category', 'fa' => 'دسته‌بندی صفحه'],
+            'bio' => ['en' => 'Bio', 'fa' => 'بیوگرافی'],
+            'no_pages_found' => ['en' => 'No pages found', 'fa' => 'هیچ صفحه‌ای پیدا نشد'],
+            'search' => ['en' => 'Search', 'fa' => 'جستجو'],
             'No notifications available' => [
-                'en' => 'No notifications available', 
+                'en' => 'No notifications available',
                 'fa' => 'هیچ اعلانی موجود نیست'
             ],
             
@@ -347,6 +354,12 @@ class LanguageSeeder extends Seeder
             'loading' => ['en' => 'Loading', 'fa' => 'در حال بارگذاری'],
             'back_to_top' => ['en' => 'Back to Top', 'fa' => 'بازگشت به بالا'],
             'retry' => ['en' => 'Retry', 'fa' => 'تلاش مجدد'],
+            'blocked_users' => ['en' => 'Blocked Users', 'fa' => 'کاربران مسدود شده'],
+            'block' => ['en' => 'Block', 'fa' => 'مسدود کردن'],
+            'unblock' => ['en' => 'Unblock', 'fa' => 'رفع مسدودی'],
+            'no_blocked_users' => ['en' => 'No blocked users', 'fa' => 'کاربر مسدودی وجود ندارد'],
+            'you_blocked_this_user' => ['en' => 'You have blocked this user.', 'fa' => 'شما این کاربر را مسدود کرده‌اید.'],
+            'user_has_blocked_you' => ['en' => 'This user has blocked you.', 'fa' => 'این کاربر شما را مسدود کرده است.'],
 
         ];
 

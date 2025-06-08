@@ -159,6 +159,7 @@ class PostController extends Controller
 private function getSimilarPosts(Post $post)
 {
     $authUser = auth()->user();
+    $blockedIds = $authUser ? $authUser->blockedIds()->merge($authUser->blockedByIds()) : collect();
 
     return Post::where('id', '!=', $post->id)
         ->whereHas('user', function ($query) use ($authUser) {
@@ -177,6 +178,7 @@ private function getSimilarPosts(Post $post)
                 }
             });
         })
+        ->whereNotIn('user_id', $blockedIds)
         ->latest()
         ->take(5)
         ->with(['user', 'media'])
@@ -194,6 +196,10 @@ public function show(Request $request, Post $post)
 
     $owner = $post->user;
     $authUser = Auth::user();
+
+    if ($authUser && ($authUser->hasBlocked($owner) || $authUser->isBlockedBy($owner))) {
+        abort(403, 'You are not allowed to view this post.');
+    }
 
     if ($owner->is_private) {
         if (!$authUser) {
@@ -226,6 +232,8 @@ public function show(Request $request, Post $post)
         ->paginate(5)
         ->withQueryString();
 
+    $blockedIds = $authUser ? $authUser->blockedIds()->merge($authUser->blockedByIds()) : collect();
+
     $similarPosts = Post::where('id', '!=', $post->id)
         ->whereHas('user', function ($query) use ($authUser) {
             $query->where(function ($q) use ($authUser) {
@@ -243,6 +251,7 @@ public function show(Request $request, Post $post)
                 }
             });
         })
+        ->whereNotIn('user_id', $blockedIds)
         ->latest()
         ->take(5)
         ->with(['user', 'media'])

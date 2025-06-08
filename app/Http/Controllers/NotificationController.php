@@ -51,4 +51,15 @@ public function getUserNotifications()
 
         return response()->json(['success' => true]);
     }
+
+    public function markAllAsRead()
+    {
+        $user = auth()->user();
+
+        Notification::where('user_id', $user->id)
+            ->where('read', false)
+            ->update(['read' => true]);
+
+        return response()->json(['success' => true]);
+    }
 }
