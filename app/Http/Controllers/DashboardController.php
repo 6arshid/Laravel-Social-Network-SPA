@@ -35,12 +35,41 @@ class DashboardController extends Controller
         'comments.replies.user', 'comments.replies.likes',
         'repost' => fn($q) => $q->with('user', 'media'),
     ])
-    ->whereHas('user', function ($query) {
-        $query->where('is_private', false);
+    ->where(function ($query) {
+        $query->whereHas('user', fn($q) => $q->where('is_private', false))
+              ->orWhereNotNull('user_page_id');
     })
     ->whereNotIn('user_id', $blockedIds)
     ->latest()
     ->paginate(10, ['*'], 'explorer_page');
+
+  // حذف repost های کاربران بلاک شده یا خصوصی که اجازه مشاهده ندارند
+  foreach ([$followedPosts, $explorerPosts] as $collection) {
+      $collection->getCollection()->transform(function ($post) use ($user) {
+          $repost = $post->repost;
+          if ($repost) {
+              $originalUser = $repost->user;
+
+              if ($user->hasBlocked($originalUser) || $user->isBlockedBy($originalUser)) {
+                  $post->repost = null;
+                  return $post;
+              }
+
+              if ($originalUser->is_private) {
+                  $isOwner = $user->id === $originalUser->id;
+                  $isFollower = DB::table('follows')
+                      ->where('follower_id', $user->id)
+                      ->where('following_id', $originalUser->id)
+                      ->where('accepted', true)
+                      ->exists();
+                  if (!$isOwner && !$isFollower) {
+                      $post->repost = null;
+                  }
+              }
+          }
+          return $post;
+      });
+  }
 
 
     $suggestedUsers = [];

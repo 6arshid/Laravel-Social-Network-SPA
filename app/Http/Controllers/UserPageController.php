@@ -7,6 +7,7 @@ use App\Models\PageLike;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
@@ -58,14 +59,49 @@ class UserPageController extends Controller
     {
         $page->loadCount('likes');
         $isLiked = false;
-        if ($user = Auth::user()) {
-            $isLiked = $page->likes()->where('user_id', $user->id)->exists();
+        $authUser = Auth::user();
+        if ($authUser) {
+            $isLiked = $page->likes()->where('user_id', $authUser->id)->exists();
+
+            $owner = $page->user;
+            if ($authUser->hasBlocked($owner) || $authUser->isBlockedBy($owner)) {
+                abort(403, 'You are not allowed to view this page.');
+            }
         }
+
         $posts = Post::with(['user', 'media', 'page'])
             ->where('user_page_id', $page->id)
             ->latest()
             ->paginate(5)
             ->withQueryString();
+
+        // فیلتر repost ها بر اساس بلاک بودن یا خصوصی بودن
+        if ($authUser) {
+            $posts->getCollection()->transform(function ($post) use ($authUser) {
+                $repost = $post->repost;
+                if ($repost) {
+                    $originalUser = $repost->user;
+
+                    if ($authUser->hasBlocked($originalUser) || $authUser->isBlockedBy($originalUser)) {
+                        $post->repost = null;
+                        return $post;
+                    }
+
+                    if ($originalUser->is_private) {
+                        $isOwner = $authUser->id === $originalUser->id;
+                        $isFollower = DB::table('follows')
+                            ->where('follower_id', $authUser->id)
+                            ->where('following_id', $originalUser->id)
+                            ->where('accepted', true)
+                            ->exists();
+                        if (!$isOwner && !$isFollower) {
+                            $post->repost = null;
+                        }
+                    }
+                }
+                return $post;
+            });
+        }
         $operators = ['+', '-', '*', '/'];
         $a = rand(1, 10);
         $b = rand(1, 10);

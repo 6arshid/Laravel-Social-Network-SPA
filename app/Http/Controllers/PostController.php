@@ -36,21 +36,31 @@ class PostController extends Controller
         ->paginate(5)
         ->withQueryString();
 
-    // فیلتر نمایش repost فقط برای پست‌های مجاز
+    // فیلتر نمایش repost فقط برای پست‌های مجاز و کاربرانی که بلاک نشده‌اند
     $posts->getCollection()->transform(function ($post) use ($authUser) {
         $repost = $post->repost;
 
-        if ($repost && $repost->user->is_private) {
-            $isOwner = $authUser->id === $repost->user->id;
+        if ($repost) {
+            $originalUser = $repost->user;
 
-            $isFollower = DB::table('follows')
-                ->where('follower_id', $authUser->id)
-                ->where('following_id', $repost->user->id)
-                ->where('accepted', true)
-                ->exists();
+            // اگر کاربر اصلی بلاک شده بود، repost نمایش داده نشود
+            if ($authUser->hasBlocked($originalUser) || $authUser->isBlockedBy($originalUser)) {
+                $post->repost = null;
+                return $post;
+            }
 
-            if (!$isOwner && !$isFollower) {
-                $post->repost = null; // مخفی کردن repost
+            if ($originalUser->is_private) {
+                $isOwner = $authUser->id === $originalUser->id;
+
+                $isFollower = DB::table('follows')
+                    ->where('follower_id', $authUser->id)
+                    ->where('following_id', $originalUser->id)
+                    ->where('accepted', true)
+                    ->exists();
+
+                if (!$isOwner && !$isFollower) {
+                    $post->repost = null; // مخفی کردن repost
+                }
             }
         }
 
@@ -250,6 +260,27 @@ public function show(Request $request, Post $post)
 
             if (!$isFollower) {
                 abort(403, 'You are not allowed to view this post.');
+            }
+        }
+    }
+
+    // اگر پست repost باشد و صاحب اصلی بلاک شده یا دسترسی ندارد، آن را مخفی کن
+    if ($post->repost) {
+        $originalUser = $post->repost->user;
+
+        if ($authUser && ($authUser->hasBlocked($originalUser) || $authUser->isBlockedBy($originalUser))) {
+            $post->repost = null;
+        } elseif ($originalUser->is_private) {
+            if (!$authUser || $authUser->id !== $originalUser->id) {
+                $isFollower = $authUser ? DB::table('follows')
+                    ->where('follower_id', $authUser->id)
+                    ->where('following_id', $originalUser->id)
+                    ->where('accepted', true)
+                    ->exists() : false;
+
+                if (!$isFollower) {
+                    $post->repost = null;
+                }
             }
         }
     }
