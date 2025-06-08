@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\UserPage;
 
 class User extends Authenticatable
 {
@@ -60,6 +61,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    public function pages()
+    {
+        return $this->hasMany(UserPage::class);
+    }
     public function followings()
     {
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id');
@@ -91,6 +97,38 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id')
                     ->withTimestamps();
+    }
+
+    public function blocks()
+    {
+        return $this->belongsToMany(User::class, 'blocks', 'user_id', 'blocked_id')
+            ->withTimestamps();
+    }
+
+    public function blockedBy()
+    {
+        return $this->belongsToMany(User::class, 'blocks', 'blocked_id', 'user_id')
+            ->withTimestamps();
+    }
+
+    public function hasBlocked(User $user)
+    {
+        return $this->blocks()->where('blocked_id', $user->id)->exists();
+    }
+
+    public function isBlockedBy(User $user)
+    {
+        return $this->blockedBy()->where('user_id', $user->id)->exists();
+    }
+
+    public function blockedIds()
+    {
+        return $this->blocks()->pluck('users.id');
+    }
+
+    public function blockedByIds()
+    {
+        return $this->blockedBy()->pluck('users.id');
     }
 
 

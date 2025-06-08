@@ -8,9 +8,10 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 import UpdateAvatarCoverForm from './Partials/UpdateAvatarCoverForm';
 import Links from './Partials/Links';
 import NotificationSettingsForm from './Partials/NotificationSettingsForm';
+import BlockedUsers from './Partials/BlockedUsers';
 import { useTranslation } from 'react-i18next';
 
-export default function Edit({ mustVerifyEmail, status, auth }) {
+export default function Edit({ mustVerifyEmail, status, auth, blockedUsers }) {
     const [activeTab, setActiveTab] = useState('profile');
     const { t } = useTranslation();
 
@@ -20,6 +21,7 @@ export default function Edit({ mustVerifyEmail, status, auth }) {
         { name: t('links'), key: 'links' },
         { name: t('password'), key: 'password' },
         { name: t('notifications'), key: 'notifications' },
+        { name: t('blocked_users'), key: 'blocks' },
         { name: t('delete_account'), key: 'delete' },
     ];
 
@@ -41,6 +43,8 @@ export default function Edit({ mustVerifyEmail, status, auth }) {
                 return <UpdatePasswordForm className="max-w-xl" />;
             case 'notifications':
                 return <NotificationSettingsForm user={auth.user} />;
+            case 'blocks':
+                return <BlockedUsers blockedUsers={blockedUsers} />;
             case 'delete':
                 return <DeleteUserForm className="max-w-xl" />;
             default:

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { useDropzone } from 'react-dropzone';
 
-export default function PostForm({ post = null }) {
+export default function PostForm({ post = null, action = null }) {
   const { data, setData, post: submit, processing, errors } = useForm({
     content: post?.content || '',
     media: [],
@@ -19,7 +19,7 @@ export default function PostForm({ post = null }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    submit(post ? `/posts/${post.id}` : '/posts');
+    submit(action ?? (post ? `/posts/${post.id}` : '/posts'));
   };
 
   return (
