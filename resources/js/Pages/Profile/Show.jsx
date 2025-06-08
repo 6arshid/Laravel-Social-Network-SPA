@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { usePage, Link, Head } from '@inertiajs/react';
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/react';
+import axios from 'axios';
 import Cropper from 'react-easy-crop';
 import PostCard from '@/Components/PostCard';
 import SocialLinks from '@/Components/SocialLinks';
@@ -49,7 +50,7 @@ async function getCroppedImg(imageSrc, pixelCrop) {
 }
 
 export default function Show() {
-    const { auth, user, posts, isOwner, isFollowing, appName, captcha } = usePage().props;
+    const { auth, user, posts, isOwner, isFollowing, isBlocked, isBlockedBy, appName, captcha } = usePage().props;
     const { t } = useTranslation();
     const loggedInUser = auth?.user;
     const [allPosts, setAllPosts] = useState(posts.data);
@@ -60,6 +61,8 @@ export default function Show() {
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [following, setFollowing] = useState(isFollowing);
+    const [blocked, setBlocked] = useState(isBlocked);
+    const [blockedBy, setBlockedBy] = useState(isBlockedBy);
     const [isUploading, setIsUploading] = useState(false);
 
     const getImageUrl = (path) => {
@@ -89,13 +92,13 @@ export default function Show() {
         formData.append('image', croppedImage);
         formData.append('type', selectedType);
 
-        Inertia.post(route('profile.upload'), formData, {
+        router.post(route('profile.upload'), formData, {
             preserveScroll: true,
             onSuccess: () => {
                 setImageSrc(null);
                 setSelectedType(null);
                 setIsUploading(false);
-                Inertia.reload({ only: ['user'] });
+                router.reload({ only: ['user'] });
             },
             onError: () => {
                 setIsUploading(false);
@@ -105,7 +108,7 @@ export default function Show() {
 
     const deleteImage = (type) => {
         if (!confirm('Delete image?')) return;
-        Inertia.post(route('profile.image.delete'), { type }, {
+        router.post(route('profile.image.delete'), { type }, {
             preserveScroll: true,
         });
     };
@@ -117,6 +120,40 @@ export default function Show() {
         setAllPosts([...allPosts, ...data.data]);
         setNextPageUrl(data.next_page_url);
     };
+
+    if (blockedBy) {
+        const message = (
+            <div className="max-w-xl mx-auto mt-20 text-center">
+                {t('user_has_blocked_you')}
+            </div>
+        );
+        return loggedInUser ? (
+            <AuthenticatedLayout>{message}</AuthenticatedLayout>
+        ) : (
+            message
+        );
+    }
+
+    if (blocked) {
+        const message = (
+            <div className="max-w-xl mx-auto mt-20 text-center space-y-4">
+                <p>{t('you_blocked_this_user')}</p>
+                <button
+                    onClick={() =>
+                        axios.delete(route('user.unblock', user.username)).then(() => setBlocked(false))
+                    }
+                    className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                    {t('unblock')}
+                </button>
+            </div>
+        );
+        return loggedInUser ? (
+            <AuthenticatedLayout>{message}</AuthenticatedLayout>
+        ) : (
+            message
+        );
+    }
 
     const content = (
         <div className="max-w-4xl mx-auto pb-20">
@@ -164,8 +201,24 @@ export default function Show() {
                 {loggedInUser && !isOwner && (
                     <div className="px-4 mt-4 flex space-x-4">
                         <Link href={route('chat.show', user.id)} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">{t('message')}</Link>
-                        <button onClick={() => Inertia.post(route('follow.toggle', user.username), {}, { onSuccess: () => setFollowing(!following) })} className={`px-4 py-2 ${following ? 'bg-gray-600' : 'bg-blue-600'} text-white rounded hover:opacity-90`}>
+                        <button onClick={() => router.post(route('follow.toggle', user.username), {}, { onSuccess: () => setFollowing(!following) })} className={`px-4 py-2 ${following ? 'bg-gray-600' : 'bg-blue-600'} text-white rounded hover:opacity-90`}>
                             {following ? 'Following' : 'Follow'}
+                        </button>
+                        <button
+                            onClick={() => {
+                                if (blocked) {
+                                    axios
+                                        .delete(route('user.unblock', user.username))
+                                        .then(() => setBlocked(false));
+                                } else {
+                                    axios
+                                        .post(route('user.block', user.username))
+                                        .then(() => setBlocked(true));
+                                }
+                            }}
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:opacity-90"
+                        >
+                            {blocked ? t('unblock') : t('block')}
                         </button>
                     </div>
                 )}
