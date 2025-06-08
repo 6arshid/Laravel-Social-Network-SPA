@@ -278,7 +278,10 @@ $captchaAnswer = eval("return $captchaQuestion;");
         abort(403);
     }
 
-    $followers = $user->followers()->paginate(20);
+    $blockedIds = $user->blockedIds()->merge($user->blockedByIds());
+    $followers = $user->followers()
+        ->whereNotIn('users.id', $blockedIds)
+        ->paginate(20);
 
     return Inertia::render('Profile/Followers', [
         'user' => $user,
@@ -294,7 +297,10 @@ public function following($username)
         abort(403);
     }
 
-    $following = $user->following()->paginate(20);
+    $blockedIds = $user->blockedIds()->merge($user->blockedByIds());
+    $following = $user->following()
+        ->whereNotIn('users.id', $blockedIds)
+        ->paginate(20);
 
     return Inertia::render('Profile/Following', [
         'user' => $user,

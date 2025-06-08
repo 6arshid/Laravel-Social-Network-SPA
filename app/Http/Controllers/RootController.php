@@ -14,7 +14,9 @@ class RootController extends Controller
     $query = User::query();
 
     if ($authUser) {
-        $query->where('id', '!=', $authUser->id);
+        $blockedIds = $authUser->blockedIds()->merge($authUser->blockedByIds());
+        $query->where('id', '!=', $authUser->id)
+            ->whereNotIn('id', $blockedIds);
     }
 
     if ($search = $request->search) {
