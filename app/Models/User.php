@@ -93,6 +93,38 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+    public function blocks()
+    {
+        return $this->belongsToMany(User::class, 'blocks', 'user_id', 'blocked_id')
+            ->withTimestamps();
+    }
+
+    public function blockedBy()
+    {
+        return $this->belongsToMany(User::class, 'blocks', 'blocked_id', 'user_id')
+            ->withTimestamps();
+    }
+
+    public function hasBlocked(User $user)
+    {
+        return $this->blocks()->where('blocked_id', $user->id)->exists();
+    }
+
+    public function isBlockedBy(User $user)
+    {
+        return $this->blockedBy()->where('user_id', $user->id)->exists();
+    }
+
+    public function blockedIds()
+    {
+        return $this->blocks()->pluck('users.id');
+    }
+
+    public function blockedByIds()
+    {
+        return $this->blockedBy()->pluck('users.id');
+    }
+
 
 
 
