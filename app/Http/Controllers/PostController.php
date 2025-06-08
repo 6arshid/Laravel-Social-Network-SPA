@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Media;
+use App\Models\UserPage;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,8 @@ class PostController extends Controller
     $posts = Post::with([
             'media',
             'user',
-            'repost' => fn ($q) => $q->with(['user', 'media']),
+            'page',
+            'repost' => fn ($q) => $q->with(['user', 'media', 'page']),
         ])
         ->where('user_id', $authUser->id)
         ->latest()
@@ -62,13 +64,13 @@ class PostController extends Controller
 
 
 
-  public function store(Request $request)
-{
-    $data = $request->validate([
-        'content' => 'required|string',
-        'repost_id' => 'nullable|exists:posts,id',
-        'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:' . env('MAX_UPLOAD_SIZE'),
-    ]);
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'content' => 'required|string',
+            'repost_id' => 'nullable|exists:posts,id',
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:' . env('MAX_UPLOAD_SIZE'),
+        ]);
 
     $authUser = auth()->user();
 
@@ -110,8 +112,40 @@ class PostController extends Controller
         }
     }
 
-    return redirect()->route('posts.show', $post->id);
-}
+        return redirect()->route('posts.show', $post->id);
+    }
+
+    public function storeForPage(Request $request, UserPage $page)
+    {
+        if ($page->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'content' => 'required|string',
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:' . env('MAX_UPLOAD_SIZE'),
+        ]);
+
+        $post = Post::create([
+            'user_id' => $request->user()->id,
+            'user_page_id' => $page->id,
+            'content' => $data['content'],
+        ]);
+
+        if ($request->hasFile('media')) {
+            foreach ($request->file('media') as $file) {
+                $path = $file->store('posts', 'public');
+                $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
+
+                $post->media()->create([
+                    'file_path' => $path,
+                    'type' => $type,
+                ]);
+            }
+        }
+
+        return redirect()->route('user_pages.show', $page->slug);
+    }
 
 
     public function edit(Post $post)
@@ -181,7 +215,7 @@ private function getSimilarPosts(Post $post)
         ->whereNotIn('user_id', $blockedIds)
         ->latest()
         ->take(5)
-        ->with(['user', 'media'])
+        ->with(['user', 'media', 'page'])
         ->get();
 }
 
@@ -190,8 +224,9 @@ public function show(Request $request, Post $post)
     $post->load([
         'media',
         'user',
+        'page',
         'likes',
-        'repost' => fn ($q) => $q->with('user', 'media'),
+        'repost' => fn ($q) => $q->with('user', 'media', 'page'),
     ]);
 
     $owner = $post->user;

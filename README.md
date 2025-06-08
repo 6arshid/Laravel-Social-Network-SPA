@@ -5,9 +5,11 @@
 - **User Profiles**: Each user has a customizable profile, with support for social network URLs.
 - **Private & Public Profiles**: Users can choose to make their profile visible only to followers (private) or publicly accessible to all users.
 - **Explore Section**: Discover trending users, posts, hashtags, and content from across the network.
+- **Block Users**: Block or unblock other users to prevent unwanted interactions or messages.
 - **Notifications**: Real-time notifications built into the system.
 - **Follow System**: Users can follow/unfollow each other easily.
 - **Messaging**: Direct messaging between users without needing third-party packages or APIs. Includes message deletion and editing, voice chat, file attachment, and emoji reactions.
+- **Group Chat**: Create and participate in group conversations.
 - **Place Chat**: Chat based on location or specific places.
 - **Post Reactions**: Users can like, dislike, or react to posts with full emoji support.
 - **Comments**: Users can comment on posts and interact through likes and dislikes.
@@ -16,8 +18,8 @@
 - **Statistics System**: Visual charts for daily, monthly, annual, and overall statistics.
 - **PWA Support**: The application is installable as a Progressive Web App (PWA) on mobile and desktop, offering offline capabilities and push notifications.
 - **Multi-language Support**: Supports multiple languages using Laravel localization and React i18n.
-- **Custom Pages**: Easily create and render custom static or dynamic pages.
-- **Admin Panel**: Manage users, posts, and overall system settings.
+- **Custom Pages**: Easily create and render custom static or dynamic pages via the admin panel.
+- **Admin Panel**: Manage users, posts, custom pages, and overall system settings.
 - **Post Report System**: Users can report inappropriate posts.
 - **Reserved Usernames**: Prevent registration of specific usernames.
 
@@ -128,6 +130,7 @@ npm run build
 - To enable real-time notifications, configure a broadcast driver like Pusher or Laravel Echo.
 - For PWA support, test installability on mobile devices and ensure HTTPS is used in production.
 - Customize the Explore algorithm to your needs using trending data, hashtags, or post metrics.
+- Use the Custom Page module in the admin panel to add landing pages, FAQs, or Terms & Conditions.
 
 ---
 

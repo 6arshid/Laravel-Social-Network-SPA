@@ -149,6 +149,18 @@ const handleFollowAction = (followerId, action, notifId) => {
             </MenuLink>
 
             <MenuLink
+                href={route('user_pages.index')}
+                active={route().current('user_pages.index')}
+                icon={
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                }
+            >
+                {t('pages')}
+            </MenuLink>
+
+            <MenuLink
                 href={route('users.index')}
                 active={route().current('users.index')}
                 icon={
@@ -325,6 +337,9 @@ const handleFollowAction = (followerId, action, notifId) => {
                     </span>
                 </Dropdown.Trigger>
                 <Dropdown.Content>
+                    <Dropdown.Link href={route('show_profile', { username: user.username })}>
+                        {t('YourProfile')}
+                    </Dropdown.Link>
                     <Dropdown.Link href={route('profile.edit')}>
                         {t('edit_profile')}
                     </Dropdown.Link>
