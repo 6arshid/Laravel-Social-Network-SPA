@@ -11,6 +11,7 @@ export default function Dashboard({ followedPosts, explorerPosts, suggestedUsers
 
   const [activeTab, setActiveTab] = useState('followed');
   const [suggestions, setSuggestions] = useState(suggestedUsers);
+  const [darkMode, setDarkMode] = useState(false);
 
   const [followedData, setFollowedData] = useState(followedPosts ?? { data: [] });
   const [explorerData, setExplorerData] = useState(explorerPosts ?? { data: [] });
@@ -20,6 +21,26 @@ export default function Dashboard({ followedPosts, explorerPosts, suggestedUsers
 
   const activeData = activeTab === 'followed' ? followedData : explorerData;
   const setActiveData = activeTab === 'followed' ? setFollowedData : setExplorerData;
+
+  // Dark mode toggle
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.documentElement.classList.toggle('dark');
+  };
+
+  // Initialize dark mode from localStorage
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedDarkMode);
+    if (savedDarkMode) {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  // Save dark mode preference
+  useEffect(() => {
+    localStorage.setItem('darkMode', darkMode);
+  }, [darkMode]);
 
   const handleFollow = async (username, id) => {
     try {
@@ -72,19 +93,31 @@ export default function Dashboard({ followedPosts, explorerPosts, suggestedUsers
     if (!posts?.data?.length) {
       if (activeTab === 'explorer') {
         return (
-          <div className="text-center text-gray-500 py-10">
-            <p className="mb-4">{t('no_explorer_posts')}</p>
-            <div className="flex justify-center gap-4">
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="w-24 h-24 mb-6 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center">
+              <svg className="w-12 h-12 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('no_explorer_posts')}</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-8 text-center max-w-md">Discover amazing content from the community</p>
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
               >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
                 {t('back_to_top')}
               </button>
               <button
                 onClick={handleRetry}
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                className="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
               >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
                 {t('retry')}
               </button>
             </div>
@@ -92,97 +125,204 @@ export default function Dashboard({ followedPosts, explorerPosts, suggestedUsers
         );
       } else {
         return (
-          <div className="text-center text-gray-500 py-10">
-            <p>{t('no_followed_posts')}</p>
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="w-24 h-24 mb-6 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 flex items-center justify-center">
+              <svg className="w-12 h-12 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('no_followed_posts')}</h3>
+            <p className="text-gray-600 dark:text-gray-400 text-center max-w-md">Start following users to see their posts here</p>
           </div>
         );
       }
     }
 
-    return posts.data.map((post) => (
-      <div key={post.id} className="mb-8">
-        <PostCard post={post} captcha={captcha} />
+    return posts.data.map((post, index) => (
+      <div key={post.id} className={`transform transition-all duration-300 ${index % 2 === 0 ? 'animate-fade-in-left' : 'animate-fade-in-right'}`}>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 mb-6 overflow-hidden">
+          <PostCard post={post} captcha={captcha} />
+        </div>
       </div>
     ));
   };
 
   return (
-    <AuthenticatedLayout
-      header={<h2 className="text-xl font-semibold leading-tight text-gray-800">{t('dashboard')}</h2>}
-    >
-      <Head title={t('dashboard')} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+      <AuthenticatedLayout
+        header={
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              {t('dashboard')}
+            </h2>
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-200 transform hover:scale-105"
+            >
+              {darkMode ? (
+                <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clipRule="evenodd" />
+                </svg>
+              )}
+            </button>
+          </div>
+        }
+      >
+        <Head title={t('dashboard')} />
 
-      <div className="py-12">
-        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="overflow-hidden shadow-sm sm:rounded-lg p-6">
+        <div className="py-8 px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl">
 
-            {/* 🔍 Suggested Users */}
+            {/* Suggested Users Section */}
             {suggestions.length > 0 && (
-              <div className="mb-10">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">🔍 {t('suggested_users_to_follow')}</h2>
-                <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {suggestions.map((user) => (
-                    <li key={user.id} className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg shadow">
-                      <Link href={`/${user.username}`}>
-                        <img
-                          src={user.avatar ? `/storage/${user.avatar}` : '/default-avatar.png'}
-                          alt={user.name}
-                          className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition"
-                        />
-                      </Link>
-                      <div className="flex-grow">
-                        <Link href={`/${user.username}`}>
-                          <div className="font-medium text-gray-900 hover:underline">{user.name}</div>
-                        </Link>
-                        <div className="text-sm text-gray-500">@{user.username}</div>
-                      </div>
-                      <button
-                        onClick={() => handleFollow(user.username, user.id)}
-                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              <div className="mb-12 animate-fade-in">
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 backdrop-blur-sm">
+                  <div className="flex items-center mb-6">
+                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center mr-4">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                      </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('suggested_users_to_follow')}</h2>
+                  </div>
+                  
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {suggestions.map((user, index) => (
+                      <div 
+                        key={user.id} 
+                        className={`group relative bg-gradient-to-br from-gray-50 to-white dark:from-gray-700 dark:to-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-600 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 animate-slide-up`}
+                        style={{ animationDelay: `${index * 100}ms` }}
                       >
-                        {t('follow')}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                        <div className="flex items-center space-x-4">
+                          <Link href={`/${user.username}`} className="relative">
+                            <div className="w-14 h-14 rounded-2xl overflow-hidden ring-2 ring-white dark:ring-gray-700 group-hover:ring-blue-500 transition-all duration-300">
+                              <img
+                                src={user.avatar ? `/storage/${user.avatar}` : '/default-avatar.png'}
+                                alt={user.name}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              />
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+                          </Link>
+                          
+                          <div className="flex-1 min-w-0">
+                            <Link href={`/${user.username}`}>
+                              <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 truncate">
+                                {user.name}
+                              </h3>
+                            </Link>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">@{user.username}</p>
+                          </div>
+                        </div>
+                        
+                        <button
+                          onClick={() => handleFollow(user.username, user.id)}
+                          className="mt-4 w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium py-2.5 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                        >
+                          {t('follow')}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* 📌 Tabs */}
-            <div className="mb-6 flex gap-4 border-b">
-              <button
-                onClick={() => setActiveTab('followed')}
-                className={`px-4 py-2 border-b-2 transition ${
-                  activeTab === 'followed'
-                    ? 'border-blue-600 text-blue-600 font-semibold'
-                    : 'border-transparent text-gray-600'
-                }`}
-              >
-                {t('followed_users')}
-              </button>
-              <button
-                onClick={() => setActiveTab('explorer')}
-                className={`px-4 py-2 border-b-2 transition ${
-                  activeTab === 'explorer'
-                    ? 'border-blue-600 text-blue-600 font-semibold'
-                    : 'border-transparent text-gray-600'
-                }`}
-              >
-                {t('explorer')}
-              </button>
+            {/* Navigation Tabs */}
+            <div className="mb-8">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-2 shadow-sm border border-gray-100 dark:border-gray-700 backdrop-blur-sm">
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setActiveTab('followed')}
+                    className={`flex-1 flex items-center justify-center px-6 py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 ${
+                      activeTab === 'followed'
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    {t('followed_users')}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('explorer')}
+                    className={`flex-1 flex items-center justify-center px-6 py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 ${
+                      activeTab === 'explorer'
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                    </svg>
+                    {t('explorer')}
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* 📢 Posts */}
-            {renderPosts(activeData)}
-
-            {/* 🔁 Infinite Scroll Loader */}
-            <div ref={loaderRef} className="h-10 mt-6 text-center text-gray-500">
-              {activeData?.links?.next && <span>{t('loading')}...</span>}
+            {/* Posts Section */}
+            <div className="space-y-6">
+              {renderPosts(activeData)}
             </div>
+
+            {/* Loading Indicator */}
+            {activeData?.links?.next && (
+              <div ref={loaderRef} className="flex justify-center py-8">
+                <div className="flex items-center space-x-3 text-gray-500 dark:text-gray-400">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
+                  <span className="font-medium">{t('loading')}...</span>
+                </div>
+              </div>
+            )}
 
           </div>
         </div>
-      </div>
-    </AuthenticatedLayout>
+      </AuthenticatedLayout>
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slide-up {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fade-in-left {
+          from { opacity: 0; transform: translateX(-30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes fade-in-right {
+          from { opacity: 0; transform: translateX(30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out forwards;
+        }
+        
+        .animate-slide-up {
+          animation: slide-up 0.8s ease-out forwards;
+          opacity: 0;
+        }
+        
+        .animate-fade-in-left {
+          animation: fade-in-left 0.6s ease-out forwards;
+        }
+        
+        .animate-fade-in-right {
+          animation: fade-in-right 0.6s ease-out forwards;
+        }
+      `}</style>
+    </div>
   );
 }
