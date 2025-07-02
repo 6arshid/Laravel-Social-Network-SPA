@@ -24,6 +24,7 @@ use App\Http\Controllers\RootController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\TranslationController;
+use App\Http\Controllers\InstallController;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,9 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('welcome');
+
+Route::get('/install', [InstallController::class, 'show'])->name('install.show');
+Route::post('/install', [InstallController::class, 'install'])->name('install.perform');
 
 
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
