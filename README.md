@@ -75,29 +75,47 @@ cp .env.example .env
 
 Then update your `.env` file with your database credentials and other necessary configurations.
 
-### 5. Generate Application Key
+### 5. Run the Web Installer
+
+Start the development server and navigate to `/install` in your browser. The installer will collect your database details, run migrations and seeders, and create the admin account automatically.
+
+```bash
+php artisan serve
+```
+
+Visit:
+
+```
+http://localhost:8000/install
+```
+
+If you're serving the project from a subdirectory, append `/install` to your application's base URL (for example, `http://localhost/your-subdir/public/install`).
+
+If you prefer manual setup, continue with the steps below.
+
+### 6. Generate Application Key
 
 ```bash
 php artisan key:generate
 ```
 
-### 6. Run Database Migrations
+### 7. Run Database Migrations
 
 ```bash
 php artisan migrate
 ```
 
-### 7. Seed the Database
+### 8. Seed the Database
 
 ```bash
 php artisan db:seed
 ```
 
-### 8. Set Admin Privileges
+### 9. Set Admin Privileges
 
 After seeding, go to the `users` table and set `is_admin = 1` for your user manually.
 
-### 9. Serve the Application
+### 10. Serve the Application
 
 ```bash
 php artisan serve
@@ -109,7 +127,7 @@ The application will be available at:
 http://localhost:8000
 ```
 
-### 10. Build Frontend Assets
+### 11. Build Frontend Assets
 
 For development:
 
