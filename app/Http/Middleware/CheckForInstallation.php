@@ -20,7 +20,10 @@ class CheckForInstallation
             && !File::exists(storage_path('installed'));
 
         if ($needsInstall && !$request->is('*install*')) {
-            return redirect($request->root().'/install');
+            // Respect subdirectory installations by redirecting relative to the
+            // request base path instead of the domain root.
+            $installUrl = $request->getBasePath().'/install';
+            return redirect($installUrl);
         }
 
         return $next($request);
