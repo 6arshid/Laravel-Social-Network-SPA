@@ -20,7 +20,10 @@ class CheckForInstallation
             && !File::exists(storage_path('installed'));
 
         if ($needsInstall && !$request->is('*install*')) {
-            return redirect($request->root().'/install');
+            // Build the install URL using the scheme, host, and base path
+            // so that nested subdirectory deployments redirect correctly.
+            $installUrl = $request->getSchemeAndHttpHost().$request->getBasePath().'/install';
+            return redirect()->to($installUrl);
         }
 
         return $next($request);
