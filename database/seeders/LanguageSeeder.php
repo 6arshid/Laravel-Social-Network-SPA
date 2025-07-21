@@ -54,6 +54,37 @@ class LanguageSeeder extends Seeder
                 'en' => 'The Place Chat feature allows users to join chats based on their current location or specific places, making it easy to connect with nearby communities, events, or shared interests.',
                 'fa' => 'ویژگی چت در مکان به کاربران اجازه می‌دهد بر اساس مکان فعلی یا مکان‌های خاص وارد گفتگو شوند و با جوامع، رویدادها یا علایق مشترک ارتباط برقرار کنند.'
             ],
+
+            // Welcome Page
+            'social_network' => ['en' => 'Social Network', 'fa' => 'شبکه اجتماعی'],
+            'hero_description' => [
+                'en' => 'Connect, Share, and Discover with the most advanced social platform built with Laravel and React',
+                'fa' => 'با پیشرفته‌ترین پلتفرم اجتماعی ساخته‌شده با لاراول و ری‌اکت ارتباط برقرار کنید، به اشتراک بگذارید و کشف کنید'
+            ],
+            'get_started' => ['en' => 'Get Started', 'fa' => 'شروع کنید'],
+            'learn_more' => ['en' => 'Learn More', 'fa' => 'بیشتر بدانید'],
+            'powerful_features' => ['en' => 'Powerful Features', 'fa' => 'ویژگی‌های قدرتمند'],
+            'features_description' => [
+                'en' => 'Everything you need to build meaningful connections and share your story',
+                'fa' => 'هر آنچه برای ساخت ارتباطات معنادار و اشتراک داستان خود نیاز دارید'
+            ],
+            'active_users' => ['en' => 'Active Users', 'fa' => 'کاربران فعال'],
+            'messages_sent' => ['en' => 'Messages Sent', 'fa' => 'پیام‌های ارسال‌شده'],
+            'uptime' => ['en' => 'Uptime', 'fa' => 'زمان فعالیت'],
+            'ready_to_get_started' => ['en' => 'Ready to Get Started?', 'fa' => 'آماده‌اید شروع کنید؟'],
+            'join_millions' => [
+                'en' => 'Join millions of users who are already connecting and sharing on our platform',
+                'fa' => 'به میلیون‌ها کاربری بپیوندید که همین حالا در پلتفرم ما در حال ارتباط و اشتراک‌گذاری هستند'
+            ],
+            'create_account' => ['en' => 'Create Account', 'fa' => 'ایجاد حساب'],
+            'sign_in' => ['en' => 'Sign In', 'fa' => 'ورود'],
+            'built_with_versions' => [
+                'en' => 'Built with ❤️ using Laravel v{{laravelVersion}} and PHP v{{phpVersion}}',
+                'fa' => 'ساخته‌شده با ❤️ با استفاده از لاراول نسخه {{laravelVersion}} و پی‌اچ‌پی نسخه {{phpVersion}}'
+            ],
+            'privacy_policy' => ['en' => 'Privacy Policy', 'fa' => 'حریم خصوصی'],
+            'terms_of_service' => ['en' => 'Terms of Service', 'fa' => 'شرایط استفاده'],
+            'contact_us' => ['en' => 'Contact Us', 'fa' => 'تماس با ما'],
             
             // Registration/Login
             'name' => ['en' => 'Name', 'fa' => 'نام'],
