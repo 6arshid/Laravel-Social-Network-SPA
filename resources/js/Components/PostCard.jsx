@@ -67,46 +67,16 @@ export default function PostCard({ post }) {
           <div className="p-6 pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                {post.page ? (
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                    </div>
-                    <div>
-                      <Link
-                        href={route('user_pages.show', post.page.slug)}
-                        className="text-gray-900 dark:text-white font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-                      >
-                        {post.page.name}
-                      </Link>
-                      <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>Verified Page</span>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  post.user && (
+                  {post.user && (
                     <div className="flex items-center space-x-3">
                       <Link href={route('show_profile', post.user.username)} className="relative group">
                         <div className="w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-transparent group-hover:ring-blue-500 dark:group-hover:ring-blue-400 transition-all duration-300">
-                          <img
-                            src={post.user.avatar ? `/storage/${post.user.avatar}` : '/default-avatar.png'}
-                            alt={post.user.username}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
+                          <img src={post.user.avatar ? `/storage/${post.user.avatar}` : '/default-avatar.png'} alt={post.user.username} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                         </div>
                         <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
                       </Link>
                       <div>
-                        <Link
-                          href={route('show_profile', post.user.username)}
-                          className="text-gray-900 dark:text-white font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-                        >
+                        <Link href={route('show_profile', post.user.username)} className="text-gray-900 dark:text-white font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
                           @{post.user.username}
                         </Link>
                         {typeof post.views === 'number' && (
@@ -120,8 +90,7 @@ export default function PostCard({ post }) {
                         )}
                       </div>
                     </div>
-                  )
-                )}
+                  )}
               </div>
 
               <div className="flex items-center space-x-3">
