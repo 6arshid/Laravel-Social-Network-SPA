@@ -17,7 +17,6 @@ use App\Http\Controllers\BlockController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HashtagController;
 use App\Http\Controllers\MessageReactionController;
-use App\Http\Controllers\UserPageController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\RootController;
@@ -134,17 +133,6 @@ Route::middleware('auth')->group(function () {
     // Route::post('/remove-following/{user}', [FollowController::class, 'removeFollowing'])->name('follow.remove');
 
     // User pages
-    Route::get('/pages', [UserPageController::class, 'index'])->name('user_pages.index');
-    Route::get('/pages/create', [UserPageController::class, 'create'])->name('user_pages.create');
-    Route::post('/pages', [UserPageController::class, 'store'])->name('user_pages.store');
-    Route::get('/pages/category/{slug}', [UserPageController::class, 'category'])->name('user_pages.category');
-    Route::get('/pages/{page:slug}', [UserPageController::class, 'show'])->name('user_pages.show');
-    Route::get('/pages/{page:slug}/edit', [UserPageController::class, 'edit'])->name('user_pages.edit');
-    Route::patch('/pages/{page:slug}', [UserPageController::class, 'update'])->name('user_pages.update');
-    Route::post('/pages/{page:slug}/like', [UserPageController::class, 'like'])->name('user_pages.like');
-    Route::post('/pages/{page:slug}/posts', [PostController::class, 'storeForPage'])->name('user_pages.posts.store');
-    Route::post('/pages/{page:slug}/upload', [UserPageController::class, 'upload'])->name('user_pages.upload');
-    Route::post('/pages/{page:slug}/image/delete', [UserPageController::class, 'deleteImage'])->name('user_pages.image.delete');
 
 
 
