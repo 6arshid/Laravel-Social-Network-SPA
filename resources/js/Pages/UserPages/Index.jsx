@@ -53,7 +53,7 @@ export default function Index({ pages, filters, categories }) {
         )}
 
         <div className="mt-8">
-          <h3 className="font-semibold mb-2">{t('categories')}</h3>
+          <h3 className="font-semibold text-white mb-2">{t('categories')}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {Object.entries(categories).map(([group, cats]) => (
               <div key={group}>
