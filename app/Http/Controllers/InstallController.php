@@ -90,4 +90,14 @@ class InstallController extends Controller
 
         return inertia('Installed');
     }
+
+    public function deleteInstallFile()
+    {
+        $installed = storage_path('installed');
+        if (File::exists($installed)) {
+            File::delete($installed);
+        }
+
+        return redirect()->route('install.show');
+    }
 }

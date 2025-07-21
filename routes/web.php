@@ -42,6 +42,7 @@ Route::get('/', function () {
 
 Route::get('/install', [InstallController::class, 'show'])->name('install.show');
 Route::post('/install', [InstallController::class, 'install'])->name('install.perform');
+Route::post('/install/delete-file', [InstallController::class, 'deleteInstallFile'])->name('install.delete-file');
 
 
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
