@@ -40,7 +40,7 @@ return [
     'join_millions' => 'به میلیون‌ها کاربری بپیوندید که همین حالا در پلتفرم ما در حال ارتباط و اشتراک‌گذاری هستند',
     'create_account' => 'ایجاد حساب',
     'sign_in' => 'ورود',
-    'built_with_versions' => 'ساخته‌شده با ❤️ با استفاده از لاراول نسخه {{laravelVersion}} و پی‌اچ‌پی نسخه {{phpVersion}}',
+    'built_with_versions' => 'حق نشر © {{year}} {{appName}}',
     'privacy_policy' => 'حریم خصوصی',
     'terms_of_service' => 'شرایط استفاده',
     'contact_us' => 'تماس با ما',
