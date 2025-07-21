@@ -24,6 +24,7 @@ use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\InstallController;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -40,9 +41,10 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
-Route::get('/install', [InstallController::class, 'show'])->name('install.show');
-Route::post('/install', [InstallController::class, 'install'])->name('install.perform');
-Route::post('/install/delete-file', [InstallController::class, 'deleteInstallFile'])->name('install.delete-file');
+if (!File::exists(storage_path('installed'))) {
+    Route::get('/install', [InstallController::class, 'show'])->name('install.show');
+    Route::post('/install', [InstallController::class, 'install'])->name('install.perform');
+}
 
 
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');

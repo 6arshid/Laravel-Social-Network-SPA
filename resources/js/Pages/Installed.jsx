@@ -1,14 +1,7 @@
 import GuestLayout from '@/Layouts/GuestLayout';
-import PrimaryButton from '@/Components/PrimaryButton';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 export default function Installed() {
-    const { post, processing } = useForm({});
-
-    const removeFile = (e) => {
-        e.preventDefault();
-        post(route('install.delete-file'));
-    };
 
     return (
         <GuestLayout>
@@ -18,9 +11,14 @@ export default function Installed() {
                 <p className="mb-2">Admin email: <strong>admin@admin.com</strong></p>
                 <p>Admin password: <strong>admin@admin.com</strong></p>
                 <p className="mb-6">Please change <strong>your email and password</strong> after logging in.</p>
-                <form onSubmit={removeFile} className="mt-6">
-                    <PrimaryButton disabled={processing}>Delete install file</PrimaryButton>
-                </form>
+                <div className="mt-6">
+                    <Link
+                        href="/"
+                        className="inline-flex items-center rounded-md border border-gray-300 bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                        Show your website
+                    </Link>
+                </div>
             </div>
         </GuestLayout>
     );
