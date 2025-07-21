@@ -78,7 +78,11 @@ class InstallController extends Controller
             try {
                 @symlink(storage_path('app/public'), $storageLink);
             } catch (\Throwable $e) {
-                Artisan::call('storage:link');
+                if (function_exists('exec')) {
+                    Artisan::call('storage:link');
+                } else {
+                    File::copyDirectory(storage_path('app/public'), $storageLink);
+                }
             }
         }
 
