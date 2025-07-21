@@ -35,7 +35,11 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value={t('email')} />
+                    <InputLabel
+                        htmlFor="email"
+                        value={t('email')}
+                        className="text-white"
+                    />
 
                     <TextInput
                         id="email"
@@ -52,7 +56,11 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value={t('password')} />
+                    <InputLabel
+                        htmlFor="password"
+                        value={t('password')}
+                        className="text-white"
+                    />
 
                     <TextInput
                         id="password"
@@ -76,7 +84,7 @@ export default function Login({ status, canResetPassword }) {
                                 setData('remember', e.target.checked)
                             }
                         />
-                        <span className="ms-2 text-sm text-gray-600">
+                        <span className="ms-2 text-sm text-white">
                             {t('remember_me')}
                         </span>
                     </label>
