@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
-use App\Models\User;
 
 class InstallController extends Controller
 {
@@ -26,10 +24,7 @@ class InstallController extends Controller
             'db_port' => 'required',
             'db_database' => 'required',
             'db_username' => 'required',
-            'admin_name' => 'required',
-            'admin_email' => 'required|email',
-            'admin_username' => 'required',
-            'admin_password' => 'required',
+            'db_password' => 'nullable',
         ]);
 
         $envPath = base_path('.env');
@@ -70,19 +65,25 @@ class InstallController extends Controller
             // ignore errors creating database
         }
 
-        Artisan::call('migrate', ['--force' => true]);
-        Artisan::call('db:seed', ['--force' => true]);
+        DB::reconnect('mysql');
+        $sqlFile = public_path('test4.sql');
+        if (File::exists($sqlFile)) {
+            DB::unprepared(File::get($sqlFile));
+            File::delete($sqlFile);
+        }
 
-        User::create([
-            'name' => $request->admin_name,
-            'email' => $request->admin_email,
-            'username' => $request->admin_username,
-            'password' => Hash::make($request->admin_password),
-            'is_admin' => true,
-        ]);
+        // create public/storage symlink if it doesn't exist
+        $storageLink = public_path('storage');
+        if (!File::exists($storageLink)) {
+            try {
+                File::link(storage_path('app/public'), $storageLink);
+            } catch (\Exception $e) {
+                Artisan::call('storage:link');
+            }
+        }
 
         File::put(storage_path('installed'), now()->toDateTimeString());
 
-        return redirect($request->root());
+        return inertia('Installed');
     }
 }

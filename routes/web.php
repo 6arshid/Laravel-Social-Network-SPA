@@ -40,8 +40,8 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
-// Route::get('/install', [InstallController::class, 'show'])->name('install.show');
-// Route::post('/install', [InstallController::class, 'install'])->name('install.perform');
+Route::get('/install', [InstallController::class, 'show'])->name('install.show');
+Route::post('/install', [InstallController::class, 'install'])->name('install.perform');
 
 
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
