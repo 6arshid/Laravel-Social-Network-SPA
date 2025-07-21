@@ -40,7 +40,7 @@ return [
     'join_millions' => 'Join millions of users who are already connecting and sharing on our platform',
     'create_account' => 'Create Account',
     'sign_in' => 'Sign In',
-    'built_with_versions' => 'Built with ❤️ using Laravel v{{laravelVersion}} and PHP v{{phpVersion}}',
+    'built_with_versions' => 'Copyright © {{year}} {{appName}}',
     'privacy_policy' => 'Privacy Policy',
     'terms_of_service' => 'Terms of Service',
     'contact_us' => 'Contact Us',

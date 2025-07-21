@@ -1,10 +1,11 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import LanguageSwitcher from '@/Components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
+export default function Welcome({ auth }) {
     const { t } = useTranslation();
+    const pages = usePage().props.pagesByLang;
 
     const features = [
         {
@@ -239,12 +240,18 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     <footer className="container mx-auto px-6 py-12 text-center">
                         <div className="text-gray-600 dark:text-gray-400">
                             <p className="mb-4">
-                                {t('built_with_versions', { laravelVersion, phpVersion })}
+                                {t('built_with_versions', { year: new Date().getFullYear(), appName: import.meta.env.VITE_APP_NAME })}
                             </p>
                             <div className="flex justify-center space-x-6 text-sm">
-                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">{t('privacy_policy')}</a>
-                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">{t('terms_of_service')}</a>
-                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">{t('contact_us')}</a>
+                                {pages && pages.map((page) => (
+                                    <Link
+                                        key={page.id}
+                                        href={route('page.show', page.slug)}
+                                        className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300"
+                                    >
+                                        {page.title}
+                                    </Link>
+                                ))}
                             </div>
                         </div>
                     </footer>

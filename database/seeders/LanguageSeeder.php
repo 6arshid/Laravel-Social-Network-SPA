@@ -79,8 +79,8 @@ class LanguageSeeder extends Seeder
             'create_account' => ['en' => 'Create Account', 'fa' => 'ایجاد حساب'],
             'sign_in' => ['en' => 'Sign In', 'fa' => 'ورود'],
             'built_with_versions' => [
-                'en' => 'Built with ❤️ using Laravel v{{laravelVersion}} and PHP v{{phpVersion}}',
-                'fa' => 'ساخته‌شده با ❤️ با استفاده از لاراول نسخه {{laravelVersion}} و پی‌اچ‌پی نسخه {{phpVersion}}'
+                'en' => 'Copyright © {{year}} {{appName}}',
+                'fa' => 'حق نشر © {{year}} {{appName}}'
             ],
             'privacy_policy' => ['en' => 'Privacy Policy', 'fa' => 'حریم خصوصی'],
             'terms_of_service' => ['en' => 'Terms of Service', 'fa' => 'شرایط استفاده'],
