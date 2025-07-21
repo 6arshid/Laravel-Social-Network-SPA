@@ -12,10 +12,6 @@ export default function Install() {
         db_database: '',
         db_username: '',
         db_password: '',
-        admin_name: '',
-        admin_email: '',
-        admin_username: '',
-        admin_password: '',
     });
 
     const submit = (e) => {
@@ -54,27 +50,6 @@ export default function Install() {
                     <InputError message={errors.db_password} className="mt-2" />
                 </div>
 
-                <h2 className="text-xl font-semibold pt-4">Admin User</h2>
-                <div>
-                    <InputLabel htmlFor="admin_name" value="Name" />
-                    <TextInput id="admin_name" name="admin_name" value={data.admin_name} className="mt-1 block w-full" onChange={e => setData('admin_name', e.target.value)} required />
-                    <InputError message={errors.admin_name} className="mt-2" />
-                </div>
-                <div>
-                    <InputLabel htmlFor="admin_email" value="Email" />
-                    <TextInput id="admin_email" type="email" name="admin_email" value={data.admin_email} className="mt-1 block w-full" onChange={e => setData('admin_email', e.target.value)} required />
-                    <InputError message={errors.admin_email} className="mt-2" />
-                </div>
-                <div>
-                    <InputLabel htmlFor="admin_username" value="Username" />
-                    <TextInput id="admin_username" name="admin_username" value={data.admin_username} className="mt-1 block w-full" onChange={e => setData('admin_username', e.target.value)} required />
-                    <InputError message={errors.admin_username} className="mt-2" />
-                </div>
-                <div>
-                    <InputLabel htmlFor="admin_password" value="Password" />
-                    <TextInput id="admin_password" type="password" name="admin_password" value={data.admin_password} className="mt-1 block w-full" onChange={e => setData('admin_password', e.target.value)} required />
-                    <InputError message={errors.admin_password} className="mt-2" />
-                </div>
                 <PrimaryButton disabled={processing}>Install</PrimaryButton>
             </form>
         </GuestLayout>

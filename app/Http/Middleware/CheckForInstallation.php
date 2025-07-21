@@ -16,7 +16,7 @@ class CheckForInstallation
      */
     public function handle($request, Closure $next)
     {
-        $needsInstall = config('database.connections.mysql.database') === 'shz_mobile'
+        $needsInstall = config('database.connections.mysql.database') === 'test4'
             && !File::exists(storage_path('installed'));
 
         if ($needsInstall && !$request->is('*install*')) {
