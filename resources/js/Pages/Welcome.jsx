@@ -113,10 +113,10 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     <section className="container mx-auto px-6 py-16 text-center">
                         <div className="max-w-4xl mx-auto">
                             <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent mb-8 leading-tight">
-                                Social Network
+                                {t('social_network')}
                             </h1>
                             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 leading-relaxed">
-                                Connect, Share, and Discover with the most advanced social platform built with Laravel and React
+                                {t('hero_description')}
                             </p>
                             
                             {/* CTA Buttons */}
@@ -125,13 +125,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     href={auth.user ? route('dashboard') : route('register')}
                                     className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 flex items-center space-x-2"
                                 >
-                                    <span>{auth.user ? t('dashboard') : 'Get Started'}</span>
+                                    <span>{auth.user ? t('dashboard') : t('get_started')}</span>
                                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                     </svg>
                                 </Link>
                                 <button className="px-8 py-4 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm text-gray-800 dark:text-gray-200 rounded-2xl font-bold text-lg border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300">
-                                    Learn More
+                                    {t('learn_more')}
                                 </button>
                             </div>
                         </div>
@@ -141,10 +141,10 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     <section className="container mx-auto px-6 py-16">
                         <div className="text-center mb-16">
                             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                                Powerful Features
+                                {t('powerful_features')}
                             </h2>
                             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                                Everything you need to build meaningful connections and share your story
+                                {t('features_description')}
                             </p>
                         </div>
 
@@ -182,19 +182,19 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
                                         1M+
                                     </div>
-                                    <div className="text-gray-600 dark:text-gray-300 font-semibold">Active Users</div>
+                                    <div className="text-gray-600 dark:text-gray-300 font-semibold">{t('active_users')}</div>
                                 </div>
                                 <div className="group">
                                     <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
                                         50M+
                                     </div>
-                                    <div className="text-gray-600 dark:text-gray-300 font-semibold">Messages Sent</div>
+                                    <div className="text-gray-600 dark:text-gray-300 font-semibold">{t('messages_sent')}</div>
                                 </div>
                                 <div className="group">
                                     <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
                                         99.9%
                                     </div>
-                                    <div className="text-gray-600 dark:text-gray-300 font-semibold">Uptime</div>
+                                    <div className="text-gray-600 dark:text-gray-300 font-semibold">{t('uptime')}</div>
                                 </div>
                             </div>
                         </div>
@@ -212,23 +212,23 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             
                             <div className="relative z-10">
                                 <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                                    Ready to Get Started?
+                                    {t('ready_to_get_started')}
                                 </h2>
                                 <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto">
-                                    Join millions of users who are already connecting and sharing on our platform
+                                    {t('join_millions')}
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                     <Link
                                         href={route('register')}
                                         className="px-8 py-4 bg-white text-purple-600 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-lg hover:shadow-xl"
                                     >
-                                        Create Account
+                                        {t('create_account')}
                                     </Link>
                                     <Link
                                         href={route('login')}
                                         className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white rounded-2xl font-bold text-lg border border-white/30 hover:bg-white/30 transition-all duration-300"
                                     >
-                                        Sign In
+                                        {t('sign_in')}
                                     </Link>
                                 </div>
                             </div>
@@ -239,12 +239,12 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     <footer className="container mx-auto px-6 py-12 text-center">
                         <div className="text-gray-600 dark:text-gray-400">
                             <p className="mb-4">
-                                Built with ❤️ using Laravel v{laravelVersion} and PHP v{phpVersion}
+                                {t('built_with_versions', { laravelVersion, phpVersion })}
                             </p>
                             <div className="flex justify-center space-x-6 text-sm">
-                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">Privacy Policy</a>
-                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">Terms of Service</a>
-                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">Contact Us</a>
+                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">{t('privacy_policy')}</a>
+                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">{t('terms_of_service')}</a>
+                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">{t('contact_us')}</a>
                             </div>
                         </div>
                     </footer>
