@@ -124,23 +124,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
                         {/* Desktop Right Side */}
                         <div className="hidden lg:flex items-center space-x-4">
-                            {/* Dark Mode Toggle */}
-                            <button
-                                onClick={toggleDarkMode}
-                                className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-105"
-                                title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                            >
-                                {darkMode ? (
-                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <circle cx="12" cy="12" r="5"/>
-                                        <path d="M12 1V3M12 21V23M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M1 12H3M21 12H23M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22"/>
-                                    </svg>
-                                ) : (
-                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79Z"/>
-                                    </svg>
-                                )}
-                            </button>
+                           
 
                             {/* Notifications */}
                             <div className="relative">
