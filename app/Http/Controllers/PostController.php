@@ -154,7 +154,7 @@ class PostController extends Controller
             }
         }
 
-        return redirect()->route('user_pages.show', $page->slug);
+        return redirect()->route('posts.show', $post->id);
     }
 
 
