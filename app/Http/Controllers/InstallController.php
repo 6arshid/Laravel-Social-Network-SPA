@@ -76,8 +76,8 @@ class InstallController extends Controller
         $storageLink = public_path('storage');
         if (!File::exists($storageLink)) {
             try {
-                File::link(storage_path('app/public'), $storageLink);
-            } catch (\Exception $e) {
+                @symlink(storage_path('app/public'), $storageLink);
+            } catch (\Throwable $e) {
                 Artisan::call('storage:link');
             }
         }
