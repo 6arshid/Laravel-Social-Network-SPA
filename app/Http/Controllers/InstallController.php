@@ -12,7 +12,7 @@ class InstallController extends Controller
     public function show(Request $request)
     {
         if (File::exists(storage_path('installed'))) {
-            return redirect($request->root());
+            return inertia('Installed');
         }
         return inertia('Install');
     }
