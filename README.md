@@ -77,13 +77,11 @@ Then update your `.env` file with your database credentials and other necessary 
 
 ### 5. Run the Web Installer
 
-Start the development server and navigate to `/install` relative to your application's base URL. The installer will collect your database details, run migrations and seeders, and create the admin account automatically.
-
-```bash
-php artisan serve
-```
+Point your web server's document root to the `public` directory and navigate to `/install` relative to your application's base URL. The installer will collect your database details, run migrations and seeders, and create the admin account automatically.
 
 For example, if you're running the app at `http://localhost:8000` visit `http://localhost:8000/install`. When serving from a subdirectory like `http://localhost/folder`, open `http://localhost/folder/install`.
+
+You can still use `php artisan serve` for local development if desired.
 
 If you prefer manual setup, continue with the steps below.
 
