@@ -12,7 +12,7 @@ class InstallController extends Controller
     public function show(Request $request)
     {
         if (File::exists(storage_path('installed'))) {
-            return inertia('Installed');
+            return redirect()->route('welcome');
         }
         return inertia('Install');
     }
@@ -91,13 +91,4 @@ class InstallController extends Controller
         return inertia('Installed');
     }
 
-    public function deleteInstallFile()
-    {
-        $installed = storage_path('installed');
-        if (File::exists($installed)) {
-            File::delete($installed);
-        }
-
-        return redirect()->route('install.show');
-    }
 }
