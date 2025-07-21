@@ -91,7 +91,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div className="mt-4 flex items-center justify-between flex-wrap gap-2">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-white">
                         {t('dont_have_account')}{' '}
                         <Link
                             href={route('register')}
@@ -105,7 +105,7 @@ export default function Login({ status, canResetPassword }) {
                         {canResetPassword && (
                             <Link
                                 href={route('password.request')}
-                                className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                className="rounded-md text-sm text-white underline hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                                 {t('forgot_password')}
                             </Link>

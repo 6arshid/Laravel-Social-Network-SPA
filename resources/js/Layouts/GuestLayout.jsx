@@ -73,7 +73,7 @@ export default function GuestLayout({ children }) {
                 {/* Footer Text */}
                 <div className="mt-12 text-center">
                     <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                        Welcome to our platform
+                        {import.meta.env.VITE_APP_NAME}
                     </p>
                     <div className="flex items-center justify-center space-x-2 mt-2">
                         <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
