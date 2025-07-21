@@ -4,7 +4,8 @@ import PostForm from '@/Components/PostForm';
 import PostCard from '@/Components/PostCard';
 import { useTranslation } from 'react-i18next';
 import UpdateAvatarCoverForm from './Partials/UpdateAvatarCoverForm';
-import { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 
 export default function Show({ page, isLiked, posts }) {
   const { t } = useTranslation();
@@ -29,16 +30,54 @@ export default function Show({ page, isLiked, posts }) {
     }
   };
 
-  const loadMorePosts = () => {
-    if (posts.next_page_url) {
-      router.visit(posts.next_page_url, { 
-        preserveScroll: true, 
-        only: ['posts'],
-        onStart: () => setLoading(true),
-        onFinish: () => setLoading(false)
+  const [postsData, setPostsData] = useState(posts);
+  const observer = useRef();
+  const loaderRef = useRef(null);
+
+  useEffect(() => {
+    setPostsData(posts);
+  }, [posts]);
+
+  const loadMorePosts = async () => {
+    if (!postsData.next_page_url) return;
+    setLoading(true);
+    try {
+      const response = await axios.get(postsData.next_page_url, {
+        headers: {
+          'X-Inertia': true,
+          'X-Requested-With': 'XMLHttpRequest',
+        },
       });
+      const newPosts = response.data.props.posts;
+      setPostsData((prev) => ({
+        ...newPosts,
+        data: [...prev.data, ...newPosts.data],
+      }));
+    } catch (err) {
+      console.error('Failed to load more posts', err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!loaderRef.current || !postsData.next_page_url) return;
+
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          loadMorePosts();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.current.observe(loaderRef.current);
+
+    return () => observer.current && observer.current.disconnect();
+  }, [postsData.next_page_url]);
 
   return (
     <AuthenticatedLayout 
@@ -284,7 +323,7 @@ export default function Show({ page, isLiked, posts }) {
 
             {/* Posts Section */}
             <div className="space-y-6">
-              {posts.data.length === 0 ? (
+              {postsData.data.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-12 text-center">
                   <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                     <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -295,7 +334,7 @@ export default function Show({ page, isLiked, posts }) {
                   <p className="text-gray-500">{t('this_page_hasnt_shared_anything_yet')}</p>
                 </div>
               ) : (
-                posts.data.map((post, index) => (
+                postsData.data.map((post, index) => (
                   <div key={post.id} style={{ animationDelay: `${index * 0.1}s` }}>
                     <PostCard post={post} />
                   </div>
@@ -303,30 +342,12 @@ export default function Show({ page, isLiked, posts }) {
               )}
 
               {/* Load More Button */}
-              {posts.next_page_url && (
-                <div className="text-center pt-6">
-                  <button 
-                    onClick={loadMorePosts} 
-                    disabled={loading}
-                    className="inline-flex items-center px-8 py-4 bg-white border-2 border-gray-200 text-gray-700 rounded-2xl hover:bg-gray-50 hover:border-blue-300 hover:text-blue-600 transition-all duration-300 font-semibold hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
-                  >
-                    {loading ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        {t('loading')}...
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </svg>
-                        {t('load_more_posts')}
-                      </>
-                    )}
-                  </button>
+              {postsData.next_page_url && (
+                <div ref={loaderRef} className="flex justify-center py-8">
+                  <div className="flex items-center space-x-3 text-gray-500 dark:text-gray-400">
+                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
+                    <span className="font-medium">{t('loading')}...</span>
+                  </div>
                 </div>
               )}
             </div>
