@@ -246,15 +246,7 @@ export default function Show() {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
             <Head title={`${user?.name || 'User'}'s Profile`} />
             
-            {/* Dark Mode Toggle */}
-            <div className="fixed top-4 right-4 z-50">
-                <button
-                    onClick={toggleDarkMode}
-                    className="p-3 bg-white dark:bg-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200 dark:border-gray-700"
-                >
-                    {darkMode ? <SunIcon /> : <MoonIcon />}
-                </button>
-            </div>
+   
 
             <div className="max-w-4xl mx-auto">
                 {/* Cover Photo Section */}
