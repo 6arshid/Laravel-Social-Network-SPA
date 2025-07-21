@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\File;
 use App\Helpers\PageHelper;
 
 class HandleInertiaRequests extends Middleware
@@ -39,7 +40,9 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
             'success' => fn () => $request->session()->get('success'),
           ],
-          'pagesByLang' => fn () => PageHelper::getPagesByLocale(),
+          'pagesByLang' => fn () => File::exists(storage_path('installed'))
+                ? PageHelper::getPagesByLocale()
+                : [],
         ];
     }
 }
